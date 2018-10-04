@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BlueTooth Connection"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:textSize="20sp"/>
+    <pl.bclogic.pulsator4droid.library.PulsatorLayout
+        android:id="@+id/pulsator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:pulse_count="3"
+        app:pulse_duration="3000"
+        app:pulse_repeat="0"
+        app:pulse_color="#87cefa"
+        app:pulse_startFromScratch="false"
+        app:pulse_interpolator="Linear">
+        <ImageView
+            android:background="@drawable/ic_bluetooth"
+            android:layout_centerInParent="true"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            />
+    </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+
+</RelativeLayout>
