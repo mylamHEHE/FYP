@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.Main.VideoActivity;
+import com.example.user.smartfitnesstrainer.Main.Video_innerActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 public class MainFragment extends Fragment {
@@ -67,7 +68,9 @@ public class MainFragment extends Fragment {
         reserve_2.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(getActivity(),"Reserved_2 is clicked.",Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(),"Reserved_2 is clicked.",Toast.LENGTH_LONG).show();
+                Intent homeIntent = new Intent(getContext(),Video_innerActivity.class);
+                startActivity(homeIntent);
             }
         });
         return view;

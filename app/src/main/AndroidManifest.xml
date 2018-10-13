@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".Main.HomeActivity"></activity>
         <activity android:name=".Main.VideoActivity"></activity>
+        <activity android:name=".Main.Video_innerActivity"></activity>
     </application>
 
 </manifest>
