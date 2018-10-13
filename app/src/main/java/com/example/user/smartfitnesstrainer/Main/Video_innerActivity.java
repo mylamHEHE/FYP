@@ -1,7 +1,9 @@
 package com.example.user.smartfitnesstrainer.Main;
 
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +13,10 @@ import android.widget.VideoView;
 
 import com.example.user.smartfitnesstrainer.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.xml.transform.ErrorListener;
 
 public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
@@ -26,16 +31,46 @@ public class Video_innerActivity extends AppCompatActivity {
         setContentView(R.layout.layout_full_video_inner);
 
         VideoView videoView = findViewById(R.id.video);
-        String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video0;
+        String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video;
+        //String videoPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/video0.mp4";;
         Uri uri = Uri.parse(videoPath);
         videoView.setVideoURI(uri);
 
         MediaController mediaController = new MediaController((this));
         videoView.setMediaController(mediaController);
         mediaController.setAnchorView(videoView);
+/*
+        MediaPlayer mP = new MediaPlayer();
+        try {
+            mP.setDataSource(this, uri);
 
+            mP.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    // TODO Auto-generated method stub
+                    mp.start();
+
+                }
+            });
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            mP.prepare();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //initImageBitmaps();
+        */
     }
+
     private void initImageBitmaps(){
         Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
 
