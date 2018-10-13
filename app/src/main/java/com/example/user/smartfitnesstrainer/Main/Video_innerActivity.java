@@ -21,7 +21,7 @@ import javax.xml.transform.ErrorListener;
 public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
 
-    //vars
+    //varss
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
