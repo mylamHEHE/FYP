@@ -105,10 +105,8 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
-<<<<<<< HEAD
+
             image.setColorFilter(Color.rgb(100,100,100), PorterDuff.Mode.LIGHTEN);
-=======
->>>>>>> 4077906cc780c6d049422daab0401d96bb057a0d
             //image.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             imageName = itemView.findViewById(R.id.image_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);

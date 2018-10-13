@@ -31,7 +31,6 @@ public class VideoActivity extends AppCompatActivity {
     private void initImageBitmaps(){
         Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
 
-<<<<<<< HEAD
         mImageUrls.add("https://cdn.liftbrands.com/snap/uploads/location_tour/2018/may/30/Urban-Fitness-Club-Battle-Ropes_ori.jpg");
         mNames.add("Core Workout");
         mduration.add("");
@@ -47,44 +46,8 @@ public class VideoActivity extends AppCompatActivity {
         mImageUrls.add("http://watchfit.com/wp-content/uploads/2016/04/male-and-female-workout_1-1024x548.jpg");
         mNames.add("Upper Body Building");
         mduration.add("");
-=======
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Havasu Falls");
-        mduration.add("3:00");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Trondheim");
-        mduration.add("1:23");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Portugal");
-        mduration.add("4:56");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Rocky Mountain");
-        mduration.add("7:00");
 
 
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Mahahual");
-        mduration.add("0:30");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Frozen Lake");
-        mduration.add("4:56");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("White Sands Desert");
-        mduration.add("1:23");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Austrailia");
-        mduration.add("3:00");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Washington");
-        mduration.add("0:30");
->>>>>>> 4077906cc780c6d049422daab0401d96bb057a0d
 
         initRecyclerView();
     }
