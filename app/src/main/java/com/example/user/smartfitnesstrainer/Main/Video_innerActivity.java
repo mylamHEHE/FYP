@@ -39,36 +39,11 @@ public class Video_innerActivity extends AppCompatActivity {
         MediaController mediaController = new MediaController((this));
         videoView.setMediaController(mediaController);
         mediaController.setAnchorView(videoView);
-/*
-        MediaPlayer mP = new MediaPlayer();
-        try {
-            mP.setDataSource(this, uri);
+        mediaController.setPadding(0, 0, 0, 827);
+        mediaController.isShowing();
 
-            mP.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    // TODO Auto-generated method stub
-                    mp.start();
-
-                }
-            });
-
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            mP.prepare();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         //initImageBitmaps();
-        */
+
     }
 
     private void initImageBitmaps(){
