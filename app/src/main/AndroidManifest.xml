@@ -24,17 +24,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
         <activity android:name=".Main.HomeActivity" />
         <activity android:name=".Main.VideoActivity" />
         <activity
             android:name=".Main.Video_innerActivity"
             android:exported="true" />
-=======
-        <activity android:name=".Main.HomeActivity"></activity>
-        <activity android:name=".Main.VideoActivity"></activity>
-        <activity android:name=".Main.Video_innerActivity"></activity>
->>>>>>> origin/master
+
         <activity
             android:name=".Main.DetailVideo.ExerciseActivity"
             android:label="@string/title_activity_exercise"
