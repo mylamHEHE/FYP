@@ -77,9 +77,8 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: clicked on: " + mImageNames.get(position));
-
-                Toast.makeText(mContext, mImageNames.get(position), Toast.LENGTH_SHORT).show();
+                Intent homeIntent = new Intent(mContext,Video_innerActivity.class);
+                mContext.startActivity(homeIntent);
 
                 //Intent intent = new Intent(mContext, VideoActivity.class);
                 //intent.putExtra("image_url", mImages.get(position));

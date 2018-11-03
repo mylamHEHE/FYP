@@ -1,5 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,9 +11,11 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -23,19 +27,46 @@ import java.util.ArrayList;
 
 public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
-
+ImageView image;
+RecyclerView rv,videorv;
+Video_inner_desp_adapter vida,vida2;
     //varss
 
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
+
+    private ArrayList<String> videoNames = new ArrayList<>();
+    private ArrayList<String> videoDuration = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_full_video_inner);
+        initBasicDesp();
+        image = findViewById(R.id.image);
+        rv = findViewById(R.id.basic_desp);
+        rv.setNestedScrollingEnabled(false);
+        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext(),
+                llm.getOrientation());
+        rv.addItemDecoration(dividerItemDecoration);
+        rv.setLayoutManager(llm);
+        vida = new Video_inner_desp_adapter(getApplicationContext(),mNames,mduration,0);
+        rv.setAdapter(vida);
 
+
+        videorv = findViewById(R.id.videolist);
+        videorv.setNestedScrollingEnabled(false);
+        LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
+                llmm.getOrientation());
+        videorv.addItemDecoration(dividerItemDecoration2);
+        videorv.setLayoutManager(llmm);
+        image.setColorFilter(Color.rgb(100,100,100), PorterDuff.Mode.LIGHTEN);
+        vida2 = new Video_inner_desp_adapter(getApplicationContext(),videoNames,videoDuration,1);
+        videorv.setAdapter(vida2);
         VideoView videoView = findViewById(R.id.video);
-
+/*
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video;
         //String videoPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/video0.mp4";;
 
@@ -49,6 +80,7 @@ public class Video_innerActivity extends AppCompatActivity {
 
         mediaController.setPadding(0, 0, 0, 827);
         mediaController.isShowing();
+        */
         //initImageBitmaps();
     }
 
@@ -57,47 +89,20 @@ public class Video_innerActivity extends AppCompatActivity {
 
 
 
-    private void initImageBitmaps(){
-        Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
+    private void initBasicDesp(){
 
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Havasu Falls");
-        mduration.add("3:00");
+        mNames.add("Description");
+        //mNames.add("Equipment");
+        mduration.add("Cardio exercise is any exercise that raises your heart rate.");
+       // mduration.add("None");
 
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Trondheim");
-        mduration.add("1:23");
+        videoNames.add("Plank");
+        videoNames.add("Russian");
+        videoNames.add("Side Plank");
+        videoDuration.add("0:30");
+        videoDuration.add("0:30");
+        videoDuration.add("0:30");
 
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Portugal");
-        mduration.add("4:56");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Rocky Mountain");
-        mduration.add("7:00");
-
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Mahahual");
-        mduration.add("0:30");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Frozen Lake");
-        mduration.add("4:56");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("White Sands Desert");
-        mduration.add("1:23");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Austrailia");
-        mduration.add("3:00");
-
-        mImageUrls.add("https://previews.123rf.com/images/martialred/martialred1507/martialred150700874/42615284-video-clip-play-line-art-icon-for-apps-and-websites.jpg");
-        mNames.add("Washington");
-        mduration.add("0:30");
-
-        initRecyclerView();
     }
 
     private void initRecyclerView(){

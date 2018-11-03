@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.example.user.smartfitnesstrainer.R;
 //import com.example.user.smartfitnesstrainer.Utils.BottomNavigationViewHelper;
-
-
 public class MainActivity extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 1000;
     private static final String TAG = "MainActivity";
@@ -32,5 +30,4 @@ public class MainActivity extends AppCompatActivity {
             }
         },SPLASH_TIME_OUT);
     }
-
 }
