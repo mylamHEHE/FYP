@@ -6,8 +6,10 @@
 <LinearLayout
      android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
     android:background="@color/mcam_color_light"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -16,15 +18,26 @@
         android:background="@drawable/gradient_background"
         android:layout_width="match_parent"
         android:layout_height="205dp"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical">
         <ImageView
             android:layout_marginTop="25dp"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/icon"/>
+        <ImageButton
+            android:layout_marginTop="-110dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="320dp"
+            android:id="@+id/setting"
+            android:src="@drawable/setting"
+            android:background="@null"
+            />
         <TextView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="-35dp"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,12 +58,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="3">
+            android:descendantFocusability="blocksDescendants"
+            android:weightSum="3"
+            >
     <LinearLayout
         android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
         android:background="@drawable/border_x">
         <TextView
@@ -72,6 +88,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical"
                 android:background="@drawable/border_x">
                 <TextView
@@ -91,6 +108,7 @@
             <LinearLayout
                 android:gravity="center"
                 android:layout_width="0dp"
+                android:descendantFocusability="blocksDescendants"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical">
