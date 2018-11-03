@@ -132,6 +132,7 @@
                     </LinearLayout>
 
                     <Button
+                        android:id="@+id/start"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:text="Start"

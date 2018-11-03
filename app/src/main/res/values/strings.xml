@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SmartFitnessTrainer</string>
+    <string name="title_activity_exercise">ExerciseActivity</string>
 </resources>

@@ -1,5 +1,8 @@
 package com.example.user.smartfitnesstrainer.Main;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -10,15 +13,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;
@@ -30,6 +37,7 @@ public class Video_innerActivity extends AppCompatActivity {
 ImageView image;
 RecyclerView rv,videorv;
 Video_inner_desp_adapter vida,vida2;
+Button start;
     //varss
 
     private ArrayList<String> mNames = new ArrayList<>();
@@ -43,9 +51,11 @@ Video_inner_desp_adapter vida,vida2;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_full_video_inner);
         initBasicDesp();
+        initStartButton();
         image = findViewById(R.id.image);
         rv = findViewById(R.id.basic_desp);
         rv.setNestedScrollingEnabled(false);
+
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext(),
                 llm.getOrientation());
@@ -53,18 +63,17 @@ Video_inner_desp_adapter vida,vida2;
         rv.setLayoutManager(llm);
         vida = new Video_inner_desp_adapter(getApplicationContext(),mNames,mduration,0);
         rv.setAdapter(vida);
+            videorv = findViewById(R.id.videolist);
+            videorv.setNestedScrollingEnabled(false);
+            LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
+                    llmm.getOrientation());
+            videorv.addItemDecoration(dividerItemDecoration2);
+            videorv.setLayoutManager(llmm);
+            image.setColorFilter(Color.rgb(100, 100, 100), PorterDuff.Mode.LIGHTEN);
+            vida2 = new Video_inner_desp_adapter(getApplicationContext(), videoNames, videoDuration, 1);
+            videorv.setAdapter(vida2);
 
-
-        videorv = findViewById(R.id.videolist);
-        videorv.setNestedScrollingEnabled(false);
-        LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
-        DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
-                llmm.getOrientation());
-        videorv.addItemDecoration(dividerItemDecoration2);
-        videorv.setLayoutManager(llmm);
-        image.setColorFilter(Color.rgb(100,100,100), PorterDuff.Mode.LIGHTEN);
-        vida2 = new Video_inner_desp_adapter(getApplicationContext(),videoNames,videoDuration,1);
-        videorv.setAdapter(vida2);
         VideoView videoView = findViewById(R.id.video);
 /*
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video;
@@ -88,7 +97,16 @@ Video_inner_desp_adapter vida,vida2;
         //initImageBitmaps();
 
 
-
+    private void initStartButton(){
+        start = (Button) findViewById(R.id.start);
+        start.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                startActivity(homeIntent);
+                // Code here executes on main thread after user presses button
+            }
+        });
+    }
     private void initBasicDesp(){
 
         mNames.add("Description");
