@@ -22,7 +22,6 @@ public class VideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_full_video);
-
         initImageBitmaps();
     }
     /* Called when the user taps the Send button
@@ -47,8 +46,6 @@ public class VideoActivity extends AppCompatActivity {
         mImageUrls.add("http://watchfit.com/wp-content/uploads/2016/04/male-and-female-workout_1-1024x548.jpg");
         mNames.add("Upper Body Building");
         mduration.add("");
-
-
 
         initRecyclerView();
     }

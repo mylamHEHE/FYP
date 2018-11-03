@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +20,7 @@ import java.util.List;
 
 public class MessagesFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "MessagesFragment";
-    TextView bmi;
-    TextView github;
+    ImageButton setting;
     RecyclerView rv;
     List<UserRecyclerItem> uri;
     RecyclerItemAdapter ria;
@@ -32,29 +32,22 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         rv = (RecyclerView)view.findViewById(R.id.rvid);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        uri.add(new UserRecyclerItem("Finishing 'Cardio' Series","08/07/2018"));
-        uri.add(new UserRecyclerItem("Finishing 'Push-up' Series","08/07/2018"));
-        uri.add(new UserRecyclerItem("Finishing 'Heavyweight' Series","08/07/2018"));
-        uri.add(new UserRecyclerItem("abcfeieh","08/07/2018"));
+        uri.add(new UserRecyclerItem("'Cardio' Series","05/11/2018"));
+        uri.add(new UserRecyclerItem("'Push-up' Series","05/11/2018"));
+        uri.add(new UserRecyclerItem("'Heavyweight' Series","05/11/2018"));
+        uri.add(new UserRecyclerItem("'Upperbody' Series","05/11/2018"));
         ria = new RecyclerItemAdapter(getContext(),uri);
         rv.setAdapter(ria);
-        rv.setNestedScrollingEnabled(false);
-        /*
-        bmi = view.findViewById(R.id.textEditProfile);
-        bmi.setOnClickListener(new View.OnClickListener(){
+        rv.setNestedScrollingEnabled(true);
+
+        setting = view.findViewById(R.id.setting);
+        setting.setImageResource(R.drawable.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Toast.makeText(getActivity(),"BMI is clicked.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"Setting is clicked.",Toast.LENGTH_LONG).show();
             }
         });
-        github = view.findViewById(R.id.website);
-        github.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast.makeText(getActivity(),"BMI is clicked.",Toast.LENGTH_LONG).show();
-            }
-        });
-        */
         return view;
     }
 }
