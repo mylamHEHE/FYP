@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,10 +29,13 @@
         <activity android:name=".Main.HomeActivity"></activity>
         <activity android:name=".Main.VideoActivity"></activity>
         <activity android:name=".Main.Video_innerActivity"></activity>
+        <activity android:name=".Main.ScanActivity"></activity>
+       
         <activity
             android:name=".Main.DetailVideo.ExerciseActivity"
             android:label="@string/title_activity_exercise"
             android:theme="@style/AppTheme"></activity>
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
     </application>
 
 </manifest>
