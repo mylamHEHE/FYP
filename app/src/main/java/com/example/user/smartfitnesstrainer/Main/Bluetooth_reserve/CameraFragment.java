@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.DeviceScanActivity;
 import com.example.user.smartfitnesstrainer.Main.HomeActivity;
 import com.example.user.smartfitnesstrainer.Main.ScanActivity;
 import com.example.user.smartfitnesstrainer.R;
@@ -46,13 +47,15 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         opentooth.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                ComponentName cn = new ComponentName("com.android.settings",
-                        "com.android.settings.bluetooth.BluetoothSettings");
-                intent.setComponent(cn);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+//                final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//                ComponentName cn = new ComponentName("com.android.settings",
+//                        "com.android.settings.bluetooth.BluetoothSettings");
+//                intent.setComponent(cn);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+                Intent homeIntent = new Intent(getContext(), DeviceScanActivity.class);
+                startActivity(homeIntent);
             }
         });
         openscan=(ImageButton)view.findViewById(R.id.openscan);

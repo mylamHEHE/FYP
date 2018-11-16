@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -30,7 +31,7 @@
         <activity android:name=".Main.VideoActivity"></activity>
         <activity android:name=".Main.Video_innerActivity"></activity>
         <activity android:name=".Main.ScanActivity"></activity>
-       
+        <activity android:name=".Main.BLE.DeviceScanActivity"></activity>
         <activity
             android:name=".Main.DetailVideo.ExerciseActivity"
             android:label="@string/title_activity_exercise"
