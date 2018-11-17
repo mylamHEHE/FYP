@@ -1,4 +1,4 @@
-package com.example.user.smartfitnesstrainer.Main;
+/*package com.example.user.smartfitnesstrainer.Main;
 
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -34,7 +34,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                         "com.android.settings.bluetooth.BluetoothSettings");
                 intent.setComponent(cn);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity( intent);*/
+                startActivity( intent);
                 Intent homeIntent = new Intent(getContext(), DeviceScanActivity.class);
                 startActivity(homeIntent);
             }
@@ -50,3 +50,4 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         return view;
     }
 }
+*/

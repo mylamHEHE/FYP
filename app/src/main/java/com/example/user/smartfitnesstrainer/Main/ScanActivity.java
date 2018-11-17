@@ -22,6 +22,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.DeviceScanActivity;
 import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.CameraFragment;
 import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.MyBluetoothService;
 import com.example.user.smartfitnesstrainer.Main.Profile.MessagesFragment;
@@ -128,7 +129,7 @@ public class ScanActivity extends AppCompatActivity {
                                 Vibrator vibrator = (Vibrator) getApplication().getSystemService(Context.VIBRATOR_SERVICE);
                                 vibrator.vibrate(1000);
                                 txtResult.setText(qrcodes.valueAt(0).displayValue);
-                                bluetooth = new MyBluetoothService(qrcodes.valueAt(0).displayValue);
+                                //bluetooth = new MyBluetoothService(qrcodes.valueAt(0).displayValue);
                             }
                         }
                     });

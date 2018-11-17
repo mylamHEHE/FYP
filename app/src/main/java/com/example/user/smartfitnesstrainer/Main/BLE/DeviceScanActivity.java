@@ -109,13 +109,13 @@ public class DeviceScanActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopScan();
-        invalidateOptionsMenu();
-        bluetoothLeDeviceStore.clear();
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        stopScan();
+//        invalidateOptionsMenu();
+//        bluetoothLeDeviceStore.clear();
+//    }
 
     @Override
     protected void onDestroy() {
