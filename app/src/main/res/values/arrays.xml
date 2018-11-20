@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="example_one">
+        <item>Well done!</item>
+        <item>Lets go to the next challenge!</item>
+    </string-array>
+</resources>
