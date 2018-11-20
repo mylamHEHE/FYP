@@ -77,9 +77,8 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: clicked on: " + mImageNames.get(position));
-
-                Toast.makeText(mContext, mImageNames.get(position), Toast.LENGTH_SHORT).show();
+                Intent homeIntent = new Intent(mContext,Video_innerActivity.class);
+                mContext.startActivity(homeIntent);
 
                 //Intent intent = new Intent(mContext, VideoActivity.class);
                 //intent.putExtra("image_url", mImages.get(position));
@@ -105,6 +104,8 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
+
+            image.setColorFilter(Color.rgb(100,100,100), PorterDuff.Mode.LIGHTEN);
             //image.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             imageName = itemView.findViewById(R.id.image_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);

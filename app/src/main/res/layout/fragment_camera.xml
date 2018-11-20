@@ -2,15 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BlueTooth Connection"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:textSize="20sp"/>
     <pl.bclogic.pulsator4droid.library.PulsatorLayout
         android:id="@+id/pulsator"
         android:layout_width="match_parent"
@@ -28,5 +19,32 @@
             android:layout_height="75dp"
             />
     </pl.bclogic.pulsator4droid.library.PulsatorLayout>
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BlueTooth Connection"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:textSize="20sp"/>-->
+    <ImageButton
+        android:id="@+id/openscan"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="60dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/openscan"
+        android:background="@null"
+        />
+    <ImageButton
+        android:id="@+id/opentooth"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="220dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/opentooth"
+        android:background="@null"
+        />
+
 
 </RelativeLayout>

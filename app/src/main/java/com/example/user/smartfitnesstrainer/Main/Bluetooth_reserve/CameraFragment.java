@@ -1,41 +1,164 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 
-import android.app.Fragment;
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.BleUtil;
 import com.example.user.smartfitnesstrainer.R;
-import com.gigamole.library.PulseView;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.vise.xsnow.permission.OnPermissionCallback;
+import com.vise.xsnow.permission.PermissionManager;
 
-import pl.bclogic.pulsator4droid.library.PulsatorLayout;
+import java.io.IOException;
 
 
 public class CameraFragment extends android.support.v4.app.Fragment {
-    private  static final String TAG = "CameraFragment";
-    public PulsatorLayout pulsator;
-    private boolean runningThread = false;
-    @Nullable
+    SurfaceView cameraPreview;
+    TextView txtResult;
+    BarcodeDetector barcodeDetector;
+    private MyBluetoothService bluetooth;
+    CameraSource cameraSource;
+    private final static int REQUEST_OPEN_BT_CODE = 1;
+    private final static int REQUEST_LOCATION = 1;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private int hardcode = 0;
+    final int RequestCameraPermissionID = 1001;
+    int step_count = 0;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_LOCATION: {
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+// <-- Start Beemray here
+                } else {
+                    getActivity().finish();
+// Permission was denied or request was cancelled
+                }
+                break;
+            }
+            case RequestCameraPermissionID: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    try {
+                        cameraSource.start(cameraPreview.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_camera,container,false);
-        pulsator = view.findViewById(R.id.pulsator);
+        View view = inflater.inflate(R.layout.scanner,container,false);
+        //checkBluetoothPermission();
+        checkLocationPermission();
+        cameraPreview = (SurfaceView) view.findViewById(R.id.cameraPreview);
+        txtResult = (TextView) view.findViewById(R.id.txtResult);
 
-        Log.d("yes","yes");
+        barcodeDetector = new BarcodeDetector.Builder(getContext())
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
 
-        pulsator.start();
+        cameraSource = new CameraSource
+                .Builder(getContext(), barcodeDetector)
+                .setAutoFocusEnabled(true)
+                .setRequestedPreviewSize(640, 480)
+                .build();
+        cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                if (ActivityCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    //Request permission
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.CAMERA},RequestCameraPermissionID);
+                    return;
+                }
+                try {
+                    cameraSource.start(cameraPreview.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+//                if (ActivityCompat.checkSelfPermission(getContext(),
+//                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                        ActivityCompat.checkSelfPermission(getContext(),
+//                                android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    requestPermissions(getActivity(),
+//                            new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+//                                    android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                            REQUEST_LOCATION);
+//                } else {
+//                    Log.e("DB", "PERMISSION GRANTED");
+//                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i , int j, int k){
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder){
+
+            }
+        });
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
+                if(qrcodes.size()!=0)
+                {
+                    txtResult.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            //Create vibrate
+
+                            if(bluetooth == null){
+                                Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+                                vibrator.vibrate(1000);
+                                txtResult.setText(qrcodes.valueAt(0).displayValue);
+                                bluetooth = new MyBluetoothService(qrcodes.valueAt(0).displayValue,getContext(),getActivity());
+                                bluetooth.init();
+                            }
+                        }
+                    });
+
+                }
+            }
+
+        });
         return view;
-    }
-
-    @Override
-    public void onPause() {
-        pulsator.stop();
-        super.onPause();
-
-        Log.d("pa","use");
     }
 
     @Override
@@ -43,4 +166,79 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         super.onResume();
 
     }
+
+    private void checkBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //校验是否已具有模糊定位权限
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                PermissionManager.instance().with(getActivity()).request(new OnPermissionCallback() {
+                    @Override
+                    public void onRequestAllow(String permissionName) {
+                        enableBluetooth();
+                    }
+
+                    @Override
+                    public void onRequestRefuse(String permissionName) {
+                        getActivity().finish();
+                    }
+
+                    @Override
+                    public void onRequestNoAsk(String permissionName) {
+                        getActivity().finish();
+                    }
+                }, Manifest.permission.ACCESS_COARSE_LOCATION);
+            } else {
+                enableBluetooth();
+            }
+        } else {
+            enableBluetooth();
+        }
+    }
+
+    private void enableBluetooth() {
+        if (!BleUtil.isBleEnable(getContext())) {
+            BleUtil.enableBluetooth(getActivity(), 1);
+        } else {
+            boolean isSupport = BleUtil.isSupportBle(getContext());
+            boolean isOpenBle = BleUtil.isBleEnable(getContext());
+
+        }
+    }
+
+    public void checkLocationPermission() {
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d("open","open");
+            PermissionManager.instance().with(getActivity()).request(new OnPermissionCallback() {
+                @Override
+                public void onRequestAllow(String permissionName) {
+                    final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getActivity().startActivityForResult(intent,REQUEST_LOCATION);
+                }
+
+                @Override
+                public void onRequestRefuse(String permissionName) {
+                   // getActivity().finish();
+                }
+
+                @Override
+                public void onRequestNoAsk(String permissionName) {
+                   // getActivity().finish();
+                }
+            }, Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        else {
+            Log.d("opened","opened");
+        }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        cameraSource.release();
+        barcodeDetector.release();
+    }
+
+
 }
