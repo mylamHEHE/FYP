@@ -1,6 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main.DetailVideo;
 
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -263,10 +264,85 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
         animationAfterExercise();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        setContentView(R.layout.activity_exercise);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        pause = findViewById(R.id.exo_pause);
+        play = findViewById(R.id.exo_play);
+        rl = findViewById(R.id.timerrl);
+        simpleExoPlayerView = findViewById(R.id.audio_view);
+        ftv = findViewById(R.id.fadingTransition);
+        mTextField = findViewById(R.id.countdown);
+        pb = findViewById(R.id.video_progressbar);
+        rl0 = findViewById(R.id.timerrl0);
+        rl.setVisibility(View.GONE);
+        temp.add("Inchworm");
+        temp.add("Power Skip");
+        temp.add("Uppercut");
+        temp.add("Mountain Climber Twist");
+        ela = new ExerciseListAdapter(this,temp);
+        play.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                player.setPlayWhenReady(true);
+                simpleExoPlayerView.setUseController(false);
+                simpleExoPlayerView.hideController();
+                simpleExoPlayerView.setControllerHideOnTouch(false);
+                pause.setVisibility(View.VISIBLE);
+            }
+        });
+
+        pause.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                player.setPlayWhenReady(false);
+                simpleExoPlayerView.setUseController(true);
+                simpleExoPlayerView.showController();
+                simpleExoPlayerView.setControllerHideOnTouch(false);
+                pause.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+        // initializePlayer();
+       /* MediaController mediaController = new MediaController(this);
+        mediaController.setAnchorView(vf);
+        vf.setMediaController(mediaController);
+*/
+      /*  rv.setAdapter(ela);
+        LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rv.setLayoutManager(llmm);
+        */
+        /*Uri uri = Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.video);
+        vf.setVideoURI(uri);
+        */
+        /*vf.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!bVideoIsBeingTouched) {
+                    bVideoIsBeingTouched = true;
+                    if (videoview.isPlaying()) {
+                        onPause(videoview);
+                    } else {
+                        Log.d("vid",String.valueOf(videoview.isPlaying()));
+                        onResume(videoview);
+                    }
+
+                    bVideoIsBeingTouched = false;
+
+                }
+                return true;
+            }
+        });vf.start();*/
 
     }
 
