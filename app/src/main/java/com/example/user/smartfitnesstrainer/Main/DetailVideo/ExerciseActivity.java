@@ -1,19 +1,47 @@
 package com.example.user.smartfitnesstrainer.Main.DetailVideo;
 
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.example.user.smartfitnesstrainer.R;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import com.tomer.fadingtextview.FadingTextView;
 
 import java.util.ArrayList;
 
-<<<<<<< HEAD
+
 public class ExerciseActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
     private RecyclerView rv;
     private ExerciseListAdapter ela;
@@ -240,25 +268,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         super.onCreate(savedInstanceState);
 
 
-=======
-public class ExerciseActivity extends AppCompatActivity {
-    RecyclerView rv;
-    ExerciseListAdapter ela;
-    ArrayList <String> temp = new ArrayList<>();
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
->>>>>>> a9879dc806237699166fca393e3f914309aa1602
-        setContentView(R.layout.activity_exercise);
-        rv = findViewById(R.id.rv);
-        temp.add("Inchworm");
-        temp.add("Power Skip");
-        temp.add("Uppercut");
-        temp.add("Mountain Climber Twist");
-        ela = new ExerciseListAdapter(this,temp);
-        rv.setAdapter(ela);
-        LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rv.setLayoutManager(llmm);
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        exerciseStarts();
+    }
 }
