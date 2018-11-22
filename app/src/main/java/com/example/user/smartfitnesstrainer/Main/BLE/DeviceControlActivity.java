@@ -307,6 +307,7 @@ public class DeviceControlActivity extends AppCompatActivity {
     /**
      * 显示GATT服务展示的信息
      */
+
     private void showGattServices() {
         if (simpleExpandableListAdapter == null) {
             return;

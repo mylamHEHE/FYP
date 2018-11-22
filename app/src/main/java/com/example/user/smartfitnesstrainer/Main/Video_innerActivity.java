@@ -1,6 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -55,7 +57,7 @@ Button start;
         image = findViewById(R.id.image);
         rv = findViewById(R.id.basic_desp);
         rv.setNestedScrollingEnabled(false);
-
+        Log.d("create","createx");
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext(),
                 llm.getOrientation());
@@ -97,15 +99,36 @@ Button start;
         //initImageBitmaps();
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initStartButton(){
+
         start = (Button) findViewById(R.id.start);
-        start.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
-                startActivity(homeIntent);
-                // Code here executes on main thread after user presses button
+        start.setOnTouchListener(new View.OnTouchListener() {
+            @Override public boolean onTouch(View view, MotionEvent motionEvent)
+            {
+                switch (motionEvent.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        {
+                            return true;
+
+                        }
+                        case MotionEvent.ACTION_MOVE:
+                            {
+                                Log.i("mandroid.cn", "button移动");
+                                break;
+                            }
+                            case MotionEvent.ACTION_UP: {
+                                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                                startActivity(homeIntent);
+                                break;
+                            }
+                }
+                return true;
             }
-        });
+        }
+        );
+
     }
     private void initBasicDesp(){
 

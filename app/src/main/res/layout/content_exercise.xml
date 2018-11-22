@@ -8,15 +8,75 @@
     tools:context=".Main.DetailVideo.ExerciseActivity"
     tools:showIn="@layout/activity_exercise"
     android:orientation="vertical">
-    <VideoView
-        android:id="@+id/video_fragment"
+    <RelativeLayout
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"/>
+        android:layout_height="0dp">
+
+        <FrameLayout
+            android:id="@+id/video_framelayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true">
+
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/audio_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:auto_show="false"
+                app:use_artwork="true"
+                app:show_timeout="0"
+                app:controller_layout_id="@layout/exolayout" />
+            <RelativeLayout
+                android:id="@+id/timerrl0"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#667CFC00">
+                <com.tomer.fadingtextview.FadingTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="50sp"
+                    app:timeout="500"
+                    android:textStyle="bold"
+                    android:textColor="#fff"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/fadingTransition"/>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_gravity="center"
+                android:id="@+id/timerrl"
+                android:background="#667CFC00"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:textColor="#fff"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/countdown"/>
+                <ProgressBar
+                    android:id="@+id/video_progressbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:progress="100"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+
+
+            <ImageButton android:id="@id/exo_pause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:background="#667CFC00"
+                style="@style/ExoMediaButton.Pause"/>
+
+        </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>
