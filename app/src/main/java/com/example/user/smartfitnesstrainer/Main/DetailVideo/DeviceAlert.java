@@ -22,7 +22,7 @@ public class DeviceAlert extends DialogFragment
         try {
             FragmentTransaction ft = manager.beginTransaction();
             ft.add(this, tag);
-            ft.commit();
+            ft.commitAllowingStateLoss();
         } catch (IllegalStateException e) {
             Log.d("ABSDIALOGFRAG", "Exception", e);
         }

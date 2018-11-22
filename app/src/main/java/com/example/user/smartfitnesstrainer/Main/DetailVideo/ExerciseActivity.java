@@ -62,32 +62,37 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class ExerciseActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
-    RecyclerView rv;
-    ExerciseListAdapter ela;
-    ArrayList <String> temp = new ArrayList<>();
-    VideoView vf;
-    FadingTextView ftv;
+    private RecyclerView rv;
+    private ExerciseListAdapter ela;
+    private ArrayList <String> temp = new ArrayList<>();
+    private VideoView vf;
+    private boolean isVideoCreate = false;
+    private FadingTextView ftv;
     private ArrayList <VideoModel> vm = new ArrayList<>();
-    ImageButton pause;
-    DeviceAlert devicealert;
-    TextView mTextField;
-int isTutorMode = 0;
-    ArrayList<ExerciseModel> exerciseModelArrayList = new ArrayList<>();
+    private ImageButton pause;
+    private DeviceAlert devicealert;
+    private TextView mTextField;
+    private int isTutorMode = 0;
+    private ArrayList<ExerciseModel> exerciseModelArrayList = new ArrayList<>();
     int currentExercise = 0;
-    ProgressBar pb;
-    SimpleExoPlayer player;
-    SimpleExoPlayerView simpleExoPlayerView;
-    ImageButton play;
-    RelativeLayout rl;
-    RelativeLayout rl0;
+    private ProgressBar pb;
+    private SimpleExoPlayer player;
+    private SimpleExoPlayerView simpleExoPlayerView;
+    private ImageButton play;
+    private RelativeLayout rl;
+    private RelativeLayout rl0;
 
     @Override
     protected void onStart() {
         super.onStart();
-        createPlaylist();
-        createExerciseModellist();
-        firstClip();
-        prepareExoPlayerFromFileUri(Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.video));
+        if (!isVideoCreate) {
+            isVideoCreate =true;
+            Log.d("playernum","lc");
+            createPlaylist();
+            createExerciseModellist();
+            firstClip();
+            prepareExoPlayerFromFileUri(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.video));
+        }
 
     }
     private MediaSource buildMediaSource(int uri){
@@ -125,7 +130,6 @@ int isTutorMode = 0;
         }
         simpleExoPlayerView.setPlayer(player);
         ConcatenatingMediaSource cms = new ConcatenatingMediaSource(mediaSources);
-        Log.d("playernum",player.toString());
         if(player!=null && mediaSources!=null){
 
             player.addListener(new SimpleExoPlayer.DefaultEventListener() {
@@ -159,6 +163,7 @@ int isTutorMode = 0;
     }
     //choser
     private void animationAfterExercise(){
+        Log.d("animationaftere",String.valueOf(isTutorMode));
         if (isTutorMode==0)
         {
             introMode();
@@ -173,7 +178,6 @@ int isTutorMode = 0;
             deviceCheck();
 
         }
-
     }
     private void deviceCheck(){
         devicealert = new DeviceAlert();
@@ -187,17 +191,13 @@ int isTutorMode = 0;
         new CountDownTimer(3000,1000) {
 
             public void onTick(long millisUntilFinished) {
-
                 //here you can have your logic to set text to edittext
             }
-
             public void onFinish() {
                 rl0.setVisibility(View.GONE);
                 player.setPlayWhenReady(true);
                 isTutorMode = 2;
-
             }
-
         }.start();
     }
     //tutor mode
@@ -216,7 +216,6 @@ int isTutorMode = 0;
                 rl0.setVisibility(View.GONE);
                 player.setPlayWhenReady(true);
                 isTutorMode = 2;
-
             }
 
         }.start();
@@ -269,6 +268,8 @@ int isTutorMode = 0;
         exerciseModelArrayList.add(em2);
         ExerciseModel em3 = new ExerciseModel("V-Sit",9,11,15,30,2);
         exerciseModelArrayList.add(em3);
+        ExerciseModel em4 = new ExerciseModel("V-Sit",9,11,15,30,2);
+        exerciseModelArrayList.add(em4);
     }
     @Override
     protected void onResume() {
@@ -284,6 +285,7 @@ int isTutorMode = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         setContentView(R.layout.activity_exercise);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
