@@ -1,6 +1,9 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,10 +11,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,8 +26,11 @@ import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothDeviceManager;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDeviceStore;
 import com.example.user.smartfitnesstrainer.Main.BLE.DeviceAdapter;
+import com.example.user.smartfitnesstrainer.Main.BLE.DeviceControlActivity;
 import com.example.user.smartfitnesstrainer.Main.BLE.DeviceDetailActivity;
+import com.example.user.smartfitnesstrainer.Main.BLE.DeviceMirror;
 import com.example.user.smartfitnesstrainer.Main.BLE.IScanCallback;
+import com.example.user.smartfitnesstrainer.Main.BLE.PropertyType;
 import com.example.user.smartfitnesstrainer.Main.BLE.ScanCallback;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
@@ -35,6 +44,8 @@ import java.util.ArrayList;
 public class MyBluetoothService {
     String address = "";
     Activity activity;
+    private BluetoothLeDevice mDevice;
+    private boolean gotDevice=false;
     Context context;
     public MyBluetoothService(String address,Context context,Activity activity) {
         this.address = address;
@@ -57,29 +68,27 @@ public class MyBluetoothService {
     private ScanCallback sc = new ScanCallback(new IScanCallback() {
         @Override
         public void onDeviceFound(final BluetoothLeDevice bluetoothLeDevice) {
-            Log.i("fsd","Founded Scan Device:" + bluetoothLeDevice);
+            Log.i("fsd", "Founded Scan Device:" + bluetoothLeDevice);
             bluetoothLeDeviceStore.addDevice(bluetoothLeDevice);
-            Log.d("bts",bluetoothLeDeviceStore.toString());
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
+            Log.d("bts", bluetoothLeDeviceStore.toString());
+//scanning jump
 
-                    if (bluetoothLeDeviceStore != null) {
-                        for (BluetoothLeDevice ble : bluetoothLeDeviceStore.getDeviceList()) {
-                            if (address.equals(ble.getAddress()))
-                            {
-                                Intent intent = new Intent(activity, DeviceDetailActivity.class);
-                                intent.putExtra(DeviceDetailActivity.EXTRA_DEVICE, ble);
-                                activity.startActivity(intent);
-                                stopScan();
-                                break;
-                            }
-                        }
-                    }
+
+            if (bluetoothLeDeviceStore != null) {
+                if (address.equals(bluetoothLeDevice.getAddress())&&!gotDevice) {
+                    gotDevice=true;
+                    stopScan();
+                    Intent intent = new Intent(activity, DeviceDetailActivity.class);
+                    intent.putExtra(DeviceDetailActivity.EXTRA_DEVICE, bluetoothLeDevice);
+                    activity.startActivity(intent);
+
+                    Log.d("mylam2", "connect success");
                 }
-            };
-            Thread thread = new Thread(runnable);
-            thread.start();
+
+            }
+
+        //    Thread thread = new Thread(runnable);
+          //  thread.start();
         }
 
         @Override
@@ -184,7 +193,48 @@ public class MyBluetoothService {
     /**
      * 开始扫描
      */
-
+/*
+    private void showGattServices() {
+        if (simpleExpandableListAdapter == null) {
+            return;
+        }
+        final AlertDialog.Builder builder = new AlertDialog.Builder(DeviceControlActivity.this);
+        View view = LayoutInflater.from(DeviceControlActivity.this).inflate(R.layout.item_gatt_services, null);
+        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.dialog_gatt_services_list);
+        expandableListView.setAdapter(simpleExpandableListAdapter);
+        builder.setView(view);
+        final AlertDialog dialog = builder.show();
+        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                dialog.dismiss();
+                final BluetoothGattService service = mGattServices.get(groupPosition);
+                final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
+                final int charaProp = characteristic.getProperties();
+                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0) {
+                    mSpCache.put(WRITE_CHARACTERISTI_UUID_KEY + mDevice.getAddress(), characteristic.getUuid().toString());
+                    ((EditText) findViewById(R.id.show_write_characteristic)).setText(characteristic.getUuid().toString());
+                    BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_WRITE, service.getUuid(), characteristic.getUuid(), null);
+                } else if ((charaProp & BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                    BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_READ, service.getUuid(), characteristic.getUuid(), null);
+                    BluetoothDeviceManager.getInstance().read(mDevice);
+                }
+                if ((charaProp & BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                    mSpCache.put(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress(), characteristic.getUuid().toString());
+                    ((EditText) findViewById(R.id.show_notify_characteristic)).setText(characteristic.getUuid().toString());
+                    BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_NOTIFY, service.getUuid(), characteristic.getUuid(), null);
+                    BluetoothDeviceManager.getInstance().registerNotify(mDevice, false);
+                } else if ((charaProp & BluetoothGattCharacteristic.PROPERTY_INDICATE) > 0) {
+                    mSpCache.put(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress(), characteristic.getUuid().toString());
+                    ((EditText) findViewById(R.id.show_notify_characteristic)).setText(characteristic.getUuid().toString());
+                    BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_INDICATE, service.getUuid(), characteristic.getUuid(), null);
+                    BluetoothDeviceManager.getInstance().registerNotify(mDevice, true);
+                }
+                return true;
+            }
+        });
+    }
+*/
     private void startScan() {
 
         ViseBle.getInstance().startScan(sc);
