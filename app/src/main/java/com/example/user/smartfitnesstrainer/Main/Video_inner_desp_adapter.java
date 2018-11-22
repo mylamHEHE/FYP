@@ -30,7 +30,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
-import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
+//import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;

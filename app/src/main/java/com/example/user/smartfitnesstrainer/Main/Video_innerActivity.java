@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
+//import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;
@@ -101,8 +101,7 @@ Button start;
         start = (Button) findViewById(R.id.start);
         start.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
-                startActivity(homeIntent);
+
                 // Code here executes on main thread after user presses button
             }
         });
