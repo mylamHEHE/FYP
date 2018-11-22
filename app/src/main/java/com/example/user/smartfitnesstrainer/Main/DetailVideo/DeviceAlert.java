@@ -18,6 +18,18 @@ import com.example.user.smartfitnesstrainer.R;
 public class DeviceAlert extends DialogFragment
 {
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null)
+        {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+    }
+    @Override
     public void show(FragmentManager manager, String tag) {
         try {
             FragmentTransaction ft = manager.beginTransaction();

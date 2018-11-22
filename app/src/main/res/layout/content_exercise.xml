@@ -31,12 +31,13 @@
                 android:id="@+id/timerrl0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#CC000000">
+                android:background="#667CFC00">
                 <com.tomer.fadingtextview.FadingTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="50sp"
                     app:timeout="500"
+                    android:textStyle="bold"
                     android:textColor="#fff"
                     android:layout_centerInParent="true"
                     android:id="@+id/fadingTransition"/>
@@ -45,7 +46,7 @@
             <RelativeLayout
                 android:layout_gravity="center"
                 android:id="@+id/timerrl"
-                android:background="#CC000000"
+                android:background="#667CFC00"
                 android:visibility="invisible"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -72,7 +73,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="right"
-                android:background="#CC000000"
+                android:background="#667CFC00"
                 style="@style/ExoMediaButton.Pause"/>
 
         </FrameLayout>

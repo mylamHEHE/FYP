@@ -185,6 +185,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     //tutor mode
     private void tutorMode(){
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
+        rl0.setVisibility(View.VISIBLE);
         String[] tmps = {"Tutor mode","Well done!","Challenge "+currentExercise+"\n"+currentem.name};
         ftv.setTexts(tmps);
         new CountDownTimer(3000,1000) {
@@ -242,6 +243,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         vm.add(vid2);
         VideoModel vid3 = new VideoModel(R.raw.vsit);
         vm.add(vid3);
+        VideoModel vid4 = new VideoModel(R.raw.vsit);
+        vm.add(vid4);
     }
     protected void createExerciseModellist(){
         ExerciseModel em = new ExerciseModel("V-Sit",9,11,15,30,2);
