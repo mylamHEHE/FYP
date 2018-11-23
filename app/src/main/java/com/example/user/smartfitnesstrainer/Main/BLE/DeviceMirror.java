@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothGattService;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+
 import com.vise.log.ViseLog;
 
 import java.lang.reflect.Method;
@@ -362,6 +364,7 @@ public class DeviceMirror {
      */
     public void readData() {
         if (!checkBluetoothGattInfo(readInfoMap)) {
+            Log.d("fail","diu");
             return;
         }
         if (handler != null) {
@@ -808,9 +811,13 @@ public class DeviceMirror {
         for (Map.Entry<String, BluetoothGattChannel> entry : readInfoMap.entrySet()) {
             String bluetoothGattInfoKey = entry.getKey();
             BluetoothGattChannel bluetoothGattInfoValue = entry.getValue();
+            Log.d("readhead",bluetoothGattInfoValue.getCharacteristic().getDescriptors().get(0).getUuid().toString());
+            success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
             if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() != null) {
+                Log.d("uurr",bluetoothGattInfoValue.getDescriptor().getUuid().toString());
                 success = bluetoothGatt.readDescriptor(bluetoothGattInfoValue.getDescriptor());
             } else if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() == null) {
+                Log.d("uutt",bluetoothGattInfoValue.getCharacteristic().getUuid().toString());
                 success = bluetoothGatt.readCharacteristic(bluetoothGattInfoValue.getCharacteristic());
             }
         }
@@ -832,14 +839,18 @@ public class DeviceMirror {
         for (Map.Entry<String, BluetoothGattChannel> entry : writeInfoMap.entrySet()) {
             String bluetoothGattInfoKey = entry.getKey();
             BluetoothGattChannel bluetoothGattInfoValue = entry.getValue();
+
             if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() != null) {
+                Log.d("uuxx",bluetoothGattInfoValue.getDescriptor().getUuid().toString());
                 bluetoothGattInfoValue.getDescriptor().setValue(data);
                 success = bluetoothGatt.writeDescriptor(bluetoothGattInfoValue.getDescriptor());
             } else if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() == null) {
+                Log.d("uuyy",bluetoothGattInfoValue.getCharacteristic().getUuid().toString());
                 bluetoothGattInfoValue.getCharacteristic().setValue(data);
                 success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
             }
         }
+        Log.d("successowrite",String.valueOf(success));
         return success;
     }
 
