@@ -198,7 +198,7 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
-
+    //get Data From Device - non-blockingUI
         new AsyncTask<Void,Void,Void>(){
 
             @Override
