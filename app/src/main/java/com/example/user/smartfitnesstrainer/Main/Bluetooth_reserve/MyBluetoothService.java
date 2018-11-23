@@ -109,7 +109,7 @@ public class MyBluetoothService {
         //adapter = new DeviceAdapter(context);
         //deviceLv.setAdapter(adapter);
         startScan();
-        /*if(address.equals("45:53:3C:3D:14:D   8")){
+        /*if(address.equals("45:53:3C:3D:14:D8")){
            /* Intent intent = new Intent(MyBluetoothService.this, DeviceDetailActivity.class);
             intent.putExtra(DeviceDetailActivity.EXTRA_DEVICE, address);
             startActivity(intent);
