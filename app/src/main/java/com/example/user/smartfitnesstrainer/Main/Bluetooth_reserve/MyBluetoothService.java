@@ -76,6 +76,7 @@ public class MyBluetoothService {
 
             if (bluetoothLeDeviceStore != null) {
                 if (address.equals(bluetoothLeDevice.getAddress())&&!gotDevice) {
+                    Log.d("mylam","gotdev");
                     gotDevice=true;
                     stopScan();
                     Intent intent = new Intent(activity, DeviceDetailActivity.class);

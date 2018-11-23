@@ -28,6 +28,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 //import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;
@@ -103,39 +104,29 @@ Button start;
     private void initStartButton(){
 
         start = (Button) findViewById(R.id.start);
-<<<<<<< HEAD
         start.setOnTouchListener(new View.OnTouchListener() {
-            @Override public boolean onTouch(View view, MotionEvent motionEvent)
-            {
-                switch (motionEvent.getAction())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                        {
-                            return true;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        return true;
 
-                        }
-                        case MotionEvent.ACTION_MOVE:
-                            {
-                                Log.i("mandroid.cn", "button移动");
-                                break;
-                            }
-                            case MotionEvent.ACTION_UP: {
-                                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
-                                startActivity(homeIntent);
-                                break;
-                            }
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        Log.i("mandroid.cn", "button移动");
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                        startActivity(homeIntent);
+                        break;
+                    }
                 }
                 return true;
-=======
-        start.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                // Code here executes on main thread after user presses button
->>>>>>> e5e5efb3494e6af19a7d99e9257a97255bca0660
+
             }
-        }
-        );
-
+        });
     }
     private void initBasicDesp(){
 
