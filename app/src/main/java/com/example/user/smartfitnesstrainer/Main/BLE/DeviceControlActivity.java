@@ -418,7 +418,7 @@ public class DeviceControlActivity extends AppCompatActivity {
             return false;
         }
         char[] chars = str.toCharArray();
-        if ((chars.length & 1) != 0) {//个数为奇数，直接返回false
+        if ((chars.length & 1) != 0) {
             return false;
         }
         for (char ch : chars) {
