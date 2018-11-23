@@ -3,6 +3,8 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
 import com.vise.log.ViseLog;
 import com.vise.xsnow.event.BusManager;
 
@@ -195,10 +197,16 @@ public class BluetoothDeviceManager {
 
     //发送队列，提供一种简单的处理方式，实际项目场景需要根据需求优化
     private Queue<byte[]> dataInfoQueue = new LinkedList<>();
+
     private void send(final BluetoothLeDevice bluetoothLeDevice) {
+        for(byte p[]: dataInfoQueue) {
+            for (byte c :p)
+            Log.d("diq",String.valueOf(c) );
+        }
         if (dataInfoQueue != null && !dataInfoQueue.isEmpty()) {
             DeviceMirror deviceMirror = mDeviceMirrorPool.getDeviceMirror(bluetoothLeDevice);
             if (dataInfoQueue.peek() != null && deviceMirror != null) {
+
                 deviceMirror.writeData(dataInfoQueue.poll());
             }
             if (dataInfoQueue.peek() != null) {

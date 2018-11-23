@@ -1,5 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main.BLE;
 
+import android.util.Log;
+
 /**
  * @Description: 十六进制转换类
  * @author: <a href="http://www.xiaoyaoyou1212.com">DAWI</a>
@@ -119,7 +121,7 @@ public class HexUtil {
         if ((len & 0x01) != 0) {
             throw new RuntimeException("Odd number of characters.");
         }
-
+        Log.d("decodeH",String.valueOf(data[0]));
         byte[] out = new byte[len >> 1];
 
         // two characters form the hex value.

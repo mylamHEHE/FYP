@@ -36,7 +36,7 @@ public class DeviceAlert extends DialogFragment
             ft.add(this, tag);
             ft.commitAllowingStateLoss();
         } catch (IllegalStateException e) {
-            Log.d("ABSDIALOGFRAG", "Exception", e);
+            Log.d("ABSDIALRAG", "Exception", e);
         }
     }
     @Override

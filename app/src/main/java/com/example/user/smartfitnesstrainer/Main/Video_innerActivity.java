@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+//import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
@@ -104,31 +105,28 @@ Button start;
 
         start = (Button) findViewById(R.id.start);
         start.setOnTouchListener(new View.OnTouchListener() {
-            @Override public boolean onTouch(View view, MotionEvent motionEvent)
-            {
-                switch (motionEvent.getAction())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                        {
-                            return true;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        return true;
 
-                        }
-                        case MotionEvent.ACTION_MOVE:
-                            {
-                                Log.i("mandroid.cn", "button移动");
-                                break;
-                            }
-                            case MotionEvent.ACTION_UP: {
-                                Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
-                                startActivity(homeIntent);
-                                break;
-                            }
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        Log.i("mandroid.cn", "button移动");
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                        startActivity(homeIntent);
+                        break;
+                    }
                 }
                 return true;
-            }
-        }
-        );
 
+
+            }
+        });
     }
     private void initBasicDesp(){
 
