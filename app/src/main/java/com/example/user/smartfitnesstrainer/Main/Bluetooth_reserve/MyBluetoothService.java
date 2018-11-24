@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -41,6 +42,8 @@ import com.vise.xsnow.permission.PermissionManager;
 
 import java.util.ArrayList;
 
+import static com.vise.utils.handler.HandlerUtil.runOnUiThread;
+
 public class MyBluetoothService {
     String address = "";
     Activity activity;
@@ -65,36 +68,63 @@ public class MyBluetoothService {
     /**
      * 扫描回调
 */
+
     private ScanCallback sc = new ScanCallback(new IScanCallback() {
         @Override
         public void onDeviceFound(final BluetoothLeDevice bluetoothLeDevice) {
-            Log.i("fsd", "Founded Scan Device:" + bluetoothLeDevice);
-            bluetoothLeDeviceStore.addDevice(bluetoothLeDevice);
-            Log.d("bts", bluetoothLeDeviceStore.toString());
+            new AsyncTask<Void,Void,Void>(){
+
+                @Override
+                protected Void doInBackground(Void... params) {
+
+                    Log.i("fsd", "Founded Scan Device:" + bluetoothLeDevice);
+                    bluetoothLeDeviceStore.addDevice(bluetoothLeDevice);
+                    Log.d("bts", bluetoothLeDeviceStore.toString());
 //scanning jump
 
 
-            if (bluetoothLeDeviceStore != null) {
-                if (address.equals(bluetoothLeDevice.getAddress())&&!gotDevice) {
-                    Log.d("mylam","gotdev");
-                    gotDevice=true;
-                    stopScan();
-                    Intent intent = new Intent(activity, DeviceDetailActivity.class);
-                    intent.putExtra(DeviceDetailActivity.EXTRA_DEVICE, bluetoothLeDevice);
-                    activity.startActivity(intent);
+                    if (bluetoothLeDeviceStore != null) {
 
-                    Log.d("mylam2", "connect success");
+                        if (address.equals(bluetoothLeDevice.getAddress())&&!gotDevice) {
+                            Log.d("mylam","gotdev");
+                            gotDevice=true;
+                            stopScan();
+
+                                Intent intent = new Intent(activity, DeviceControlActivity.class);
+                                intent.putExtra("ble", bluetoothLeDevice);
+                                activity.startActivity(intent);
+
+                        }
+                        if (gotDevice)
+                        {
+                            stopScan();
+                            Log.d("thisth",String.valueOf(Thread.currentThread().getId()));
+                            return null;
+                        }
+                        return null;
+                    }
+
+
+                    return null;
                 }
 
-            }
+            }.execute();
 
-        //    Thread thread = new Thread(runnable);
-          //  thread.start();
+
+            //    Thread thread = new Thread(runnable);
+            //  thread.start();
         }
 
         @Override
         public void onScanFinish(BluetoothLeDeviceStore bluetoothLeDeviceStore) {
-            ViseLog.i("scan finish " + bluetoothLeDeviceStore);
+            ViseBle.getInstance().clear();
+            ViseBle.getInstance().stopScan(sc);
+            for(BluetoothLeDevice ble : bluetoothLeDeviceStore.getDeviceList())
+            {
+
+            }
+
+
         }
 
         @Override
@@ -103,7 +133,6 @@ public class MyBluetoothService {
         }
 
     });
-
 
     public void init() {
 
@@ -238,7 +267,8 @@ public class MyBluetoothService {
 */
     private void startScan() {
 
-        ViseBle.getInstance().startScan(sc);
+ViseBle.getInstance().startScan(sc);
+
     }
 
 

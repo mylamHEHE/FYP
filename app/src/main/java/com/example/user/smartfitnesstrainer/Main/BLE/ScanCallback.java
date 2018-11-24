@@ -66,7 +66,6 @@ public class ScanCallback implements BluetoothAdapter.LeScanCallback, IScanFilte
                         if (ViseBle.getInstance().getBluetoothAdapter() != null) {
                             ViseBle.getInstance().getBluetoothAdapter().stopLeScan(ScanCallback.this);
                         }
-                        Log.d("devicemap",bluetoothLeDeviceStore.getDeviceMap().toString());
                         if (bluetoothLeDeviceStore.getDeviceMap() != null
                                 && bluetoothLeDeviceStore.getDeviceMap().size() > 0) {
                             scanCallback.onScanFinish(bluetoothLeDeviceStore);
