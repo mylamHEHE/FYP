@@ -72,11 +72,15 @@ public class MyBluetoothService {
     private ScanCallback sc = new ScanCallback(new IScanCallback() {
         @Override
         public void onDeviceFound(final BluetoothLeDevice bluetoothLeDevice) {
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void,Void,Boolean>(){
 
                 @Override
-                protected Void doInBackground(Void... params) {
-
+                protected Boolean doInBackground(Void... params) {
+                    if(gotDevice)
+                    {
+                        stopScan();
+                        return false;
+                    }
                     Log.i("fsd", "Founded Scan Device:" + bluetoothLeDevice);
                     bluetoothLeDeviceStore.addDevice(bluetoothLeDevice);
                     Log.d("bts", bluetoothLeDeviceStore.toString());
@@ -88,24 +92,32 @@ public class MyBluetoothService {
                         if (address.equals(bluetoothLeDevice.getAddress())&&!gotDevice) {
                             Log.d("mylam","gotdev");
                             gotDevice=true;
-                            stopScan();
 
-                                Intent intent = new Intent(activity, DeviceControlActivity.class);
-                                intent.putExtra("ble", bluetoothLeDevice);
-                                activity.startActivity(intent);
+
+                             return true;
 
                         }
-                        if (gotDevice)
-                        {
-                            stopScan();
-                            Log.d("thisth",String.valueOf(Thread.currentThread().getId()));
-                            return null;
-                        }
-                        return null;
+
+                        return false;
                     }
 
 
-                    return null;
+                    return false;
+                }
+                @Override
+                protected void onPostExecute(Boolean result) {
+
+                    if(result)
+                    {
+
+                        Intent intent = new Intent(activity, DeviceControlActivity.class);
+                        intent.putExtra("ble", bluetoothLeDevice);
+                        activity.startActivity(intent);
+                    }
+                    else
+                    {
+
+                    }
                 }
 
             }.execute();
