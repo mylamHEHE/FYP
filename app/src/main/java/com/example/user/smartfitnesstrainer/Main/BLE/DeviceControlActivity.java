@@ -210,8 +210,8 @@ public class DeviceControlActivity extends AppCompatActivity {
                 }
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
-
-                    Log.d("kto",HexUtil.encodeHexStr(event.getData()));
+                    String result = HexUtil.encodeHexStr(event.getData()).replaceAll("..(?!$)", "$0-");;
+                    Log.d("kto",result);
 
                 }
 

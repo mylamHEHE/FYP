@@ -847,10 +847,15 @@ public class DeviceMirror {
             } else if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() == null) {
                 Log.d("uuyy",bluetoothGattInfoValue.getCharacteristic().getUuid().toString());
                 bluetoothGattInfoValue.getCharacteristic().setValue(data);
-                success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
+                while(!success) {
+
+                    success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
+                    Log.d("successowrite",String.valueOf(success));
+                }
+
             }
         }
-        Log.d("successowrite",String.valueOf(success));
+
         return success;
     }
 
