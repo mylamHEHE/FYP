@@ -34,7 +34,7 @@
         <activity android:name=".Main.ScanActivity"></activity>
         <activity android:name=".Main.BLE.DeviceScanActivity"></activity>
         <activity android:name=".Main.BLE.DeviceDetailActivity"></activity>
-        <activity android:name=".Main.BLE.DeviceControlActivity"></activity>
+        <activity android:name=".Main.BLE.DeviceControlActivity" android:theme="@style/MyDialogStyle"></activity>
         <activity
             android:name=".Main.DetailVideo.ExerciseActivity"
             android:label="@string/title_activity_exercise"
