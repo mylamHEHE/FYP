@@ -30,8 +30,11 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.List;
         import java.util.Map;
         import java.util.regex.Pattern;
+<<<<<<< HEAD
 
         import static java.lang.Math.atan;
+=======
+>>>>>>> 99172fd8238e328cef491afb8995f798347ef691
 
 /**
  * 设备数据操作相关展示界面
@@ -166,7 +169,44 @@ public class DeviceControlActivity extends Activity {
             }
         }
     }
+    public float kalmanCalculate(float newAngle, float newRate,int looptime) {
+        float x_bias = 0;
+        float x_angle = 0;
+        float Q_angle =  0;//
+        Q_angle += 0.001;
+        float Q_gyro =  0;//
+        Q_gyro += 0.003;
+        float R_angle = 0;//
+        R_angle +=0.03;
+        float P_00 = 0, P_01 = 0, P_10 = 0, P_11 = 0;
+        float dt = (float) ((looptime)/1000);
+        x_angle += dt * (newRate - x_bias);
+        P_00 +=  - dt * (P_10 + P_01) + Q_angle * dt;
+        P_01 +=  - dt * P_11;
+        P_10 +=  - dt * P_11;
+        P_11 +=  + Q_gyro * dt;
 
+        float y = newAngle - x_angle;
+        float S = P_00 + R_angle;
+        float K_0 = P_00 / S;
+        float K_1 = P_10 / S;
+
+        x_angle +=  K_0 * y;
+        x_bias  +=  K_1 * y;
+        P_00 -= K_0 * P_00;
+        P_01 -= K_0 * P_01;
+        P_10 -= K_1 * P_00;
+        P_11 -= K_1 * P_01;
+
+        return x_angle;
+    }
+    public float two_filter(float angle,float gly,float angle2,int looptime){
+        float ans = 0,kang = 0;
+        ans = (float)(0.98 * (angle + gly * (looptime/1000)) + 0.02 * angle2);
+        //kang = kalmanCalculate(ans,gly,looptime);
+        kang += 0.65+ans;
+        return kang;
+    };
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
     //get Data From Device - non-blockingUI
@@ -183,8 +223,10 @@ public class DeviceControlActivity extends Activity {
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
+
+
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
-                   //x
+                    //x
 
                     Log.d("Accele",String.valueOf(i));
                     String tmp = "";
@@ -220,14 +262,18 @@ public class DeviceControlActivity extends Activity {
 
                         //i1z += (Integer.parseInt(data[6],16));
 
-                        Log.d("ax ay az", String.valueOf(a1x/256.0) + " " + String.valueOf( a1y/256.0) + " " + String.valueOf((int) a1z/256));
+                        //2filter trytry
+
+                        Log.d("ax ay az", String.valueOf(two_filter(Integer.parseInt(data[7]),a1x,Integer.parseInt(data[9],16),100))
+                                + " " + String.valueOf(two_filter(Integer.parseInt(data[9]),a1y,Integer.parseInt(data[11],16),100))
+                                + " " + String.valueOf(two_filter(Integer.parseInt(data[11]),a1z,Integer.parseInt(data[7],16),100)));
+                        //Log.d("ax ay az", String.valueOf(a1x/256.0) + " " + String.valueOf( a1y/256.0) + " " + String.valueOf((int) a1z/256));
                     }
                     catch (Exception e)
                     {
 
                     }
                 }
-
                 return null;
             }
 

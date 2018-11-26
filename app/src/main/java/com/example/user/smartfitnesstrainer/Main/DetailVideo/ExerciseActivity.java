@@ -213,7 +213,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     if (rl.getVisibility() == View.GONE)
                     rl.setVisibility(View.VISIBLE);
                     mTextField.setText(String.valueOf(millisUntilFinished / 1000 + 1));
-                    
+
                 //here you can have your logic to set text to edittext
             }
 
