@@ -178,8 +178,16 @@ public class DeviceControlActivity extends Activity {
                 }
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
-                    String result = HexUtil.encodeHexStr(event.getData()).replaceAll("..(?!$)", "$0-");;
-                    Log.d("kto",result);
+                    String result = HexUtil.encodeHexStr(event.getData());
+                    String tmp = "";
+                    int id = 0;
+                    while(id<result.length())
+                    {
+                        tmp+=String.valueOf(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16));
+                        tmp+="-";
+                        id+=2;
+                    }
+                    Log.d("kto",tmp);
 
                 }
 
