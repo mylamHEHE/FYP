@@ -39,6 +39,7 @@
             android:name=".Main.DetailVideo.ExerciseActivity"
             android:label="@string/title_activity_exercise"
             android:theme="@style/AppTheme"></activity>
+
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="barcode"/>
     </application>
 
