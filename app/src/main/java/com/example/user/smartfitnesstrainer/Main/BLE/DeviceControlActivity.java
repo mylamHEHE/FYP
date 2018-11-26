@@ -30,11 +30,6 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.List;
         import java.util.Map;
         import java.util.regex.Pattern;
-<<<<<<< HEAD
-
-        import static java.lang.Math.atan;
-=======
->>>>>>> 99172fd8238e328cef491afb8995f798347ef691
 
 /**
  * 设备数据操作相关展示界面
