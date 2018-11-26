@@ -116,6 +116,8 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 //                } else {
 //                    Log.e("DB", "PERMISSION GRANTED");
 //                }
+                bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
+                bluetooth.init();
             }
 
             @Override

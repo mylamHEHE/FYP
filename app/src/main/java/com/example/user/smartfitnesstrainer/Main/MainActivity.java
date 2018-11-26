@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
+import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
 //import com.example.user.smartfitnesstrainer.Utils.BottomNavigationViewHelper;
 public class MainActivity extends AppCompatActivity {
@@ -15,6 +17,21 @@ public class MainActivity extends AppCompatActivity {
     private static final int ACTIVITY_NUM = 0;
 
     private Context mContext = MainActivity.this;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
+
+            for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
+                Log.d("bleConnx",ble.getName());
+            }
+        }
+        catch (Exception e){
+            Log.d("device","null");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(mContext, HomeActivity.class);
                 startActivity(homeIntent);
                 finish();
+
             }
         },SPLASH_TIME_OUT);
     }
