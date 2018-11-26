@@ -18,20 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext = MainActivity.this;
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
 
-            for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
-                Log.d("bleConnx",ble.getName());
-            }
-        }
-        catch (Exception e){
-            Log.d("device","null");
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -205,10 +205,11 @@ public class DeviceControlActivity extends Activity {
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
     //get Data From Device - non-blockingUI
-        new AsyncTask<Void,Void,Void>(){
 
+        new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
+
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -217,6 +218,7 @@ public class DeviceControlActivity extends Activity {
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
+
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
                     //x

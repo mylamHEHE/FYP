@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
+import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.CameraFragment;
 import com.example.user.smartfitnesstrainer.Main.Profile.MessagesFragment;
 import com.example.user.smartfitnesstrainer.Main.SectionsPagerAdapter;
@@ -12,14 +15,20 @@ import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.MainFra
 import com.example.user.smartfitnesstrainer.R;
 
 public class HomeActivity extends AppCompatActivity{
+    SectionsPagerAdapter adapter;
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupViewPager();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
     private void setupViewPager(){
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new CameraFragment());          //index 0
         adapter.addFragment(new MainFragment());             //index 1
         adapter.addFragment(new MessagesFragment());        //index 2
