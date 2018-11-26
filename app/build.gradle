@@ -24,6 +24,8 @@ dependencies {
     //noinspection GradleCompatible\
     implementation 'com.bartoszlipinski:recyclerviewheader2:2.0.1'
     implementation 'com.vise.xiaoyaoyou:xsnow:2.1.3'
+    implementation 'io.github.inflationx:calligraphy3:3.0.0'
+    implementation 'io.github.inflationx:viewpump:1.0.0'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'

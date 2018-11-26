@@ -73,10 +73,15 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        BasicDespViewHolder viewHolder0 = (BasicDespViewHolder) holder;
-        viewHolder0.name.setText(ble.get(position).getName());
-        viewHolder0.duration.setText(ble.get(position).getAddress());
+        try {
+            BasicDespViewHolder viewHolder0 = (BasicDespViewHolder) holder;
+            viewHolder0.name.setText(ble.get(position).getName());
+            viewHolder0.duration.setText(ble.get(position).getAddress());
+        }
+        catch (Exception e)
+        {
 
+        }
     }
 
     // Now the critical part. You have return the exact item count of your list

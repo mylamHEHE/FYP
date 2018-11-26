@@ -2,8 +2,10 @@ package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.BleUtil;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 public class CameraFragment extends android.support.v4.app.Fragment {
     SurfaceView cameraPreview;
     TextView txtResult;
+   // private BroadcastReceiver _refreshReceiver = new MyReceiver();
     BarcodeDetector barcodeDetector;
     private MyBluetoothService bluetooth;
     CameraSource cameraSource;
@@ -52,7 +56,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     private int hardcode = 0;
     final int RequestCameraPermissionID = 1001;
     private RecyclerView connectedBle;
-    private TextView emptyView;
+    private LinearLayout emptyView;
     private BluetoothDeviceAdapter bluetoothDeviceAdapter;
     int step_count = 0;
     @Override
@@ -86,10 +90,11 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     private void notifySet(){
         try {
             Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
-
+            blueto.clear();
             for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
                 blueto.add(ble);
                 Log.d("bleConnx",ble.getName());
+
             }
         }
         catch (Exception e){
@@ -99,12 +104,16 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_item_list,container,false);
-        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
+        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D9",getContext(),getActivity());
         bluetooth.init();
+        /*
+        IntentFilter filter = new IntentFilter("SOMEACTION");
+        getActivity().registerReceiver(_refreshReceiver, filter);
+        */
         //checkBluetoothPermission();
         checkLocationPermission();
         connectedBle = (RecyclerView) view.findViewById(R.id.recycler);
-        emptyView = (TextView) view.findViewById(R.id.empty_view);
+        emptyView =  view.findViewById(R.id.empty_view);
         notifySet();
         bluetoothDeviceAdapter = new BluetoothDeviceAdapter(getContext(),blueto);
         connectedBle.setAdapter(bluetoothDeviceAdapter);

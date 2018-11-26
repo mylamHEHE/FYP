@@ -1,5 +1,6 @@
 package com.example.user.smartfitnesstrainer.Main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -14,12 +15,29 @@ import com.example.user.smartfitnesstrainer.Main.SectionsPagerAdapter;
 import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.MainFragment;
 import com.example.user.smartfitnesstrainer.R;
 
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+
 public class HomeActivity extends AppCompatActivity{
     SectionsPagerAdapter adapter;
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ViewPump.init(ViewPump.builder()
+                .addInterceptor(new CalligraphyInterceptor(
+                        new CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/latoregulamr.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()))
+                .build());
         setupViewPager();
     }
     @Override
