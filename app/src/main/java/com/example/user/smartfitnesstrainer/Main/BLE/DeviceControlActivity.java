@@ -217,6 +217,7 @@ public class DeviceControlActivity extends Activity {
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
+
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
                     //x
 
