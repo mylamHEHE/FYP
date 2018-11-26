@@ -29,6 +29,9 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.HashMap;
         import java.util.List;
         import java.util.Map;
+        import java.util.regex.Pattern;
+
+        import static java.lang.Math.atan;
 
 /**
  * 设备数据操作相关展示界面
@@ -167,10 +170,11 @@ public class DeviceControlActivity extends Activity {
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
     //get Data From Device - non-blockingUI
-        new AsyncTask<Void,Void,Void>(){
 
+        new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
+
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -179,16 +183,49 @@ public class DeviceControlActivity extends Activity {
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
+                    int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
+                   //x
+
+                    Log.d("Accele",String.valueOf(i));
                     String tmp = "";
                     int id = 0;
+
                     while(id<result.length())
                     {
-                        tmp+=String.valueOf(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16));
+                        tmp+=String.valueOf(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
                         tmp+="-";
                         id+=2;
                     }
-                    Log.d("kto",tmp);
+                    Pattern pattern;
+                    pattern=Pattern.compile(Pattern.quote("-"));
+                    String[] data =pattern.split(tmp);
 
+                  /*  Double aDouble= Math.atan2((Integer.parseInt(data[9],16)+Integer.parseInt(data[10],16))
+                            ,
+                            ((Integer.parseInt(data[7],16)+Integer.parseInt(data[8],16))/2.0));
+                    Log.d("x::::"," "+String.valueOf(aDouble));
+*/
+                    //int i1x = (Integer.parseInt(data[1],16)) << 8;
+                    try {
+                        /* Accelemometer */
+                        int a1x = (Integer.parseInt(data[1],16)<<8)+(Integer.parseInt(data[2],16));
+                        int a1y = (Integer.parseInt(data[3],16)<<8)+(Integer.parseInt(data[4],16));
+                        int a1z = (Integer.parseInt(data[5],16)<<8)+(Integer.parseInt(data[6],16));
+                        /* Gyroscope */
+                        double i1x = (Integer.parseInt(data[7], 16) + Integer.parseInt(data[8], 16)) / 2.0 * 9.81 / 256;
+                        double i1y = (Integer.parseInt(data[9], 16) + Integer.parseInt(data[10], 16)) / 2.0 * 9.81 / 256;
+                        //i1y += (Integer.parseInt(data[4],16));
+                        //int i1z = (Integer.parseInt(data[5],16)) << 8;
+                        double i1z = (Integer.parseInt(data[11], 16) + Integer.parseInt(data[12], 16)) / 2.0 * 9.81 / 256;
+
+                        //i1z += (Integer.parseInt(data[6],16));
+
+                        Log.d("ax ay az", String.valueOf(a1x/256.0) + " " + String.valueOf( a1y/256.0) + " " + String.valueOf((int) a1z/256));
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                 }
 
                 return null;

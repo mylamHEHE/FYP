@@ -1,6 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 
 import android.Manifest;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -22,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.BleUtil;
+import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
+import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -31,6 +36,7 @@ import com.vise.xsnow.permission.OnPermissionCallback;
 import com.vise.xsnow.permission.PermissionManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class CameraFragment extends android.support.v4.app.Fragment {
@@ -42,8 +48,12 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     private final static int REQUEST_OPEN_BT_CODE = 1;
     private final static int REQUEST_LOCATION = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private ArrayList<BluetoothLeDevice> blueto = new ArrayList<>();
     private int hardcode = 0;
     final int RequestCameraPermissionID = 1001;
+    private RecyclerView connectedBle;
+    private TextView emptyView;
+    private BluetoothDeviceAdapter bluetoothDeviceAdapter;
     int step_count = 0;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -73,11 +83,36 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             }
         }
     }
+    private void notifySet(){
+        try {
+            Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
+
+            for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
+                blueto.add(ble);
+                Log.d("bleConnx",ble.getName());
+            }
+        }
+        catch (Exception e){
+            Log.d("device","null");
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.scanner,container,false);
+        View view = inflater.inflate(R.layout.fragment_item_list,container,false);
+        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
+        bluetooth.init();
         //checkBluetoothPermission();
         checkLocationPermission();
+        connectedBle = (RecyclerView) view.findViewById(R.id.recycler);
+        emptyView = (TextView) view.findViewById(R.id.empty_view);
+        notifySet();
+        bluetoothDeviceAdapter = new BluetoothDeviceAdapter(getContext(),blueto);
+        connectedBle.setAdapter(bluetoothDeviceAdapter);
+        connectedBle.setLayoutManager(new LinearLayoutManager(getContext()));
+// ...
+
+
+        /*
         cameraPreview = (SurfaceView) view.findViewById(R.id.cameraPreview);
         txtResult = (TextView) view.findViewById(R.id.txtResult);
 
@@ -116,8 +151,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 //                } else {
 //                    Log.e("DB", "PERMISSION GRANTED");
 //                }
+
                 bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
                 bluetooth.init();
+
             }
 
             @Override
@@ -160,13 +197,24 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             }
 
         });
+        */
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        notifySet();
+        bluetoothDeviceAdapter.notifyDataSetChanged();
+        if (blueto.isEmpty()) {
+            connectedBle.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            connectedBle.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
 
+        }
     }
 
     private void checkBluetoothPermission() {
