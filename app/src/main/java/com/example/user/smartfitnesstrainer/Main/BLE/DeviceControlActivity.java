@@ -223,7 +223,6 @@ public class DeviceControlActivity extends Activity {
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
                     //x
 
-                    Log.d("Accele",String.valueOf(i));
                     String tmp = "";
                     int id = 0;
 
@@ -243,6 +242,9 @@ public class DeviceControlActivity extends Activity {
                     Log.d("x::::"," "+String.valueOf(aDouble));
 */
                     //int i1x = (Integer.parseInt(data[1],16)) << 8;
+
+
+
                     try {
                         /* Accelemometer */
                         int a1x = (Integer.parseInt(data[1],16)<<8)+(Integer.parseInt(data[2],16));
@@ -259,10 +261,15 @@ public class DeviceControlActivity extends Activity {
 
                         //2filter trytry
 
-                        Log.d("ax ay az", String.valueOf(two_filter(Integer.parseInt(data[7]),a1x,Integer.parseInt(data[9],16),100))
-                                + " " + String.valueOf(two_filter(Integer.parseInt(data[9]),a1y,Integer.parseInt(data[11],16),100))
-                                + " " + String.valueOf(two_filter(Integer.parseInt(data[11]),a1z,Integer.parseInt(data[7],16),100)));
-                        //Log.d("ax ay az", String.valueOf(a1x/256.0) + " " + String.valueOf( a1y/256.0) + " " + String.valueOf((int) a1z/256));
+                        float gyosca = (float)Math.PI / (16.4f * 180.0f);
+                        double accsca = 1.0/2048.0;
+
+
+//                        Log.d("ax ay az", String.valueOf(two_filter(Integer.parseInt(data[7]),a1x,Integer.parseInt(data[9],16),100))
+//                                + " " + String.valueOf(two_filter(Integer.parseInt(data[9]),a1y,Integer.parseInt(data[11],16),100))
+//                                + " " + String.valueOf(two_filter(Integer.parseInt(data[11]),a1z,Integer.parseInt(data[7],16),100)));
+                        //Log.d("ax ay az", String.valueOf(a1x*accsca) + " " + String.valueOf( a1y*accsca) + " " + String.valueOf((int) a1z*accsca));
+                        Log.d("ax ay az", String.valueOf(i1x*gyosca) + " " + String.valueOf( i1y*gyosca) + " " + String.valueOf((int) i1z*gyosca));
                     }
                     catch (Exception e)
                     {

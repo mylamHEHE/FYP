@@ -13,6 +13,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,6 +55,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private ArrayList<BluetoothLeDevice> blueto = new ArrayList<>();
     private int hardcode = 0;
+    FloatingActionButton toScan;
     final int RequestCameraPermissionID = 1001;
     private RecyclerView connectedBle;
     private LinearLayout emptyView;
@@ -90,8 +92,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     private void notifySet(){
         try {
             Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
+
             blueto.clear();
             for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
+                ViseBle.getInstance().getDeviceMirror(ble).getBatteryLevel();
                 blueto.add(ble);
                 Log.d("bleConnx",ble.getName());
 
@@ -104,7 +108,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_item_list,container,false);
-        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D9",getContext(),getActivity());
+        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
         bluetooth.init();
         /*
         IntentFilter filter = new IntentFilter("SOMEACTION");
