@@ -63,7 +63,7 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.inner_video_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.device_list, parent, false);
         BasicDespViewHolder holder = new BasicDespViewHolder(view);
 
         return holder;

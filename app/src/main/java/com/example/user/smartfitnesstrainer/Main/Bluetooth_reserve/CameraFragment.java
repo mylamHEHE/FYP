@@ -1,6 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -41,6 +43,7 @@ import com.vise.xsnow.permission.PermissionManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class CameraFragment extends android.support.v4.app.Fragment {
@@ -105,11 +108,21 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             Log.d("device","null");
         }
     }
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_item_list,container,false);
         bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
         bluetooth.init();
+        toScan = view.findViewById(R.id.addDevice);
+        toScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), QRCodeScanActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+
         /*
         IntentFilter filter = new IntentFilter("SOMEACTION");
         getActivity().registerReceiver(_refreshReceiver, filter);
