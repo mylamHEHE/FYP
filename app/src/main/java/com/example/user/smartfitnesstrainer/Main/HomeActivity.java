@@ -22,11 +22,19 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class HomeActivity extends AppCompatActivity{
     SectionsPagerAdapter adapter;
+    TabLayout tabLayout;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
+    /*
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+    }
 
+*/
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,15 +61,15 @@ public class HomeActivity extends AppCompatActivity{
         ViewPager viewPager = (ViewPager)findViewById(R.id.container);
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
+        tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         TabLayout.Tab tab = tabLayout.getTabAt(1);
         tab.select();
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_android);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_arrow);
+        tabLayout.getTabAt(0).setIcon(R.drawable.bluetooth);
+        tabLayout.getTabAt(1).setIcon(R.drawable.muscle);
+        tabLayout.getTabAt(2).setIcon(R.drawable.user);
     }
 
 }
