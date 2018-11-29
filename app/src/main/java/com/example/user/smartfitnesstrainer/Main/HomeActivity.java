@@ -39,13 +39,6 @@ public class HomeActivity extends AppCompatActivity{
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewPump.init(ViewPump.builder()
-                .addInterceptor(new CalligraphyInterceptor(
-                        new CalligraphyConfig.Builder()
-                                .setDefaultFontPath("fonts/latoregulamr.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build()))
-                .build());
         setupViewPager();
     }
     @Override

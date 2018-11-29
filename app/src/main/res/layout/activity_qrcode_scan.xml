@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Main.Bluetooth_reserve.QRCodeScanActivity">
 
+
+
 </android.support.constraint.ConstraintLayout>
