@@ -202,6 +202,35 @@ public class DeviceControlActivity extends Activity {
         kang += 0.65+ans;
         return kang;
     };
+    public static int getDecimal(int binary){
+        int decimal = 0;
+        int n = 0;
+        while(true){
+            if(binary == 0){
+                break;
+            } else {
+                int temp = binary%10;
+                decimal += temp*Math.pow(2, n);
+                binary = binary/10;
+                n++;
+            }
+        }
+        return decimal;
+    }
+    public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2){
+        int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
+        int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
+        double resultx = xtempshifted/1048.0;
+        int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
+        int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
+        double resulty = ytempshifted/1048.0;
+        int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
+        int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
+        double resultz = ztempshifted/1048.0;
+        double angle = Math.atan2(resulty,resultx);
+       Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+String.valueOf(angle));
+       // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
+    }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
     //get Data From Device - non-blockingUI
@@ -218,7 +247,7 @@ public class DeviceControlActivity extends Activity {
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
-
+                    Log.d("result",result);
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
                     //x
@@ -228,14 +257,32 @@ public class DeviceControlActivity extends Activity {
 
                     while(id<result.length())
                     {
-                        tmp+=String.valueOf(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
+
+                        tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
+                        Log.d("temp",tmp);
                         tmp+="-";
                         id+=2;
                     }
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
+                    shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6]);
+                    /*
+                    Log.d("mylam",String.valueOf(data[1])+" "+String.valueOf(data[2])+" "
+                    +String.valueOf(data[3])+" "+String.valueOf(data[4])+" "+
+                            String.valueOf(data[5])+" "+String.valueOf(data[6]));
+                    String x = data[1]+data[2];
 
+                    Log.d("shiftbitx",String.valueOf(((Integer.parseInt(data[1],16)<<8)+Integer.parseInt(data[2],16))/2048));
+                    String y = data[3]+data[4];
+                    Log.d("shiftbity",String.valueOf(((Integer.parseInt(data[3],16)<<8)+Integer.parseInt(data[4],16))/2048));
+                    String z = data[5]+data[6];
+                    Log.d("shiftbitz",String.valueOf(((Integer.parseInt(data[5],16)<<8)+Integer.parseInt(data[6],16))/2048));
+                    Log.d("xyz??",String.valueOf(Integer.parseInt(x,16))+" "+String.valueOf(Integer.parseInt(y,16))+" "+String.valueOf(Integer.parseInt(z,16)));
+
+                    //int hex = (Integer.parseInt(data[i]) & 0xff << 8) ;
+                    Log.d("hex??",String.valueOf(Integer.valueOf(x)/2048)+" "+String.valueOf(Integer.valueOf(y)/2048)+" "+String.valueOf(Integer.valueOf(z)/2048));
+*/
                   /*  Double aDouble= Math.atan2((Integer.parseInt(data[9],16)+Integer.parseInt(data[10],16))
                             ,
                             ((Integer.parseInt(data[7],16)+Integer.parseInt(data[8],16))/2.0));
