@@ -31,6 +31,9 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.Map;
         import java.util.regex.Pattern;
 
+        import static java.lang.Math.pow;
+        import static java.lang.Math.sqrt;
+
 /**
  * 设备数据操作相关展示界面
  */
@@ -210,7 +213,7 @@ public class DeviceControlActivity extends Activity {
                 break;
             } else {
                 int temp = binary%10;
-                decimal += temp*Math.pow(2, n);
+                decimal += temp* pow(2, n);
                 binary = binary/10;
                 n++;
             }
@@ -220,15 +223,15 @@ public class DeviceControlActivity extends Activity {
     public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2){
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
         int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
-        double resultx = xtempshifted/1048.0;
+        double resultx = xtempshifted/2048.0;
         int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
         int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
-        double resulty = ytempshifted/1048.0;
+        double resulty = ytempshifted/2048.0;
         int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
         int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
-        double resultz = ztempshifted/1048.0;
-        double angle = Math.atan2(resulty,resultx);
-       Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+String.valueOf(angle));
+        double resultz = ztempshifted/2048.0;
+        double angle = Math.atan2(resulty,sqrt(pow(resultx,2)+pow(resultz,2)));
+       Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+String.valueOf((int)(angle*100)));
        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     @Subscribe
