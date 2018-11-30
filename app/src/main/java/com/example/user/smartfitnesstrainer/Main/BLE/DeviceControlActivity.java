@@ -176,7 +176,7 @@ catch (Exception e)
     double x_bias = 0;
     double K_0,K_1;
     double P_00 = 0, P_01 = 0, P_10 = 0, P_11 = 0;
-    public double kalmanCalculate(double newAngle, double newRate) {
+    public double kalmanCalculate(float newAngle, float newRate) {
         //mylam hardcode time
         dt = 100/1000;
         x_angle = dt * (newRate - x_bias);
@@ -200,7 +200,15 @@ catch (Exception e)
 
         return x_angle;
     }
-
+    double Angy = 0;
+    public double help(String a,String b){
+        int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
+        return ((xtemp<<8) | Integer.parseInt(b,2))/2048.0;
+    }
+    public double help2(String a,String b){
+        int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
+        return (((xtemp<<8) | Integer.parseInt(b,2)))* Math.PI / (16.4f * 180.0f);
+    }
     public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
         int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
@@ -214,16 +222,98 @@ catch (Exception e)
         //variable for complement filter
         int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
         int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
-        double resultg = gtempshifted *9.81 / 2048.0*  Math.PI / (16.4f * 180.0f);
+        double resultg = gtempshifted *  Math.PI / (16.4f * 180.0f);
+        /*final tuning*/
+        float angle = (float)Math.atan2(resulty,sqrt(pow(resultx,2)+pow(resulty,2)+pow(resultz,2)));
+        float LS = (float)Math.atan2(resultx,sqrt(pow(resultx,2)+pow(resulty,2)+pow(resultz,2)));
 
-        double angle = Math.atan2(resulty,sqrt(pow(resultx,2)+pow(resultz,2)));
-        double offset_angle = 0.06;//hardcode with 90 degree
-        double angle2 = Math.atan2(resulty,resultz)-offset_angle;
-        double Angy = 0.998*(resultg*100/1000)+0.02*angle2;
-        double kang = kalmanCalculate(Angy, resultg);
-        Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "
-                +String.valueOf(angle) +" "+String.valueOf(angle2)+" "+String.valueOf(Angy)+" "+String.valueOf(kang));
+
+
+        double offset_angle = 0.08;//hardcode with 90 degree
+        Angy = 0.998*(Angy + resultg*100/1000)+0.02*angle;
+        double kang =  kalmanCalculate((float)Angy,(float)resultg);
+
+        Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+
+                "tanxyz: "+String.valueOf((angle*100))+ " tanxz: "+String.valueOf((kang*100))+" tanxyz: "+String.valueOf((Angy*100)));
        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
+    }
+    double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
+    double Ki = 0.008f;
+    double halfT = 0.001f; // 采样周期的一半，用于求解四元数微分方程时计算角增量
+    double q0 = 1, q1 = 0, q2 = 0, q3 = 0;    // 初始姿态四元数，由上篇博文提到的变换四元数公式得来
+    double exInt = 0, eyInt = 0, ezInt = 0;    //当前加计测得的重力加速度在三轴上的分量
+    //与用当前姿态计算得来的重力在三轴上的分量的误差的积分
+    public void IMUupdate(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2,String gy1,String gy2,String gz1,String gz2)//g表陀螺仪，a表加计
+    {
+
+        double q0temp,q1temp,q2temp,q3temp;//四元数暂存变量，求解微分方程时要用
+        double norm; //矢量的模或四元数的范数
+        double vx, vy, vz;//当前姿态计算得来的重力在三轴上的分量
+        double ex, ey, ez;//当前加计测得的重力加速度在三轴上的分量
+        //与用当前姿态计算得来的重力在三轴上的分量的误差
+        double ax = help( x1, x2);
+        double ay = help( y1, y2);
+        double az = help( z1, z2);
+        double gx = help2( gx1, gx2);
+        double gy = help2( gy1, gy2);
+        double gz = help2( gz1, gz2);
+        // 先把这些用得到的值算好
+        double q0q0 = q0*q0;
+        double q0q1 = q0*q1;
+        double q0q2 = q0*q2;
+        double q1q1 = q1*q1;
+        double q1q3 = q1*q3;
+        double q2q2 = q2*q2;
+        double q2q3 = q2*q3;
+        double q3q3 = q3*q3;
+        if(ax*ay*az==0)//加计处于自由落体状态时不进行姿态解算，因为会产生分母无穷大的情况
+            return;
+        norm = sqrt(ax*ax + ay*ay + az*az);//单位化加速度计，
+        ax = ax /norm;// 这样变更了量程也不需要修改KP参数，因为这里归一化了
+        ay = ay / norm;
+        az = az / norm;
+        //用当前姿态计算出重力在三个轴上的分量，
+        //参考坐标n系转化到载体坐标b系的用四元数表示的方向余弦矩阵第三列即是（博文一中有提到）
+        vx = 2*(q1q3 - q0q2);
+        vy = 2*(q0q1 + q2q3);
+        vz = q0q0 - q1q1 - q2q2 + q3q3 ;
+        //计算测得的重力与计算得重力间的误差，向量外积可以表示这一误差
+        //原因我理解是因为两个向量是单位向量且sin0等于0
+        //不过要是夹角是180度呢~这个还没理解
+        ex = (ay*vz - az*vy) ;
+        ey = (az*vx - ax*vz) ;
+        ez = (ax*vy - ay*vx) ;
+
+        exInt = exInt + (ex * Ki);                                           //对误差进行积分
+        eyInt = eyInt + (ey * Ki);
+        ezInt = ezInt + (ez * Ki);
+        // adjusted gyroscope measurements
+        gx = gx + Kp*ex + exInt;  //将误差PI后补偿到陀螺仪，即补偿零点漂移
+        gy = gy + Kp*ey + eyInt;
+        gz = gz + Kp*ez + ezInt;    //这里的gz由于没有观测者进行矫正会产生漂移，表现出来的就是积分自增或自减
+        //下面进行姿态的更新，也就是四元数微分方程的求解
+        q0temp=q0;//暂存当前值用于计算
+        q1temp=q1;//网上传的这份算法大多没有注意这个问题，在此更正
+        q2temp=q2;
+        q3temp=q3;
+        //采用一阶毕卡解法，相关知识可参见《惯性器件与惯性导航系统》P212
+        q0 = q0temp + (-q1temp*gx - q2temp*gy -q3temp*gz)*halfT;
+        q1 = q1temp + (q0temp*gx + q2temp*gz -q3temp*gy)*halfT;
+        q2 = q2temp + (q0temp*gy - q1temp*gz +q3temp*gx)*halfT;
+        q3 = q3temp + (q0temp*gz + q1temp*gy -q2temp*gx)*halfT;
+        //单位化四元数在空间旋转时不会拉伸，仅有旋转角度，这类似线性代数里的正交变换
+        norm = sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);
+        q0 = q0 / norm;
+        q1 = q1 / norm;
+        q2 = q2 / norm;
+        q3 = q3 / norm;
+        //四元数到欧拉角的转换，公式推导见博文一
+        //其中YAW航向角由于加速度计对其没有修正作用，因此此处直接用陀螺仪积分代替
+        Log.d("momo","AngleY: "+String.valueOf(Math.asin(-2 * q1 * q3 + 2 * q0* q2)*100)+" AngleX: "+
+                String.valueOf((Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1))*100));
+//        Q_ANGLE.Z = GYRO_I.Z; // yaw
+//        Q_ANGLE.Y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
+//        Q_ANGLE.X = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
@@ -260,6 +350,7 @@ catch (Exception e)
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
                     shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]);
+                    IMUupdate(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11],data[12]);
                 }
                 return null;
             }
