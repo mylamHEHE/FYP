@@ -4,6 +4,7 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import android.app.AlertDialog;
         import android.bluetooth.BluetoothGattCharacteristic;
         import android.bluetooth.BluetoothGattService;
+        import android.content.Intent;
         import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.annotation.Nullable;
@@ -219,6 +220,7 @@ catch (Exception e)
         int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
         int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
         double resultz = ztempshifted/2048.0;
+
         //variable for complement filter
         int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
         int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
@@ -331,7 +333,6 @@ catch (Exception e)
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
-                    Log.d("result",result);
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
 
@@ -342,13 +343,13 @@ catch (Exception e)
                     {
 
                         tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        Log.d("temp",tmp);
                         tmp+="-";
                         id+=2;
                     }
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
+
                     shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]);
                     IMUupdate(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11],data[12]);
                 }
@@ -357,6 +358,11 @@ catch (Exception e)
 
         }.execute();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

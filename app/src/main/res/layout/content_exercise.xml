@@ -66,9 +66,57 @@
                     android:progress="100"
                     android:visibility="visible" />
             </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/scoreboard">
+    <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#cd7f32"
+                    android:text="Current Score: "
+                    android:textSize="30sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:id="@+id/score"
+                    android:textColor="#cd7f32"
+                    android:text="0"
+                    android:textSize="30sp"/>
 
 
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#D4AF37"
+                        android:text="Target: "
+                        android:textSize="30sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
+                        android:id="@+id/basescore"
+                        android:textColor="#D4AF37"
+                        android:text="0"
+                        android:textSize="30sp"/>
+
+
+                </LinearLayout>
+            </LinearLayout>
             <ImageButton android:id="@id/exo_pause"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
