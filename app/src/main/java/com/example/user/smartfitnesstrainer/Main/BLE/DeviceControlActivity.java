@@ -109,19 +109,23 @@ public class DeviceControlActivity extends Activity {
     }
     private void testBluetoothAvability(){
         Log.d("bletest", String.valueOf(ViseBle.getInstance().getConnectState(mDevice)));
+try {
+    DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
+    for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
+        Log.d("bletest", String.valueOf(bgs.getUuid()));
+        if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
+            writeHead(bgs);
 
-        DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
-        for(BluetoothGattService bgs: deviceMirror.getBluetoothGatt().getServices()) {
-            Log.d("bletest", String.valueOf(bgs.getUuid()));
-            if(bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0"))
-            {
-               writeHead(bgs);
-
-               notifyHead(bgs);
-                readHead(bgs);
-            }
-
+            notifyHead(bgs);
+            readHead(bgs);
         }
+
+    }
+}
+catch (Exception e)
+{
+    Log.d("error","error");
+}
 
     }
     @Subscribe
