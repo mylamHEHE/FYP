@@ -167,27 +167,24 @@ public class DeviceControlActivity extends Activity {
             }
         }
     }
-    public float kalmanCalculate(float newAngle, float newRate,int looptime) {
-        float x_bias = 0;
-        float x_angle = 0;
-        float Q_angle =  0;//
-        Q_angle += 0.001;
-        float Q_gyro =  0;//
-        Q_gyro += 0.003;
-        float R_angle = 0;//
-        R_angle +=0.03;
-        float P_00 = 0, P_01 = 0, P_10 = 0, P_11 = 0;
-        float dt = (float) ((looptime)/1000);
-        x_angle += dt * (newRate - x_bias);
-        P_00 +=  - dt * (P_10 + P_01) + Q_angle * dt;
+    double x_angle;
+    double y,S,dt;
+    double x_bias = 0;
+    double K_0,K_1;
+    double P_00 = 0, P_01 = 0, P_10 = 0, P_11 = 0;
+    public double kalmanCalculate(double newAngle, double newRate) {
+        //mylam hardcode time
+        dt = 100/1000;
+        x_angle = dt * (newRate - x_bias);
+        P_00 +=  - dt * (P_10 + P_01) + 0.001 * dt;
         P_01 +=  - dt * P_11;
         P_10 +=  - dt * P_11;
-        P_11 +=  + Q_gyro * dt;
+        P_11 +=  + 0.003 * dt;
 
-        float y = newAngle - x_angle;
-        float S = P_00 + R_angle;
-        float K_0 = P_00 / S;
-        float K_1 = P_10 / S;
+        y = newAngle - x_angle;
+        S = P_00 + 0.03;
+        K_0 = P_00 / S;
+        K_1 = P_10 / S;
 
         x_angle +=  K_0 * y;
         x_bias  +=  K_1 * y;
@@ -196,31 +193,11 @@ public class DeviceControlActivity extends Activity {
         P_10 -= K_1 * P_00;
         P_11 -= K_1 * P_01;
 
+
         return x_angle;
     }
-    public float two_filter(float angle,float gly,float angle2,int looptime){
-        float ans = 0,kang = 0;
-        ans = (float)(0.98 * (angle + gly * (looptime/1000)) + 0.02 * angle2);
-        //kang = kalmanCalculate(ans,gly,looptime);
-        kang += 0.65+ans;
-        return kang;
-    };
-    public static int getDecimal(int binary){
-        int decimal = 0;
-        int n = 0;
-        while(true){
-            if(binary == 0){
-                break;
-            } else {
-                int temp = binary%10;
-                decimal += temp* pow(2, n);
-                binary = binary/10;
-                n++;
-            }
-        }
-        return decimal;
-    }
-    public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2){
+
+    public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
         int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
         double resultx = xtempshifted/2048.0;
@@ -230,8 +207,18 @@ public class DeviceControlActivity extends Activity {
         int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
         int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
         double resultz = ztempshifted/2048.0;
+        //variable for complement filter
+        int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
+        int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
+        double resultg = gtempshifted *9.81 / 2048.0*  Math.PI / (16.4f * 180.0f);
+
         double angle = Math.atan2(resulty,sqrt(pow(resultx,2)+pow(resultz,2)));
-       Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+String.valueOf((int)(angle*100)));
+        double offset_angle = 0.06;//hardcode with 90 degree
+        double angle2 = Math.atan2(resulty,resultz)-offset_angle;
+        double Angy = 0.998*(resultg*100/1000)+0.02*angle2;
+        double kang = kalmanCalculate(Angy, resultg);
+        Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "
+                +String.valueOf(angle) +" "+String.valueOf(angle2)+" "+String.valueOf(Angy)+" "+String.valueOf(kang));
        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     @Subscribe
@@ -253,7 +240,6 @@ public class DeviceControlActivity extends Activity {
                     Log.d("result",result);
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
-                    //x
 
                     String tmp = "";
                     int id = 0;
@@ -269,62 +255,7 @@ public class DeviceControlActivity extends Activity {
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
-                    shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6]);
-                    /*
-                    Log.d("mylam",String.valueOf(data[1])+" "+String.valueOf(data[2])+" "
-                    +String.valueOf(data[3])+" "+String.valueOf(data[4])+" "+
-                            String.valueOf(data[5])+" "+String.valueOf(data[6]));
-                    String x = data[1]+data[2];
-
-                    Log.d("shiftbitx",String.valueOf(((Integer.parseInt(data[1],16)<<8)+Integer.parseInt(data[2],16))/2048));
-                    String y = data[3]+data[4];
-                    Log.d("shiftbity",String.valueOf(((Integer.parseInt(data[3],16)<<8)+Integer.parseInt(data[4],16))/2048));
-                    String z = data[5]+data[6];
-                    Log.d("shiftbitz",String.valueOf(((Integer.parseInt(data[5],16)<<8)+Integer.parseInt(data[6],16))/2048));
-                    Log.d("xyz??",String.valueOf(Integer.parseInt(x,16))+" "+String.valueOf(Integer.parseInt(y,16))+" "+String.valueOf(Integer.parseInt(z,16)));
-
-                    //int hex = (Integer.parseInt(data[i]) & 0xff << 8) ;
-                    Log.d("hex??",String.valueOf(Integer.valueOf(x)/2048)+" "+String.valueOf(Integer.valueOf(y)/2048)+" "+String.valueOf(Integer.valueOf(z)/2048));
-*/
-                  /*  Double aDouble= Math.atan2((Integer.parseInt(data[9],16)+Integer.parseInt(data[10],16))
-                            ,
-                            ((Integer.parseInt(data[7],16)+Integer.parseInt(data[8],16))/2.0));
-                    Log.d("x::::"," "+String.valueOf(aDouble));
-*/
-                    //int i1x = (Integer.parseInt(data[1],16)) << 8;
-
-
-
-                    try {
-                        /* Accelemometer */
-                        int a1x = (Integer.parseInt(data[1],16)<<8)+(Integer.parseInt(data[2],16));
-                        int a1y = (Integer.parseInt(data[3],16)<<8)+(Integer.parseInt(data[4],16));
-                        int a1z = (Integer.parseInt(data[5],16)<<8)+(Integer.parseInt(data[6],16));
-                        /* Gyroscope */
-                        double i1x = (Integer.parseInt(data[7], 16) + Integer.parseInt(data[8], 16)) / 2.0 * 9.81 / 256;
-                        double i1y = (Integer.parseInt(data[9], 16) + Integer.parseInt(data[10], 16)) / 2.0 * 9.81 / 256;
-                        //i1y += (Integer.parseInt(data[4],16));
-                        //int i1z = (Integer.parseInt(data[5],16)) << 8;
-                        double i1z = (Integer.parseInt(data[11], 16) + Integer.parseInt(data[12], 16)) / 2.0 * 9.81 / 256;
-
-                        //i1z += (Integer.parseInt(data[6],16));
-
-                        //2filter trytry
-
-                        float gyosca = (float)Math.PI / (16.4f * 180.0f);
-                        double accsca = 1.0/2048.0;
-
-
-//                        Log.d("ax ay az", String.valueOf(two_filter(Integer.parseInt(data[7]),a1x,Integer.parseInt(data[9],16),100))
-//                                + " " + String.valueOf(two_filter(Integer.parseInt(data[9]),a1y,Integer.parseInt(data[11],16),100))
-//                                + " " + String.valueOf(two_filter(Integer.parseInt(data[11]),a1z,Integer.parseInt(data[7],16),100)));
-                        //Log.d("ax ay az", String.valueOf(a1x*accsca) + " " + String.valueOf( a1y*accsca) + " " + String.valueOf((int) a1z*accsca));
-                        Log.d("ax ay az", String.valueOf(i1x*gyosca) + " " + String.valueOf( i1y*gyosca) + " " + String.valueOf((int) i1z*gyosca));
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
+                    shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]);
                 }
                 return null;
             }
@@ -338,151 +269,6 @@ public class DeviceControlActivity extends Activity {
         invalidateOptionsMenu();
         super.onResume();
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.connect, menu);
-        if (BluetoothDeviceManager.getInstance().isConnected(mDevice)) {
-            menu.findItem(R.id.menu_connect).setVisible(false);
-            menu.findItem(R.id.menu_disconnect).setVisible(true);
-            mConnectionState.setText("true");
-            DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
-            if (deviceMirror != null) {
-                simpleExpandableListAdapter = displayGattServices(deviceMirror.getBluetoothGatt().getServices());
-            }
-            showDefaultInfo();
-        } else {
-            menu.findItem(R.id.menu_connect).setVisible(true);
-            menu.findItem(R.id.menu_disconnect).setVisible(false);
-            mConnectionState.setText("false");
-            clearUI();
-        }
-        if (ViseBle.getInstance().getConnectState(mDevice) == ConnectState.CONNECT_PROCESS) {
-            menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_progress_indeterminate);
-        } else {
-            menu.findItem(R.id.menu_refresh).setActionView(null);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_connect://连接设备
-                if (!BluetoothDeviceManager.getInstance().isConnected(mDevice)) {
-                    BluetoothDeviceManager.getInstance().connect(mDevice);
-                    invalidateOptionsMenu();
-                }
-                break;
-            case R.id.menu_disconnect://断开设备
-                if (BluetoothDeviceManager.getInstance().isConnected(mDevice)) {
-                    BluetoothDeviceManager.getInstance().disconnect(mDevice);
-                    invalidateOptionsMenu();
-                }
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        BusManager.getBus().unregister(this);
-        super.onDestroy();
-    }
-*/
-    /**
-     * 根据GATT服务显示该服务下的所有特征值
-     *
-     * @param gattServices GATT服务
-     * @return
-     */
-    /*
-    private SimpleExpandableListAdapter displayGattServices(final List<BluetoothGattService> gattServices) {
-        for(BluetoothGattService bgs: gattServices) {
-            Log.d("bgs",String.valueOf(bgs.getUuid()));
-        }
-        if (gattServices == null) return null;
-        String uuid;
-        final String unknownServiceString = getResources().getString(R.string.unknown_service);
-        final String unknownCharaString = getResources().getString(R.string.unknown_characteristic);
-        final List<Map<String, String>> gattServiceData = new ArrayList<>();
-        final List<List<Map<String, String>>> gattCharacteristicData = new ArrayList<>();
-
-        mGattServices = new ArrayList<>();
-        mGattCharacteristics = new ArrayList<>();
-
-        // Loops through available GATT Services.
-        for (final BluetoothGattService gattService : gattServices) {
-            final Map<String, String> currentServiceData = new HashMap<>();
-            uuid = gattService.getUuid().toString();
-            //mylam currentServiceData.put(LIST_NAME, GattAttributeResolver.getAttributeName(uuid, unknownServiceString));
-            currentServiceData.put(LIST_UUID, uuid);
-            gattServiceData.add(currentServiceData);
-
-            final List<Map<String, String>> gattCharacteristicGroupData = new ArrayList<>();
-            final List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
-            final List<BluetoothGattCharacteristic> charas = new ArrayList<>();
-
-            // Loops through available Characteristics.
-            for (final BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-                charas.add(gattCharacteristic);
-                final Map<String, String> currentCharaData = new HashMap<>();
-                uuid = gattCharacteristic.getUuid().toString();
-                //mylam currentCharaData.put(LIST_NAME, GattAttributeResolver.getAttributeName(uuid, unknownCharaString));
-                currentCharaData.put(LIST_UUID, uuid);
-                gattCharacteristicGroupData.add(currentCharaData);
-            }
-
-            mGattServices.add(gattService);
-            mGattCharacteristics.add(charas);
-            gattCharacteristicData.add(gattCharacteristicGroupData);
-        }
-
-        final SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(this, gattServiceData, android.R.layout
-                .simple_expandable_list_item_2, new String[]{LIST_NAME, LIST_UUID}, new int[]{android.R.id.text1, android.R.id.text2},
-                gattCharacteristicData, android.R.layout.simple_expandable_list_item_2, new String[]{LIST_NAME, LIST_UUID}, new
-                int[]{android.R.id.text1, android.R.id.text2});
-        return gattServiceAdapter;
-    }
-
-    private void showReadInfo(String uuid, byte[] dataArr) {
-        mGattUUID.setText(uuid != null ? uuid : getString(R.string.no_data));
-        //mylam mGattUUIDDesc.setText(GattAttributeResolver.getAttributeName(uuid, getString(R.string.unknown)));
-        mDataAsArray.setText(HexUtil.encodeHexStr(dataArr));
-        mDataAsString.setText(new String(dataArr));
-    }
-
-    private void showDefaultInfo() {
-        mGattUUID.setText(R.string.no_data);
-        mGattUUIDDesc.setText(R.string.no_data);
-        mDataAsArray.setText(R.string.no_data);
-        mDataAsString.setText(R.string.no_data);
-        mInput.setText(mSpCache.get(WRITE_DATA_KEY + mDevice.getAddress(), ""));
-        mOutput.setText("");
-        ((EditText) findViewById(R.id.show_write_characteristic)).setText(mSpCache.get(WRITE_CHARACTERISTI_UUID_KEY + mDevice.getAddress(), ""));
-        ((EditText) findViewById(R.id.show_notify_characteristic)).setText(mSpCache.get(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress(), ""));
-        mOutputInfo = new StringBuilder();
-    }
-
-    private void clearUI() {
-        mGattUUID.setText(R.string.no_data);
-        mGattUUIDDesc.setText(R.string.no_data);
-        mDataAsArray.setText(R.string.no_data);
-        mDataAsString.setText(R.string.no_data);
-        mInput.setText("");
-        mOutput.setText("");
-        ((EditText) findViewById(R.id.show_write_characteristic)).setText("");
-        ((EditText) findViewById(R.id.show_notify_characteristic)).setText("");
-        mOutputInfo = new StringBuilder();
-        simpleExpandableListAdapter = null;
-        mSpCache.remove(WRITE_CHARACTERISTI_UUID_KEY + mDevice.getAddress());
-        mSpCache.remove(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress());
-        mSpCache.remove(WRITE_DATA_KEY + mDevice.getAddress());
-    }
-*/
-    /**
-     * 显示GATT服务展示的信息
-     */
 
     private void showGattServices() {
         if (simpleExpandableListAdapter == null) {
