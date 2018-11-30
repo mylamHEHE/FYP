@@ -62,7 +62,7 @@ public class NewScanActivity extends AppCompatActivity {
         deviceLv = (ListView) findViewById(android.R.id.list);
         emptyTv = (TextView) findViewById(android.R.id.empty);
         countTv = (TextView) findViewById(R.id.connected_device_count);
-
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class NewScanActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+*/
         adapter = new DeviceMainAdapter(this);
         deviceLv.setAdapter(adapter);
 

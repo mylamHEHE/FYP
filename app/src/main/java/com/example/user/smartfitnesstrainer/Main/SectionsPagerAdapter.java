@@ -1,8 +1,13 @@
 package com.example.user.smartfitnesstrainer.Main;
 
+import android.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
+
+import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.BluetoothStatusFragment;
+import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +19,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     public SectionsPagerAdapter(FragmentManager fm){
         super(fm);
+
     }
 
     @Override
     public Fragment getItem(int position) {
+
         return mFragmentList.get(position);
     }
 

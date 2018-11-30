@@ -78,6 +78,7 @@ public class ViseBle {
         if (scanCallback == null) {
             throw new IllegalArgumentException("this ScanCallback is Null!");
         }
+        if (!scanCallback.isScanning)
         scanCallback.setScan(true).scan();
     }
 
@@ -90,6 +91,7 @@ public class ViseBle {
         if (scanCallback == null) {
             throw new IllegalArgumentException("this ScanCallback is Null!");
         }
+        if (scanCallback.isScanning)
         scanCallback.setScan(false).removeHandlerMsg().scan();
     }
 

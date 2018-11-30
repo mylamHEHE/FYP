@@ -55,7 +55,7 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scanner);
-
+/*
         cameraPreview = (SurfaceView) findViewById(R.id.cameraPreview);
         txtResult = (TextView) findViewById(R.id.txtResult);
 
@@ -124,7 +124,7 @@ public class ScanActivity extends AppCompatActivity {
             }
 
         });
-
+*/
     }
     @Override
     protected void onDestroy() {

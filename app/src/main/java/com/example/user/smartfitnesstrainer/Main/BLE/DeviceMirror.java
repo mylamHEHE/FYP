@@ -1015,4 +1015,22 @@ public class DeviceMirror {
             }
         }
     }
+    private static final UUID Battery_Service_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
+    private static final UUID Battery_Level_UUID = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+    public void getBatteryLevel()
+    {
+        BluetoothGattService batteryService = bluetoothGatt.getService(Battery_Service_UUID);
+        if(batteryService == null) {
+            Log.d("yeah", "Battery service not found!");
+            return;
+        }
+
+        BluetoothGattCharacteristic batteryLevel = batteryService.getCharacteristic(Battery_Level_UUID);
+        if(batteryLevel == null) {
+            Log.d("yeah", "Battery level not found!");
+            return;
+        }
+        bluetoothGatt.readCharacteristic(batteryLevel);
+        Log.v("yeah", "batteryLevel = " + bluetoothGatt.readCharacteristic(batteryLevel));
+    }
 }

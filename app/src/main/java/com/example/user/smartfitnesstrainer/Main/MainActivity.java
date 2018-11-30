@@ -10,6 +10,12 @@ import android.util.Log;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
+
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+
 //import com.example.user.smartfitnesstrainer.Utils.BottomNavigationViewHelper;
 public class MainActivity extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 1000;
@@ -19,24 +25,16 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext = MainActivity.this;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
-
-            for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
-                Log.d("bleConnx",ble.getName());
-            }
-        }
-        catch (Exception e){
-            Log.d("device","null");
-        }
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.homeactivity);
+
+        super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: starting. ");
         new Handler().postDelayed(new Runnable(){
             @Override
