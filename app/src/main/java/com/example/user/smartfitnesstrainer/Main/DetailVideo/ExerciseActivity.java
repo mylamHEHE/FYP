@@ -87,9 +87,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-            final Double sender = intent.getDoubleExtra("sender_name",0.0);
-            Log.d("sendx",String.valueOf(sender*100));
-            currentreading+=sender*100;
+            final int sender = intent.getIntExtra("sender_name",0);
+            Log.d("shb",String.valueOf(sender));
+            currentreading+=sender;
 
 
 

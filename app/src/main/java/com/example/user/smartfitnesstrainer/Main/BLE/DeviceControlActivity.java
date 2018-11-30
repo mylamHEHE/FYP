@@ -214,6 +214,7 @@ catch (Exception e)
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
         int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
         double resultx = xtempshifted/2048.0;
+        if(resultx>30)return;
         int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
         int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
         double resulty = ytempshifted/2048.0;
@@ -235,8 +236,13 @@ catch (Exception e)
         Angy = 0.998*(Angy + resultg*100/1000)+0.02*angle;
         double kang =  kalmanCalculate((float)Angy,(float)resultg);
 
-        Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+
-                "tanxyz: "+String.valueOf((angle*100))+ " tanxz: "+String.valueOf((kang*100))+" tanxyz: "+String.valueOf((Angy*100)));
+        //Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+
+              //  " tanxz: "+String.valueOf((int)(angle*100))+" tanxyz: "+String.valueOf((int)(LS*100)));
+
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        Log.d("broadcast?",String.valueOf((int)(angle*100)));
+        it.putExtra("sender_name", (int)(angle*100));
+        sendBroadcast(it);
        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
@@ -349,9 +355,14 @@ catch (Exception e)
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
+                    try {
+                        shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                        //IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                    }
+                    catch(Exception e)
+                    {
 
-                    shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]);
-                    IMUupdate(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11],data[12]);
+                    }
                 }
                 return null;
             }

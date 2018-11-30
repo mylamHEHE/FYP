@@ -10,7 +10,7 @@ public class Analyticzer {
         {
             case 0:
             {
-                if (currentangle >= 30 && currentangle <= 50)
+                if (currentangle >= 10 && currentangle <= 40)
                 {
                     correctCount++;
                     Log.d("correctLeg",String.valueOf(correctCount));
