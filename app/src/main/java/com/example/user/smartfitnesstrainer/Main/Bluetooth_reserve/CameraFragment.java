@@ -232,14 +232,18 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("reequest",String.valueOf(resultCode)+" "+String.valueOf(RESULT_OK));
         if (requestCode == QR_CODE_SCAN && resultCode == RESULT_OK && data != null) {
             
             bleAdress = data.getStringExtra("address");
-            if (bluetooth == null) {
+            Log.d("bleadr",bleAdress);
                 bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
-                bluetooth.init();
-            }
 
+            new Thread(new Runnable() {
+                public void run() {
+                    bluetooth.init();
+                }
+            }).start();
         }
     }
     @Override
@@ -324,12 +328,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        cameraSource.release();
-        barcodeDetector.release();
-    }
 
 
 }

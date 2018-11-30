@@ -3,6 +3,7 @@ package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.R;
@@ -39,7 +40,7 @@ public class QRCodeScanActivity extends AppCompatActivity {
             }
             else
             {
-
+                Log.d("bluue","trial");
                 Intent output = new Intent();
                 output.putExtra("address",result.getContents());
                 setResult(RESULT_OK, output);
