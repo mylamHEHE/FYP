@@ -45,8 +45,8 @@ import java.util.ArrayList;
 import static com.vise.utils.handler.HandlerUtil.runOnUiThread;
 
 public class MyBluetoothService {
-    String address = "";
-    Activity activity;
+    private String address ;
+    private Activity activity;
     private BluetoothLeDevice mDevice;
     private boolean gotDevice=false;
     Context context;
@@ -78,6 +78,7 @@ public class MyBluetoothService {
                 protected Boolean doInBackground(Void... params) {
                     if(gotDevice)
                     {
+                        Log.d("stopx",bluetoothLeDevice.getAddress());
                         stopScan();
                         return false;
                     }
@@ -129,12 +130,6 @@ public class MyBluetoothService {
 
         @Override
         public void onScanFinish(BluetoothLeDeviceStore bluetoothLeDeviceStore) {
-            ViseBle.getInstance().clear();
-            ViseBle.getInstance().stopScan(sc);
-            for(BluetoothLeDevice ble : bluetoothLeDeviceStore.getDeviceList())
-            {
-
-            }
 
 
         }
@@ -147,10 +142,13 @@ public class MyBluetoothService {
     });
 
     public void init() {
-
+        Log.d("addressx",address);
         //adapter = new DeviceAdapter(context);
         //deviceLv.setAdapter(adapter);
-        startScan();
+
+                    startScan();
+
+
         /*if(address.equals("45:53:3C:3D:14:D8")){
            /* Intent intent = new Intent(MyBluetoothService.this, DeviceDetailActivity.class);
             intent.putExtra(DeviceDetailActivity.EXTRA_DEVICE, address);

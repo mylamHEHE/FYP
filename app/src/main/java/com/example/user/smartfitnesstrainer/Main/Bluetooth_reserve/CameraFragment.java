@@ -45,13 +45,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class CameraFragment extends android.support.v4.app.Fragment {
     SurfaceView cameraPreview;
     TextView txtResult;
+    private MyBluetoothService bluetooth;
    // private BroadcastReceiver _refreshReceiver = new MyReceiver();
     BarcodeDetector barcodeDetector;
-    private MyBluetoothService bluetooth;
+    private static final int QR_CODE_SCAN = 1;
+    public int address_request_code = 2;
+    public String bleAdress ;
     CameraSource cameraSource;
     private final static int REQUEST_OPEN_BT_CODE = 1;
     private final static int REQUEST_LOCATION = 1;
@@ -112,14 +117,13 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_item_list,container,false);
-        bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
-        bluetooth.init();
+
         toScan = view.findViewById(R.id.addDevice);
         toScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), QRCodeScanActivity.class);
-                getActivity().startActivity(intent);
+                startActivityForResult(intent,QR_CODE_SCAN);
             }
         });
 
@@ -226,7 +230,22 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         */
         return view;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("reequest",String.valueOf(resultCode)+" "+String.valueOf(RESULT_OK));
+        if (requestCode == QR_CODE_SCAN && resultCode == RESULT_OK && data != null) {
+            
+            bleAdress = data.getStringExtra("address");
+            Log.d("bleadr",bleAdress);
+                bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
 
+            new Thread(new Runnable() {
+                public void run() {
+                    bluetooth.init();
+                }
+            }).start();
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -309,12 +328,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        cameraSource.release();
-        barcodeDetector.release();
-    }
 
 
 }
