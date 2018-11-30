@@ -4,6 +4,7 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import android.app.AlertDialog;
         import android.bluetooth.BluetoothGattCharacteristic;
         import android.bluetooth.BluetoothGattService;
+        import android.content.Intent;
         import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.annotation.Nullable;
@@ -235,8 +236,10 @@ catch (Exception e)
         int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
         double resultz = ztempshifted/2048.0;
         double angle = Math.atan2(resulty,sqrt(pow(resultx,2)+pow(resultz,2)));
-       Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+String.valueOf((int)(angle*100)));
-       // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        it.putExtra("sender_name", angle);
+        sendBroadcast(it);
+        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
@@ -254,7 +257,6 @@ catch (Exception e)
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
-                    Log.d("result",result);
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
                     //x
@@ -266,7 +268,6 @@ catch (Exception e)
                     {
 
                         tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        Log.d("temp",tmp);
                         tmp+="-";
                         id+=2;
                     }
@@ -323,7 +324,7 @@ catch (Exception e)
 //                                + " " + String.valueOf(two_filter(Integer.parseInt(data[9]),a1y,Integer.parseInt(data[11],16),100))
 //                                + " " + String.valueOf(two_filter(Integer.parseInt(data[11]),a1z,Integer.parseInt(data[7],16),100)));
                         //Log.d("ax ay az", String.valueOf(a1x*accsca) + " " + String.valueOf( a1y*accsca) + " " + String.valueOf((int) a1z*accsca));
-                        Log.d("ax ay az", String.valueOf(i1x*gyosca) + " " + String.valueOf( i1y*gyosca) + " " + String.valueOf((int) i1z*gyosca));
+                      //  Log.d("ax ay az", String.valueOf(i1x*gyosca) + " " + String.valueOf( i1y*gyosca) + " " + String.valueOf((int) i1z*gyosca));
                     }
                     catch (Exception e)
                     {
@@ -335,6 +336,11 @@ catch (Exception e)
 
         }.execute();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

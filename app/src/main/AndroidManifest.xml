@@ -29,9 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main.HomeActivity" />
-        <activity android:name=".Main.VideoActivity" />
-        <activity android:name=".Main.Video_innerActivity" />
+        <activity android:name=".Main.HomeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".Main.VideoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".Main.Video_innerActivity" android:screenOrientation="portrait" />
         <activity android:name=".Main.ScanActivity" />
         <activity android:name=".Main.BLE.DeviceScanActivity" />
         <activity android:name=".Main.BLE.DeviceDetailActivity" />

@@ -118,7 +118,9 @@ Button start;
                     }
                     case MotionEvent.ACTION_UP: {
                         Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                         startActivity(homeIntent);
+                        Log.d("catgirl","cat");
                         break;
                     }
                 }
