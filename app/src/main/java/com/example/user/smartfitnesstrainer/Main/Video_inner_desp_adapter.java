@@ -96,12 +96,16 @@ public class Video_inner_desp_adapter extends RecyclerView.Adapter<RecyclerView.
                 PlaylistViewHolder viewHolder2 = (PlaylistViewHolder)holder;
                 viewHolder2.name.setText(mImageNames.get(position));
                 viewHolder2.duration.setText(mduration.get(position));
+try {
+    Glide.with(mContext)
+            .asBitmap()
+            .load(mImages.get(position))
+            .into(viewHolder2.imageview);
+}
+catch (Exception e)
+{
 
-                Glide.with(mContext)
-                        .asBitmap()
-                        .load(mImages.get(position))
-                        .into(viewHolder2.imageview);
-
+}
                 break;
         }
 

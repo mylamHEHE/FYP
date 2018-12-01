@@ -1,10 +1,17 @@
 package com.example.user.smartfitnesstrainer.Main.DetailVideo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +21,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.user.smartfitnesstrainer.R;
@@ -32,6 +41,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -41,6 +51,8 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.tomer.fadingtextview.FadingTextView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ExerciseActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
@@ -49,6 +61,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ArrayList <String> temp = new ArrayList<>();
     private VideoView vf;
     private boolean isVideoCreate = false;
+    private Analyticzer analyticzer =new Analyticzer();
     private FadingTextView ftv;
     private ArrayList <VideoModel> vm = new ArrayList<>();
     private ImageButton pause;
@@ -58,12 +71,32 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ArrayList<ExerciseModel> exerciseModelArrayList = new ArrayList<>();
     int currentExercise = 0;
     private ProgressBar pb;
+    private int stageScore =0;
+    private TextView currentScore;
+    private TextView baseScore;
     private SimpleExoPlayer player;
     private SimpleExoPlayerView simpleExoPlayerView;
     private ImageButton play;
     private RelativeLayout rl;
     private RelativeLayout rl0;
+    private LinearLayout scoreBoard;
+    private Bundle sis;
+    private double currentreading=0.0;
+    public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            final int sender = intent.getIntExtra("sender_name",0);
+            Log.d("shb",String.valueOf(sender));
+            currentreading+=sender;
+
+
+
+        }
+
+    }
+    private MyBroadcaseReceiver1 m_MyReceiver1;
     @Override
     protected void onStart() {
         super.onStart();
@@ -98,18 +131,24 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
 
     private void prepareExoPlayerFromFileUri(Uri uri) {
+        if (player!=null)
+        {
+            Log.d("playerx","gr");
+            return;
+        }
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-
+        simpleExoPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
 
         MediaSource[] mediaSources = new MediaSource[vm.size()];
         for (int i=0;i<vm.size();i++) {
            mediaSources[i]= buildMediaSource(vm.get(i).videoUrl);
         }
+
         simpleExoPlayerView.setPlayer(player);
         ConcatenatingMediaSource cms = new ConcatenatingMediaSource(mediaSources);
         if(player!=null && mediaSources!=null){
@@ -132,33 +171,49 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
                 @Override
                 public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+                    player.setPlayWhenReady(false);
                     super.onTracksChanged(trackGroups, trackSelections);
 
 
                 }
             });
-            player.prepare(cms);
+            player.setPlayWhenReady(false);
+            //player.prepare(cms);
+            simpleExoPlayerView.getPlayer().prepare(cms);
             simpleExoPlayerView.setUseController(false);
         }
 
+
+    }
+    private void unregDevice(){
+        try {
+            unregisterReceiver(m_MyReceiver1);
+        }
+        catch (Exception e )
+        {
+
+        }
     }
     //choser
     private void animationAfterExercise(){
         Log.d("animationaftere",String.valueOf(isTutorMode));
         if (isTutorMode==0)
         {
+            unregDevice();
             introMode();
 
         }
         else if (isTutorMode == 1)
         {
+            scoreBoardAppear();
+            unregisterReceiver(m_MyReceiver1);
             tutorMode();
         }
         else
         {
+            unregDevice();
             deviceCheck();
-
+            scoreBoardAppear();
         }
     }
     private void deviceCheck(){
@@ -181,6 +236,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 isTutorMode = 2;
             }
         }.start();
+    }
+    private void scoreBoardAppear()
+    {
+        if(scoreBoard.getVisibility()==View.GONE)
+        scoreBoard.setVisibility(View.VISIBLE);
+        else if(scoreBoard.getVisibility()==View.VISIBLE)
+            scoreBoard.setVisibility(View.GONE);
     }
     //tutor mode
     private void tutorMode(){
@@ -206,7 +268,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     //player mode
     private void exerciseStarts(){
+        callAsynchronousTask();
         pb.setVisibility(View.VISIBLE);
+
         new CountDownTimer(3000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -259,6 +323,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     @Override
     protected void onResume() {
         super.onResume();
+
     }
     protected void firstClip(){
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
@@ -270,8 +335,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sis=savedInstanceState;
         super.onCreate(savedInstanceState);
-
+        if(savedInstanceState!=null)
+        {
+            Log.d("savce",savedInstanceState.toString());
+        }
 
         setContentView(R.layout.activity_exercise);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -283,11 +352,14 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         mTextField = findViewById(R.id.countdown);
         pb = findViewById(R.id.video_progressbar);
         rl0 = findViewById(R.id.timerrl0);
+        scoreBoard = findViewById(R.id.scoreboard);
+        currentScore = findViewById(R.id.score);
+        baseScore = findViewById(R.id.basescore);
         rl.setVisibility(View.GONE);
-        temp.add("Inchworm");
-        temp.add("Power Skip");
-        temp.add("Uppercut");
-        temp.add("Mountain Climber Twist");
+        Log.d("pkxt","owow");
+        m_MyReceiver1 = new MyBroadcaseReceiver1();
+
+
         ela = new ExerciseListAdapter(this,temp);
         play.setOnClickListener(new View.OnClickListener()
         {
@@ -349,8 +421,55 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     }
 
+
+
+    private void scoreAdder()
+    {
+        stageScore++;
+        currentScore.setText(String.valueOf(stageScore));
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
+        mp.start();
+    }
+
+    public void callAsynchronousTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            Log.d("readffromace",String.valueOf(currentreading)+" "+String.valueOf(currentreading/30));
+                            if(analyticzer.analyze(0,currentreading/20)){
+                               scoreAdder();
+                            }
+                         currentreading=0;
+
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 2000); //execute in every 50000 ms
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        player.release();
+        unregDevice();
+    }
+
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
+
         exerciseStarts();
+
+        IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
+        registerReceiver(m_MyReceiver1, itFilter);
     }
 }

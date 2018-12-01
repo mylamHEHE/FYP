@@ -1,8 +1,12 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,18 +14,25 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.BleUtil;
+import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
+import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -31,19 +42,32 @@ import com.vise.xsnow.permission.OnPermissionCallback;
 import com.vise.xsnow.permission.PermissionManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class CameraFragment extends android.support.v4.app.Fragment {
     SurfaceView cameraPreview;
     TextView txtResult;
-    BarcodeDetector barcodeDetector;
     private MyBluetoothService bluetooth;
+   // private BroadcastReceiver _refreshReceiver = new MyReceiver();
+    BarcodeDetector barcodeDetector;
+    private static final int QR_CODE_SCAN = 1;
+    public int address_request_code = 2;
+    public String bleAdress ;
     CameraSource cameraSource;
     private final static int REQUEST_OPEN_BT_CODE = 1;
     private final static int REQUEST_LOCATION = 1;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private ArrayList<BluetoothLeDevice> blueto = new ArrayList<>();
     private int hardcode = 0;
+    FloatingActionButton toScan;
     final int RequestCameraPermissionID = 1001;
+    private RecyclerView connectedBle;
+    private LinearLayout emptyView;
+    private BluetoothDeviceAdapter bluetoothDeviceAdapter;
     int step_count = 0;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -73,11 +97,52 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             }
         }
     }
+    private void notifySet(){
+        try {
+            Log.d("inde",String.valueOf(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()));
+
+            blueto.clear();
+            for(BluetoothLeDevice ble :ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
+                ViseBle.getInstance().getDeviceMirror(ble).getBatteryLevel();
+                blueto.add(ble);
+                Log.d("bleConnx",ble.getName());
+
+            }
+        }
+        catch (Exception e){
+            Log.d("device","null");
+        }
+    }
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.scanner,container,false);
+        View view = inflater.inflate(R.layout.fragment_item_list,container,false);
+
+        toScan = view.findViewById(R.id.addDevice);
+        toScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), QRCodeScanActivity.class);
+                startActivityForResult(intent,QR_CODE_SCAN);
+            }
+        });
+
+        /*
+        IntentFilter filter = new IntentFilter("SOMEACTION");
+        getActivity().registerReceiver(_refreshReceiver, filter);
+        */
         //checkBluetoothPermission();
         checkLocationPermission();
+        connectedBle = (RecyclerView) view.findViewById(R.id.recycler);
+        emptyView =  view.findViewById(R.id.empty_view);
+        notifySet();
+        bluetoothDeviceAdapter = new BluetoothDeviceAdapter(getContext(),blueto);
+        connectedBle.setAdapter(bluetoothDeviceAdapter);
+        connectedBle.setLayoutManager(new LinearLayoutManager(getContext()));
+// ...
+
+
+        /*
         cameraPreview = (SurfaceView) view.findViewById(R.id.cameraPreview);
         txtResult = (TextView) view.findViewById(R.id.txtResult);
 
@@ -116,6 +181,10 @@ public class CameraFragment extends android.support.v4.app.Fragment {
 //                } else {
 //                    Log.e("DB", "PERMISSION GRANTED");
 //                }
+
+                bluetooth = new MyBluetoothService("45:53:3C:3D:14:D8",getContext(),getActivity());
+                bluetooth.init();
+
             }
 
             @Override
@@ -158,13 +227,39 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             }
 
         });
+        */
         return view;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("reequest",String.valueOf(resultCode)+" "+String.valueOf(RESULT_OK));
+        if (requestCode == QR_CODE_SCAN && resultCode == RESULT_OK && data != null) {
+            
+            bleAdress = data.getStringExtra("address");
+            Log.d("bleadr",bleAdress);
+                bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
 
+            new Thread(new Runnable() {
+                public void run() {
+                    bluetooth.init();
+                }
+            }).start();
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
+        notifySet();
+        bluetoothDeviceAdapter.notifyDataSetChanged();
+        if (blueto.isEmpty()) {
+            connectedBle.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            connectedBle.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
 
+        }
     }
 
     private void checkBluetoothPermission() {
@@ -233,12 +328,6 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        cameraSource.release();
-        barcodeDetector.release();
-    }
 
 
 }

@@ -1,32 +1,19 @@
 package com.example.user.smartfitnesstrainer.Main;
 
 import android.Manifest;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.SparseArray;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
-import com.example.user.smartfitnesstrainer.Main.BLE.DeviceScanActivity;
-import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.CameraFragment;
 import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.MyBluetoothService;
-import com.example.user.smartfitnesstrainer.Main.Profile.MessagesFragment;
-import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.MainFragment;
 import com.example.user.smartfitnesstrainer.R;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -34,7 +21,6 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
-import java.security.Policy;
 
 public class ScanActivity extends AppCompatActivity {
     SurfaceView cameraPreview;
@@ -69,7 +55,7 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scanner);
-
+/*
         cameraPreview = (SurfaceView) findViewById(R.id.cameraPreview);
         txtResult = (TextView) findViewById(R.id.txtResult);
 
@@ -138,7 +124,7 @@ public class ScanActivity extends AppCompatActivity {
             }
 
         });
-
+*/
     }
     @Override
     protected void onDestroy() {
