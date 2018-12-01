@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -80,7 +81,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private RelativeLayout rl;
     private RelativeLayout rl0;
     private LinearLayout scoreBoard;
+    private Button skipTutor;
     private Bundle sis;
+    private TimerTask doAsynchronousTask;
     private double currentreading=0.0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -161,9 +164,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     Log.d("gene",String.valueOf(player.getCurrentWindowIndex()));
 
 
-                    player.setPlayWhenReady(false);
 
-                        animationAfterExercise();
+
+
 
 
 
@@ -172,6 +175,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 @Override
                 public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
                     player.setPlayWhenReady(false);
+                    animationAfterExercise();
                     super.onTracksChanged(trackGroups, trackSelections);
 
 
@@ -194,23 +198,40 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
         }
     }
+    private void noSkip()
+    {
+        if(skipTutor.getVisibility()==View.VISIBLE)
+            skipTutor.setVisibility(View.GONE);
+    }
+    private void skipAvaliable()
+    {
+
+        if(skipTutor.getVisibility()==View.GONE)
+        skipTutor.setVisibility(View.VISIBLE);
+      //  else if(skipTutor.getVisibility()==View.VISIBLE)
+        //skipTutor.setVisibility(View.GONE);
+    }
     //choser
     private void animationAfterExercise(){
         Log.d("animationaftere",String.valueOf(isTutorMode));
         if (isTutorMode==0)
         {
+
             unregDevice();
+
             introMode();
 
         }
         else if (isTutorMode == 1)
         {
             scoreBoardAppear();
+            skipAvaliable();
             unregisterReceiver(m_MyReceiver1);
             tutorMode();
         }
         else
         {
+            noSkip();
             unregDevice();
             deviceCheck();
             scoreBoardAppear();
@@ -234,6 +255,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 rl0.setVisibility(View.GONE);
                 player.setPlayWhenReady(true);
                 isTutorMode = 2;
+                skipAvaliable();
             }
         }.start();
     }
@@ -346,6 +368,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         pause = findViewById(R.id.exo_pause);
         play = findViewById(R.id.exo_play);
+        skipTutor = findViewById(R.id.skiptut);
         rl = findViewById(R.id.timerrl);
         simpleExoPlayerView = findViewById(R.id.audio_view);
         ftv = findViewById(R.id.fadingTransition);
@@ -387,7 +410,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             }
         });
 
-
         // initializePlayer();
        /* MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(vf);
@@ -421,7 +443,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     }
 
-
+    public void onClickSkip(View v)
+    {
+        Toast.makeText(this, String.valueOf(player.getDuration()), Toast.LENGTH_LONG).show();
+        player.seekTo(player.getDuration());
+    }
 
     private void scoreAdder()
     {
@@ -434,7 +460,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
+        doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
                 handler.post(new Runnable() {
@@ -461,6 +487,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     protected void onDestroy() {
         super.onDestroy();
         player.release();
+        if(doAsynchronousTask!=null)
+        doAsynchronousTask.cancel();
         unregDevice();
     }
 
