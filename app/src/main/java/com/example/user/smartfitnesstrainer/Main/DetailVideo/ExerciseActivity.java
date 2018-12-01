@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.widget.VideoView;
 import com.example.user.smartfitnesstrainer.R;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -157,11 +159,18 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         if(player!=null && mediaSources!=null){
 
             player.addListener(new SimpleExoPlayer.DefaultEventListener() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+                    Log.d("playState",String.valueOf(player.getCurrentPosition()));
+                }
 
                 @Override
                 public void onPositionDiscontinuity(int reason) {
                     super.onPositionDiscontinuity(reason);
-                    Log.d("gene",String.valueOf(player.getCurrentWindowIndex()));
+                    int currentPosition = 0;
+                    currentPosition = player.getCurrentWindowIndex();
+                    Log.d("playState",String.valueOf(currentPosition));
 
 
 
@@ -183,6 +192,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             });
             player.setPlayWhenReady(false);
             //player.prepare(cms);
+            player.setVolume(0.0f);
             simpleExoPlayerView.getPlayer().prepare(cms);
             simpleExoPlayerView.setUseController(false);
         }
@@ -224,6 +234,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
         else if (isTutorMode == 1)
         {
+            pauseCounter();
             scoreBoardAppear();
             skipAvaliable();
             unregisterReceiver(m_MyReceiver1);
@@ -268,19 +279,23 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     //tutor mode
     private void tutorMode(){
+
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
         rl0.setVisibility(View.VISIBLE);
-        String[] tmps = {"Tutor mode","Well done!","Challenge "+currentExercise+"\n"+currentem.name};
+        noSkip();
+        String[] tmps = {"Well done!","Challenge "+currentExercise+"\n"+currentem.name};
         ftv.setTexts(tmps);
-        new CountDownTimer(3000,1000) {
+        new CountDownTimer(6000,1000) {
 
             public void onTick(long millisUntilFinished) {
-
+               // congradulationAudio
                 //here you can have your logic to set text to edittext
             }
 
             public void onFinish() {
                 rl0.setVisibility(View.GONE);
+                skipAvaliable();
+
                 player.setPlayWhenReady(true);
                 isTutorMode = 2;
             }
@@ -290,7 +305,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     //player mode
     private void exerciseStarts(){
-        callAsynchronousTask();
+
         pb.setVisibility(View.VISIBLE);
 
         new CountDownTimer(3000, 1000) {
@@ -298,8 +313,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void onTick(long millisUntilFinished) {
                     if (rl.getVisibility() == View.GONE)
                     rl.setVisibility(View.VISIBLE);
-                    mTextField.setText(String.valueOf(millisUntilFinished / 1000 + 1));
-
+                    if (millisUntilFinished>1000)
+                    mTextField.setText(String.valueOf(millisUntilFinished / 1000));
+                    else
+                        mTextField.setText(String.valueOf(1));
                 //here you can have your logic to set text to edittext
             }
 
@@ -456,7 +473,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
         mp.start();
     }
-
+    public void pauseCounter(){
+        if(doAsynchronousTask!=null)
+            doAsynchronousTask.cancel();
+    }
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
@@ -467,7 +487,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     public void run() {
                         try {
                             Log.d("readffromace",String.valueOf(currentreading)+" "+String.valueOf(currentreading/30));
-                            if(analyticzer.analyze(0,currentreading/20)){
+                            if(analyticzer.analyze(0,currentreading/200)){
                                scoreAdder();
                             }
                          currentreading=0;
@@ -496,7 +516,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     public void onDismiss(DialogInterface dialogInterface) {
 
         exerciseStarts();
-
+        callAsynchronousTask();
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
     }

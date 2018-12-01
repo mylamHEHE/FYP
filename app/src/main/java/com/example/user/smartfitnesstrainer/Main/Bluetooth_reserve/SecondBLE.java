@@ -1,56 +1,32 @@
 package com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve;
-import android.Manifest;
+
+
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.user.smartfitnesstrainer.Main.BLE.BleUtil;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothDeviceManager;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDeviceStore;
 import com.example.user.smartfitnesstrainer.Main.BLE.DeviceAdapter;
 import com.example.user.smartfitnesstrainer.Main.BLE.DeviceControlActivity;
-import com.example.user.smartfitnesstrainer.Main.BLE.DeviceDetailActivity;
-import com.example.user.smartfitnesstrainer.Main.BLE.DeviceMirror;
 import com.example.user.smartfitnesstrainer.Main.BLE.IScanCallback;
-import com.example.user.smartfitnesstrainer.Main.BLE.PropertyType;
 import com.example.user.smartfitnesstrainer.Main.BLE.ScanCallback;
 import com.example.user.smartfitnesstrainer.Main.BLE.SecondDeviceControl;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
-import com.example.user.smartfitnesstrainer.R;
 import com.vise.log.ViseLog;
 import com.vise.xsnow.event.BusManager;
-import com.vise.xsnow.permission.OnPermissionCallback;
-import com.vise.xsnow.permission.PermissionManager;
 
-import java.util.ArrayList;
-
-import static com.vise.utils.handler.HandlerUtil.runOnUiThread;
-
-public class MyBluetoothService {
+public class SecondBLE {
     private String address ;
     private Activity activity;
     private boolean gotDevice=false;
     Context context;
-    public MyBluetoothService(String address,Context context,Activity activity) {
+    public SecondBLE(String address,Context context,Activity activity) {
         this.address = address;
         this.activity = activity;
         BluetoothDeviceManager.getInstance().init(context);
@@ -67,7 +43,7 @@ public class MyBluetoothService {
 
     /**
      * 扫描回调
-*/
+     */
 
     private ScanCallback sc = new ScanCallback(new IScanCallback() {
         @Override
@@ -94,7 +70,7 @@ public class MyBluetoothService {
                             Log.d("mylam","gotdev");
                             gotDevice=true;
 
-                             return true;
+                            return true;
 
                         }
 
@@ -109,12 +85,19 @@ public class MyBluetoothService {
 
                     if(result)
                     {
-
+                        if(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==0) {
                             Log.d("blegetfirst",bluetoothLeDevice.getAddress());
                             Intent intent = new Intent(activity, DeviceControlActivity.class);
                             intent.putExtra("ble", bluetoothLeDevice);
                             activity.startActivity(intent);
-
+                        }
+                        else if (ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==1)
+                        {
+                            Log.d("blegetsec",bluetoothLeDevice.getAddress());
+                            Intent intent = new Intent(activity, SecondDeviceControl.class);
+                            intent.putExtra("ble", bluetoothLeDevice);
+                            activity.startActivity(intent);
+                        }
                     }
                     else
                     {
@@ -147,7 +130,7 @@ public class MyBluetoothService {
         //adapter = new DeviceAdapter(context);
         //deviceLv.setAdapter(adapter);
 
-                    startScan();
+        startScan();
 
 
         /*if(address.equals("45:53:3C:3D:14:D8")){
@@ -278,7 +261,7 @@ public class MyBluetoothService {
 */
     private void startScan() {
 
-ViseBle.getInstance().startScan(sc);
+        ViseBle.getInstance().startScan(sc);
 
     }
 

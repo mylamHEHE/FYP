@@ -52,6 +52,7 @@ public class CameraFragment extends android.support.v4.app.Fragment {
     SurfaceView cameraPreview;
     TextView txtResult;
     private MyBluetoothService bluetooth;
+    private SecondBLE secondBLE;
    // private BroadcastReceiver _refreshReceiver = new MyReceiver();
     BarcodeDetector barcodeDetector;
     private static final int QR_CODE_SCAN = 1;
@@ -237,13 +238,25 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             
             bleAdress = data.getStringExtra("address");
             Log.d("bleadr",bleAdress);
+            if(ViseBle.getInstance().getDeviceMirrorPool()==null||(ViseBle.getInstance().getDeviceMirrorPool()!=null
+                    &&ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==0)) {
                 bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
+                new Thread(new Runnable() {
+                    public void run() {
+                        bluetooth.init();
+                    }
+                }).start();
+            }
+            else if (ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==1)
+            {
+                secondBLE = new SecondBLE(bleAdress, getContext(), getActivity());
+                new Thread(new Runnable() {
+                    public void run() {
+                        secondBLE.init();
+                    }
+                }).start();
+            }
 
-            new Thread(new Runnable() {
-                public void run() {
-                    bluetooth.init();
-                }
-            }).start();
         }
     }
     @Override

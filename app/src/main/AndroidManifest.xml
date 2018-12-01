@@ -35,9 +35,12 @@
         <activity android:name=".Main.ScanActivity" />
         <activity android:name=".Main.BLE.DeviceScanActivity" />
         <activity android:name=".Main.BLE.DeviceDetailActivity" />
+
         <activity
             android:name=".Main.BLE.DeviceControlActivity"
             android:theme="@style/MyDialogStyle" />
+        <activity android:name=".Main.BLE.SecondDeviceControl"
+            android:theme="@style/MyDialogStyle"/>
         <activity android:name=".Main.Bluetooth_reserve.QRCodeScanActivity" />
 
 
