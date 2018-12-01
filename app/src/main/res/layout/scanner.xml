@@ -6,7 +6,7 @@
     android:paddingRight="16dp"
 
     tools:context="com.example.user.smartfitnesstrainer.Main.ScanActivity">
-
+<!--
     <SurfaceView
         android:id="@+id/cameraPreview"
         android:layout_centerInParent="true"
@@ -21,4 +21,5 @@
         android:id="@+id/txtResult"
         android:layout_marginTop="20dp"
         android:text="@string/result_text_default"/>
+        -->
 </RelativeLayout>

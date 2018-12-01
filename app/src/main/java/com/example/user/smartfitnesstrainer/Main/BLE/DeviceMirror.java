@@ -847,10 +847,15 @@ public class DeviceMirror {
             } else if (bluetoothGatt != null && bluetoothGattInfoValue.getCharacteristic() != null && bluetoothGattInfoValue.getDescriptor() == null) {
                 Log.d("uuyy",bluetoothGattInfoValue.getCharacteristic().getUuid().toString());
                 bluetoothGattInfoValue.getCharacteristic().setValue(data);
-                success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
+                while(!success) {
+
+                    success = bluetoothGatt.writeCharacteristic(bluetoothGattInfoValue.getCharacteristic());
+                    Log.d("successowrite",String.valueOf(success));
+                }
+
             }
         }
-        Log.d("successowrite",String.valueOf(success));
+
         return success;
     }
 
@@ -1009,5 +1014,23 @@ public class DeviceMirror {
                 bluetoothGattInfoHashMap.remove(removeBluetoothGattInfoKey);
             }
         }
+    }
+    private static final UUID Battery_Service_UUID = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb");
+    private static final UUID Battery_Level_UUID = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+    public void getBatteryLevel()
+    {
+        BluetoothGattService batteryService = bluetoothGatt.getService(Battery_Service_UUID);
+        if(batteryService == null) {
+            Log.d("yeah", "Battery service not found!");
+            return;
+        }
+
+        BluetoothGattCharacteristic batteryLevel = batteryService.getCharacteristic(Battery_Level_UUID);
+        if(batteryLevel == null) {
+            Log.d("yeah", "Battery level not found!");
+            return;
+        }
+        bluetoothGatt.readCharacteristic(batteryLevel);
+        Log.v("yeah", "batteryLevel = " + bluetoothGatt.readCharacteristic(batteryLevel));
     }
 }
