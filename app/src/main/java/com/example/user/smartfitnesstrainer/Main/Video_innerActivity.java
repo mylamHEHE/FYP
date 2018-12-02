@@ -59,6 +59,7 @@ Button start;
         rv = findViewById(R.id.basic_desp);
         rv.setNestedScrollingEnabled(false);
         Log.d("create","createx");
+        rv.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext(),
                 llm.getOrientation());
@@ -68,6 +69,7 @@ Button start;
         rv.setAdapter(vida);
             videorv = findViewById(R.id.videolist);
             videorv.setNestedScrollingEnabled(false);
+            videorv.setHasFixedSize(true);
             LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
                     llmm.getOrientation());

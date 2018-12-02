@@ -31,7 +31,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.user.smartfitnesstrainer.R;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -53,6 +55,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.tomer.fadingtextview.FadingTextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -86,6 +89,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private Button skipTutor;
     private Bundle sis;
     private TimerTask doAsynchronousTask;
+    private MediaPlayer mp;
     private double currentreading=0.0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -161,7 +165,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             player.addListener(new SimpleExoPlayer.DefaultEventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+                    if(playbackState == Player.STATE_ENDED)
+                    {
+                        finish();
+                    }
                     Log.d("playState",String.valueOf(player.getCurrentPosition()));
                 }
 
@@ -171,15 +178,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     int currentPosition = 0;
                     currentPosition = player.getCurrentWindowIndex();
                     Log.d("playState",String.valueOf(currentPosition));
-
-
-
-
-
-
-
-
                 }
+
 
                 @Override
                 public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
@@ -192,7 +192,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             });
             player.setPlayWhenReady(false);
             //player.prepare(cms);
-            player.setVolume(0.0f);
             simpleExoPlayerView.getPlayer().prepare(cms);
             simpleExoPlayerView.setUseController(false);
         }
@@ -249,17 +248,108 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
     }
     private void deviceCheck(){
-        devicealert = new DeviceAlert();
+        devicealert = DeviceAlert.newInstance(currentExerciseInstruction(currentExercise));
+
+       // devicealert.setArguments();
         devicealert.show(getFragmentManager(),"Edit");
+    }
+    private void introSound(){
+
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.welcometocadiochallege);
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.release();
+                challengeSound(R.raw.challegeonevsit);
+            }
+        });
+        mp.start();
+
+    }
+    private void challengeSound(int challenge){
+        mp = MediaPlayer.create(getApplicationContext(),challenge);
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
+    private int currentExerciseSound(int currentExercise){
+        switch (currentExercise)
+        {
+            case 0:
+                return R.raw.challegeonevsit;
+            case 1:
+                return R.raw.challegetwoplank;
+                default:
+                    return R.raw.chal3tstable;
+        }
+    }
+    private int currentExerciseInstruction(int currentExercise){
+        switch (currentExercise)
+        {
+            case 0:
+                return R.raw.vsittut;
+            case 1:
+                return R.raw.tplank;
+            default:
+                return R.raw.tstable;
+        }
+    }
+    private void congrazSound(){
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.welldone);
+        mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.release();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // Actions to do after 10 seconds
+                        try {
+                            challengeSound(currentExerciseSound(currentExercise));
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }, 1200);
+
+            }
+        });
+        mp.start();
     }
     //intro mode
     private void introMode(){
-        ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
-        String[] tmps = {"Welcome to Cardio power","Challenge "+currentExercise+"\n"+currentem.name};
-        ftv.setTexts(tmps);
-        new CountDownTimer(3000,1000) {
+        //play intro sound
+        introSound();
+        new CountDownTimer(5000,1000) {
 
             public void onTick(long millisUntilFinished) {
+
+                //challengeSound();
                 //here you can have your logic to set text to edittext
             }
             public void onFinish() {
@@ -281,10 +371,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void tutorMode(){
 
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
-        rl0.setVisibility(View.VISIBLE);
+
         noSkip();
-        String[] tmps = {"Well done!","Challenge "+currentExercise+"\n"+currentem.name};
+        congrazSound();
+        String[] tmps = {"Well done!","Challenge "+(currentExercise+1)+"\n"+currentem.name};
+        ftv.restart();
         ftv.setTexts(tmps);
+        rl0.setVisibility(View.VISIBLE);
         new CountDownTimer(6000,1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -313,10 +406,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void onTick(long millisUntilFinished) {
                     if (rl.getVisibility() == View.GONE)
                     rl.setVisibility(View.VISIBLE);
-                    if (millisUntilFinished>1000)
-                    mTextField.setText(String.valueOf(millisUntilFinished / 1000));
-                    else
-                        mTextField.setText(String.valueOf(1));
+                    mTextField.setText(String.valueOf(millisUntilFinished / 1000+1));
+
                 //here you can have your logic to set text to edittext
             }
 
@@ -339,25 +430,34 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         player.clearVideoSurface();
         player.release();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pausePlayer();
+    }
+
     protected void createPlaylist(){
-        VideoModel vid = new VideoModel(R.raw.c1);
+        VideoModel vid = new VideoModel(R.raw.svsit);
         vm.add(vid);
-        VideoModel vid2 = new VideoModel(R.raw.c1);
+        VideoModel vid2 = new VideoModel(R.raw.vvsit);
         vm.add(vid2);
-        VideoModel vid3 = new VideoModel(R.raw.vsit);
+        VideoModel vid3 = new VideoModel(R.raw.tutplunk);
         vm.add(vid3);
-        VideoModel vid4 = new VideoModel(R.raw.vsit);
+        VideoModel vid4 = new VideoModel(R.raw.traplunk);
         vm.add(vid4);
+        VideoModel vid5 = new VideoModel(R.raw.tuttstable);
+        vm.add(vid5);
+        VideoModel vid6 = new VideoModel(R.raw.realtstable);
+        vm.add(vid6);
     }
     protected void createExerciseModellist(){
         ExerciseModel em = new ExerciseModel("V-Sit",9,11,15,30,2);
         exerciseModelArrayList.add(em);
-        ExerciseModel em2 = new ExerciseModel("Inchworm",10,12,20,30,2);
+        ExerciseModel em2 = new ExerciseModel("Plank",10,12,20,30,2);
         exerciseModelArrayList.add(em2);
-        ExerciseModel em3 = new ExerciseModel("V-Sit",9,11,15,30,2);
+        ExerciseModel em3 = new ExerciseModel("T-Stabilization",9,11,15,30,2);
         exerciseModelArrayList.add(em3);
-        ExerciseModel em4 = new ExerciseModel("V-Sit",9,11,15,30,2);
-        exerciseModelArrayList.add(em4);
     }
     @Override
     protected void onResume() {
@@ -366,24 +466,26 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     protected void firstClip(){
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
-        String[] tmps = {"Welcome to Cardio power set!","Challenge "+currentExercise+"\n"+currentem.name};
+        String[] tmps = {"Welcome to Cardio challenge!","Challenge "+(currentExercise+1)+"\n"+currentem.name};
         ftv.setTexts(tmps);
-
-        animationAfterExercise();
     }
-
+    private void pausePlayer(){
+        player.setPlayWhenReady(false);
+        simpleExoPlayerView.setUseController(true);
+        simpleExoPlayerView.showController();
+        simpleExoPlayerView.setControllerHideOnTouch(false);
+        pause.setVisibility(View.INVISIBLE);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sis=savedInstanceState;
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null)
+        if (savedInstanceState!=null)
         {
-            Log.d("savce",savedInstanceState.toString());
+            sis=savedInstanceState;
         }
-
         setContentView(R.layout.activity_exercise);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         pause = findViewById(R.id.exo_pause);
+
         play = findViewById(R.id.exo_play);
         skipTutor = findViewById(R.id.skiptut);
         rl = findViewById(R.id.timerrl);
@@ -419,11 +521,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void onClick(View v)
             {
-                player.setPlayWhenReady(false);
-                simpleExoPlayerView.setUseController(true);
-                simpleExoPlayerView.showController();
-                simpleExoPlayerView.setControllerHideOnTouch(false);
-                pause.setVisibility(View.INVISIBLE);
+                pausePlayer();
             }
         });
 
@@ -470,7 +568,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     {
         stageScore++;
         currentScore.setText(String.valueOf(stageScore));
-        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
         mp.start();
     }
     public void pauseCounter(){
@@ -487,7 +585,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     public void run() {
                         try {
                             Log.d("readffromace",String.valueOf(currentreading)+" "+String.valueOf(currentreading/30));
-                            if(analyticzer.analyze(0,currentreading/200)){
+                            if(analyticzer.analyze(currentExercise,currentreading/200)){
                                scoreAdder();
                             }
                          currentreading=0;
@@ -507,6 +605,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     protected void onDestroy() {
         super.onDestroy();
         player.release();
+            mp.release();
         if(doAsynchronousTask!=null)
         doAsynchronousTask.cancel();
         unregDevice();

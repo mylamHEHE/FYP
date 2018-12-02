@@ -70,13 +70,13 @@
 
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Weight"
+                                android:text="Difficulty"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="125lb"
+                                android:text="Easy"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -93,13 +93,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Height"
+                                android:text="Equipment"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="175cm"
+                                android:text="Sensor x1"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -115,13 +115,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Age"
+                                android:text="Age group"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="25(Male)"
+                                android:text="All age"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"

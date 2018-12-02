@@ -33,6 +33,7 @@
             android:layout_marginLeft="320dp"
             android:id="@+id/setting"
             android:src="@drawable/setting"
+            android:visibility="gone"
             android:background="@null"
             />
         <TextView

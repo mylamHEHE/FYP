@@ -35,6 +35,13 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 */
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ViseBle.getInstance().disconnect();
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

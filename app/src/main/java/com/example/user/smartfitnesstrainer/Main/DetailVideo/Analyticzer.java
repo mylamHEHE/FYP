@@ -22,6 +22,20 @@ public class Analyticzer {
                     return false;
                 }
             }
+            case 1:
+            {
+                if (currentangle >= 38 && currentangle < 78)
+                {
+                    correctCount++;
+                    Log.d("correctLeg",String.valueOf(correctCount));
+                    return true;
+                }
+                else
+                {
+                    Log.d("wrongLeg",String.valueOf(correctCount));
+                    return false;
+                }
+            }
         }
         return false;
     }
