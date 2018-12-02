@@ -96,8 +96,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-            final int sender = intent.getIntExtra("sender_name",0);
+             int sender = intent.getIntExtra("sender_name",0);
             Log.d("shb",String.valueOf(sender));
+            //tommy change 78
+            if(sender==78)sender=0;
             currentreading+=sender;
 
 
@@ -560,12 +562,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     public void onClickSkip(View v)
     {
-        Toast.makeText(this, String.valueOf(player.getDuration()), Toast.LENGTH_LONG).show();
         player.seekTo(player.getDuration());
     }
 
     private void scoreAdder()
     {
+
         stageScore++;
         currentScore.setText(String.valueOf(stageScore));
         mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
@@ -584,8 +586,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            Log.d("readffromace",String.valueOf(currentreading)+" "+String.valueOf(currentreading/30));
-                            if(analyticzer.analyze(currentExercise,currentreading/200)){
+                            Log.d("readffromace",String.valueOf(currentExercise-1)+" "+String.valueOf(currentreading/40));
+                            if(analyticzer.analyze(currentExercise-1,currentreading/40)){
                                scoreAdder();
                             }
                          currentreading=0;

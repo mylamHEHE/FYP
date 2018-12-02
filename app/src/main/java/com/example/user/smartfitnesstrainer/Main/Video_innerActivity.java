@@ -142,9 +142,6 @@ Button start;
         videoNames.add("Plank");
         videoNames.add("Russian");
         videoNames.add("Side Plank");
-        videoDuration.add("0:30");
-        videoDuration.add("0:30");
-        videoDuration.add("0:30");
 
     }
 
