@@ -7,6 +7,7 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import android.content.Intent;
         import android.os.AsyncTask;
         import android.os.Bundle;
+        import android.os.Handler;
         import android.support.annotation.Nullable;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
@@ -30,6 +31,8 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.HashMap;
         import java.util.List;
         import java.util.Map;
+        import java.util.Timer;
+        import java.util.TimerTask;
         import java.util.regex.Pattern;
 
         import static java.lang.Math.pow;
@@ -74,14 +77,15 @@ public class DeviceControlActivity extends Activity {
         init();
     }
 
-    private void init() {
+    protected void init() {
 
         mDevice = getIntent().getParcelableExtra("ble");
 
         mSpCache = new SpCache(this);
 
-
         BluetoothDeviceManager.getInstance().connect(mDevice);
+
+
         Log.d("bluettohd",String.valueOf(BluetoothDeviceManager.getInstance().isConnected(mDevice)));
 
  //       showDefaultInfo();
@@ -109,9 +113,11 @@ public class DeviceControlActivity extends Activity {
 
     }
     private void testBluetoothAvability(){
-        Log.d("bletest", String.valueOf(ViseBle.getInstance().getConnectState(mDevice)));
+
 try {
+
     DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
+    Log.d("bletest", deviceMirror.getBluetoothLeDevice().getAddress());
     for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
         Log.d("bletest", String.valueOf(bgs.getUuid()));
         if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
@@ -166,6 +172,7 @@ catch (Exception e)
 
                 }
             } else {
+                Log.d("fail","failing");
                 /*((EditText) findViewById(R.id.show_write_characteristic)).setText("");
                 ((EditText) findViewById(R.id.show_notify_characteristic)).setText("");
                 */
@@ -325,14 +332,15 @@ catch (Exception e)
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
+      //  BluetoothLeDeviceStore bluetoothLeDeviceStore =
     //get Data From Device - non-blockingUI
 
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
-
+                Log.d("delble",event.getBluetoothLeDevice().getAddress());
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

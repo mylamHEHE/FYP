@@ -33,6 +33,7 @@ import com.example.user.smartfitnesstrainer.Main.BLE.DeviceMirror;
 import com.example.user.smartfitnesstrainer.Main.BLE.IScanCallback;
 import com.example.user.smartfitnesstrainer.Main.BLE.PropertyType;
 import com.example.user.smartfitnesstrainer.Main.BLE.ScanCallback;
+import com.example.user.smartfitnesstrainer.Main.BLE.SecondDeviceControl;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.R;
 import com.vise.log.ViseLog;
@@ -47,7 +48,6 @@ import static com.vise.utils.handler.HandlerUtil.runOnUiThread;
 public class MyBluetoothService {
     private String address ;
     private Activity activity;
-    private BluetoothLeDevice mDevice;
     private boolean gotDevice=false;
     Context context;
     public MyBluetoothService(String address,Context context,Activity activity) {
@@ -94,7 +94,6 @@ public class MyBluetoothService {
                             Log.d("mylam","gotdev");
                             gotDevice=true;
 
-
                              return true;
 
                         }
@@ -111,9 +110,11 @@ public class MyBluetoothService {
                     if(result)
                     {
 
-                        Intent intent = new Intent(activity, DeviceControlActivity.class);
-                        intent.putExtra("ble", bluetoothLeDevice);
-                        activity.startActivity(intent);
+                            Log.d("blegetfirst",bluetoothLeDevice.getAddress());
+                            Intent intent = new Intent(activity, DeviceControlActivity.class);
+                            intent.putExtra("ble", bluetoothLeDevice);
+                            activity.startActivity(intent);
+
                     }
                     else
                     {

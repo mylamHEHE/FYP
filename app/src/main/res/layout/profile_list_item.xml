@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:paddingBottom="5dp"
     android:orientation="vertical"
+    android:background="#666"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
@@ -34,12 +35,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Heading"
+                android:textColor="#eee"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
             <TextView
                 android:id="@+id/tvcreatedate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#eee"
                 android:text="08/09/2018"
                  />
         </LinearLayout>
