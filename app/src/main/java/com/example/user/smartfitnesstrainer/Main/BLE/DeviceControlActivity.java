@@ -340,7 +340,7 @@ catch (Exception e)
             protected Void doInBackground(Void... params) {
                 Log.d("delble",event.getBluetoothLeDevice().getAddress());
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

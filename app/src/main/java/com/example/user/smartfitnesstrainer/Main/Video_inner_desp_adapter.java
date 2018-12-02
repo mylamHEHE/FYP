@@ -41,8 +41,6 @@ public class Video_inner_desp_adapter extends RecyclerView.Adapter<RecyclerView.
     Dialog myVideo;
     private ArrayList<String> mImageNames = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
-    private ArrayList<Integer> mImages = new ArrayList<>();
-    private ArrayList<Integer> mVideos = new ArrayList<>();
     private Context mContext;
     private int type;
     private int stopPosition;
@@ -52,10 +50,6 @@ public class Video_inner_desp_adapter extends RecyclerView.Adapter<RecyclerView.
     public Video_inner_desp_adapter(Context context, ArrayList<String> imageNames, ArrayList<String> duration,int type) {
         mImageNames = imageNames;
 
-        mImages.add(R.drawable.thumb1);
-        mImages.add(R.drawable.thumb2);
-        mVideos.add(R.raw.video);
-        mVideos.add(R.raw.video0);
         mContext = context;
         mduration = duration;
         this.type = type;
@@ -81,21 +75,22 @@ public class Video_inner_desp_adapter extends RecyclerView.Adapter<RecyclerView.
         return type;
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         Log.d("on9", "onBindViewHolder: called.");
 
-        switch (holder.getItemViewType()) {
+        switch (type) {
             case 0:
                 BasicDespViewHolder viewHolder0 = (BasicDespViewHolder) holder;
                 viewHolder0.name.setText(mImageNames.get(position));
-                viewHolder0.duration.setText(mduration.get(position));
+                //viewHolder0.duration.setText(mduration.get(position));
                 break;
 
             case 1:
                 PlaylistViewHolder viewHolder2 = (PlaylistViewHolder)holder;
                 viewHolder2.name.setText(mImageNames.get(position));
-                viewHolder2.duration.setText(mduration.get(position));
+/*
 try {
     Glide.with(mContext)
             .asBitmap()
@@ -105,7 +100,7 @@ try {
 catch (Exception e)
 {
 
-}
+}*/
                 break;
         }
 
