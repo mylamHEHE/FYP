@@ -498,7 +498,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         rl0 = findViewById(R.id.timerrl0);
         scoreBoard = findViewById(R.id.scoreboard);
         currentScore = findViewById(R.id.score);
-        baseScore = findViewById(R.id.basescore);
+    //    baseScore = findViewById(R.id.basescore);
         rl.setVisibility(View.GONE);
         Log.d("pkxt","owow");
         m_MyReceiver1 = new MyBroadcaseReceiver1();
