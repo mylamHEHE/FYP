@@ -14,6 +14,7 @@ import com.vise.log.ViseLog;
 
 import java.lang.reflect.Method;
 import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,8 @@ public class DeviceMirror {
     private final DeviceMirror deviceMirror;
     private final String uniqueSymbol;//唯一符号
     private final BluetoothLeDevice bluetoothLeDevice;//设备基础信息
-
+    //tommy
+    List<BluetoothGattCharacteristic> chars = new ArrayList<>();
     private BluetoothGatt bluetoothGatt;//蓝牙GATT
     private IRssiCallback rssiCallback;//获取信号值回调
     private IConnectCallback connectCallback;//连接回调
@@ -97,6 +99,7 @@ public class DeviceMirror {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 gatt.discoverServices();
             } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
+                Log.d("adpre","sta");
                 close();
                 if (connectCallback != null) {
                     if (handler != null) {
@@ -151,7 +154,9 @@ public class DeviceMirror {
         public void onCharacteristicRead(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, final int status) {
             ViseLog.i("onCharacteristicRead  status: " + status + ", data:" + HexUtil.encodeHexStr(characteristic.getValue()) +
                     "  ,thread: " + Thread.currentThread());
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d("chacter",gatt.getDevice().getAddress());
                 handleSuccessData(readInfoMap, characteristic.getValue(), status, true);
             } else {
                 readFailure(new GattException(status), true);
@@ -739,7 +744,7 @@ public class DeviceMirror {
         }
         connectState = ConnectState.CONNECT_PROCESS;
         if (bluetoothLeDevice != null && bluetoothLeDevice.getDevice() != null) {
-            bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), false, coreGattCallback);
+            bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), true, coreGattCallback);
         }
     }
 
@@ -790,6 +795,8 @@ public class DeviceMirror {
                     }
                 }
                 if (bluetoothGatt != null) {
+
+                    Log.d("writetb",bluetoothGatt.getDevice().getAddress());
                     bluetoothGatt.writeDescriptor(bluetoothGattDescriptor);
                 }
             }

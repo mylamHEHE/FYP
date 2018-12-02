@@ -108,6 +108,7 @@ public class SecondDeviceControl extends Activity {
             Log.d("bletest2", String.valueOf(deviceMirror.getBluetoothLeDevice().getAddress()));
             for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
                 if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
+
                     writeHead(bgs);
 
                     notifyHead(bgs);
