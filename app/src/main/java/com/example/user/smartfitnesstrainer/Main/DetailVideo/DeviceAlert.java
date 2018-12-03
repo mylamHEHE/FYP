@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.example.user.smartfitnesstrainer.R;
@@ -89,6 +90,8 @@ public class DeviceAlert extends DialogFragment
         VideoView video=(VideoView)view.findViewById(R.id.tutorial_vid);
         Log.d("vieod",video.toString());
         String path = "android.resource://" + getActivity().getPackageName() + "/" + tutVideo;
+
+// Init Video
         video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
