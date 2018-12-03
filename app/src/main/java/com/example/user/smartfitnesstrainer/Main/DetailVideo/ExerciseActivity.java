@@ -83,13 +83,16 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private SimpleExoPlayer player;
     private SimpleExoPlayerView simpleExoPlayerView;
     private ImageButton play;
+    private ArrayList<Integer> totalRound =new ArrayList<>();
     private RelativeLayout rl;
     private RelativeLayout rl0;
     private LinearLayout scoreBoard;
     private Button skipTutor;
+    private boolean onFinishRepeat =false;
     private Bundle sis;
     private TimerTask doAsynchronousTask;
     private MediaPlayer mp;
+    private TextView angle;
     private double currentreading=0.0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -98,8 +101,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             // TODO Auto-generated method stub
              int sender = intent.getIntExtra("sender_name",0);
             Log.d("shb",String.valueOf(sender));
+
             //tommy change 78
             if(sender==78)sender=0;
+            angle.setText(String.valueOf(sender));
             currentreading+=sender;
 
 
@@ -140,7 +145,15 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 new ExtractorMediaSource(rawResourceDataSource.getUri(),factory, new DefaultExtractorsFactory(), null, null);
         return audioSource;
     }
+    private void roundFinished(){
+        Log.d("stageScore",String.valueOf(stageScore));
 
+            onFinishRepeat =true;
+            totalRound.add(stageScore);
+            stageScore = 0;
+            currentScore.setText(String.valueOf(stageScore));
+
+    }
     private void prepareExoPlayerFromFileUri(Uri uri) {
         if (player!=null)
         {
@@ -169,8 +182,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                     if(playbackState == Player.STATE_ENDED)
                     {
-                        finish();
+                        if(!onFinishRepeat) {
+                            roundFinished();
+                            Log.d("plex", String.valueOf(totalRound.size()));
+
+                            for (int x : totalRound) {
+                                Log.d("roundscore", String.valueOf(x));
+                            }
+                            finish();
+                        }
                     }
+
                     Log.d("playState",String.valueOf(player.getCurrentPosition()));
                 }
 
@@ -180,6 +202,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     int currentPosition = 0;
                     currentPosition = player.getCurrentWindowIndex();
                     Log.d("playState",String.valueOf(currentPosition));
+                    if(isTutorMode==1)
+                    {
+                        //Finish one round
+                        roundFinished();
+                        Log.d("try","sessionmode");
+                    }
                 }
 
 
@@ -235,6 +263,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
         else if (isTutorMode == 1)
         {
+
             pauseCounter();
             scoreBoardAppear();
             skipAvaliable();
@@ -419,6 +448,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 pb.setVisibility(View.INVISIBLE);
                 player.setPlayWhenReady(true);
                 currentExercise++;
+                callAsynchronousTask();
                 isTutorMode = 1;
             }
 
@@ -496,6 +526,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         mTextField = findViewById(R.id.countdown);
         pb = findViewById(R.id.video_progressbar);
         rl0 = findViewById(R.id.timerrl0);
+        angle = findViewById(R.id.angle);
         scoreBoard = findViewById(R.id.scoreboard);
         currentScore = findViewById(R.id.score);
     //    baseScore = findViewById(R.id.basescore);
@@ -617,7 +648,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     public void onDismiss(DialogInterface dialogInterface) {
 
         exerciseStarts();
-        callAsynchronousTask();
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
     }

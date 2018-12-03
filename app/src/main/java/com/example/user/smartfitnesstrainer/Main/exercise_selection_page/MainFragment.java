@@ -39,11 +39,11 @@ public class MainFragment extends Fragment {
         Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
 
         mImageUrls.add("https://cdn.liftbrands.com/snap/uploads/location_tour/2018/may/30/Urban-Fitness-Club-Battle-Ropes_ori.jpg");
-        mNames.add("Core Workout");
+        mNames.add("Cardio");
         mduration.add("");
 
         mImageUrls.add("https://cdn-ami-drupal.heartyhosting.com/sites/muscleandfitness.com/files/styles/full_node_image_1090x614/public/media/rowing_2.jpg?itok=yVeSICMt&timestamp=1484950270");
-        mNames.add("Cardio");
+        mNames.add("Core Workout");
         mduration.add("");
 
         mImageUrls.add("https://www.dwfitnessfirst.com/media/1944/20140418_fitnessfirst_fatburn-extreme.jpg?crop=0.0653935185185186,0,0,0&cropmode=percentage&width=1500&rnd=131547870940000000");
