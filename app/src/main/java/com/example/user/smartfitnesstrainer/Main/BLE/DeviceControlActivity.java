@@ -4,8 +4,10 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import android.app.AlertDialog;
         import android.bluetooth.BluetoothGattCharacteristic;
         import android.bluetooth.BluetoothGattService;
+        import android.content.Intent;
         import android.os.AsyncTask;
         import android.os.Bundle;
+        import android.os.Handler;
         import android.support.annotation.Nullable;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
@@ -29,6 +31,8 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import java.util.HashMap;
         import java.util.List;
         import java.util.Map;
+        import java.util.Timer;
+        import java.util.TimerTask;
         import java.util.regex.Pattern;
 
         import static java.lang.Math.pow;
@@ -73,14 +77,15 @@ public class DeviceControlActivity extends Activity {
         init();
     }
 
-    private void init() {
+    protected void init() {
 
         mDevice = getIntent().getParcelableExtra("ble");
 
         mSpCache = new SpCache(this);
 
-
         BluetoothDeviceManager.getInstance().connect(mDevice);
+
+
         Log.d("bluettohd",String.valueOf(BluetoothDeviceManager.getInstance().isConnected(mDevice)));
 
  //       showDefaultInfo();
@@ -108,9 +113,11 @@ public class DeviceControlActivity extends Activity {
 
     }
     private void testBluetoothAvability(){
-        Log.d("bletest", String.valueOf(ViseBle.getInstance().getConnectState(mDevice)));
+
 try {
+
     DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
+    Log.d("bletest", deviceMirror.getBluetoothLeDevice().getAddress());
     for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
         Log.d("bletest", String.valueOf(bgs.getUuid()));
         if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
@@ -165,6 +172,7 @@ catch (Exception e)
 
                 }
             } else {
+                Log.d("fail","failing");
                 /*((EditText) findViewById(R.id.show_write_characteristic)).setText("");
                 ((EditText) findViewById(R.id.show_notify_characteristic)).setText("");
                 */
@@ -213,12 +221,14 @@ catch (Exception e)
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
         int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
         double resultx = xtempshifted/2048.0;
+        if(resultx>30)return;
         int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
         int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
         double resulty = ytempshifted/2048.0;
         int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
         int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
         double resultz = ztempshifted/2048.0;
+
         //variable for complement filter
         int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
         int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
@@ -233,8 +243,13 @@ catch (Exception e)
         Angy = 0.998*(Angy + resultg*100/1000)+0.02*angle;
         double kang =  kalmanCalculate((float)Angy,(float)resultg);
 
-        Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+
-                "tanxyz: "+String.valueOf((angle*100))+ " tanxz: "+String.valueOf((kang*100))+" tanxyz: "+String.valueOf((Angy*100)));
+        //Log.d("shb",String.valueOf(resultx)+" "+String.valueOf(resulty)+" "+String.valueOf(resultz)+" "+
+              //  " tanxz: "+String.valueOf((int)(angle*100))+" tanxyz: "+String.valueOf((int)(LS*100)));
+
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        Log.d("broadcast?",String.valueOf((int)(angle*100)));
+        it.putExtra("sender_name", (int)(angle*100));
+        sendBroadcast(it);
        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
@@ -317,21 +332,21 @@ catch (Exception e)
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
+      //  BluetoothLeDeviceStore bluetoothLeDeviceStore =
     //get Data From Device - non-blockingUI
 
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
-
+                Log.d("delble",event.getBluetoothLeDevice().getAddress());
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
-                    Log.d("result",result);
 
                     int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
 
@@ -342,21 +357,31 @@ catch (Exception e)
                     {
 
                         tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        Log.d("temp",tmp);
                         tmp+="-";
                         id+=2;
                     }
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
-                    shiftHighByte(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]);
-                    IMUupdate(data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8],data[9],data[10],data[11],data[12]);
+                    try {
+                        shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                        //IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
                 }
                 return null;
             }
 
         }.execute();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

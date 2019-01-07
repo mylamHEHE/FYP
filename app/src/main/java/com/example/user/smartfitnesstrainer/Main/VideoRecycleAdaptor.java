@@ -34,6 +34,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.SecondDeviceControl;
+import com.example.user.smartfitnesstrainer.Main.BLE.ToastUtil;
 import com.example.user.smartfitnesstrainer.R;
 
 import java.util.ArrayList;
@@ -59,7 +61,27 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_video, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int position = holder.getAdapterPosition();
+                //check if position exists
+                if (position == RecyclerView.NO_POSITION) {
+
+                    //TODO whatever you want
+                }
+                else if (position == 0)
+                {
+                    Intent homeIntent = new Intent(mContext,Video_innerActivity.class);
+                    mContext.startActivity(homeIntent);
+                }
+                else
+                {
+                    ToastUtil.showToast(mContext, "Unlock at level 21!");
+                }
+            }
+        });
         return holder;
     }
 
@@ -74,11 +96,11 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
 
         holder.imageName.setText(mImageNames.get(position));
         holder.duration.setText(mduration.get(position));
+       /*
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent homeIntent = new Intent(mContext,Video_innerActivity.class);
-                mContext.startActivity(homeIntent);
+
 
                 //Intent intent = new Intent(mContext, VideoActivity.class);
                 //intent.putExtra("image_url", mImages.get(position));
@@ -86,6 +108,7 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
                 //mContext.startActivity(intent);
             }
         });
+        */
     }
 
     @Override

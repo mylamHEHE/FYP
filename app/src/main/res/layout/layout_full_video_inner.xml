@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView1"
+
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <include layout="@layout/snippet_top_profilebar"/>
-    <ScrollView
-
-        android:id="@+id/scrollView1"
-
-        android:layout_width="match_parent"
-        android:fillViewport="true"
-        android:layout_height="match_parent"
-        >
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -71,13 +66,13 @@
 
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Weight"
+                                android:text="Difficulty"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="125lb"
+                                android:text="Easy"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -94,13 +89,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Height"
+                                android:text="Equipment"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="175cm"
+                                android:text="Sensor x1"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -116,13 +111,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Age"
+                                android:text="Age group"
                                 android:textColor="#fff"
                                 android:textSize="20sp"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="25(Male)"
+                                android:text="All age"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -160,7 +155,6 @@
 
                 android:id="@+id/video">
             </VideoView>-->
-        </LinearLayout>
     <!--android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -168,5 +162,6 @@
         android:id="@+id/recyclerv_view">
     </android.support.v7.widget.RecyclerView-->
 
-    </ScrollView>
 </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>

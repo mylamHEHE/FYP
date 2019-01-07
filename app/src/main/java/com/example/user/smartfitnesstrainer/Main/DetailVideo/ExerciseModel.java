@@ -15,4 +15,5 @@ public class ExerciseModel {
         this.duration = duration;
         this.hardness = hardness;
     }
+
 }
