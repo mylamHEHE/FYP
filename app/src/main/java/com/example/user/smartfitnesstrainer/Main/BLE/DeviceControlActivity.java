@@ -1,5 +1,4 @@
 package com.example.user.smartfitnesstrainer.Main.BLE;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -181,17 +180,20 @@ public class DeviceControlActivity extends Activity {
     }
 
     double Angy = 0;
-    public double help(String a,String b){
-        int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
-        return ((xtemp<<7) | Integer.parseInt(b,2))/2048.0;
+    public float help(String a,String b){
+        short int16 = (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF));
+        float f = int16/(float)2048.0;
+        Log.d("datax",String.valueOf(f));
+        return f;
     }
-    public double help2(String a,String b){
+    public float help2(String a,String b){
         int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
-        return ((xtemp<<7) | Integer.parseInt(b,2))* Math.PI / (16.4f * 180.0f);
+        return (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF))* (float)(Math.PI / (16.4f * 180.0f));
     }
     public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
-        int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
+        int xtempshifted=(xtemp<<7) | Integer.parseInt(x2,2);
+        Log.d("xtempcheck",String.valueOf(xtempshifted));
         double resultx = xtempshifted/2048.0;
         if(resultx>30)return;
         int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
@@ -243,8 +245,8 @@ public class DeviceControlActivity extends Activity {
         double gx = help2( gx1, gx2)- 69.74;
         double gy = help2( gy1, gy2)- 69.74;
         double gz = help2( gz1, gz2);
-        Log.d("tone",String.valueOf(gx)+" "+String.valueOf(gy)+" "+String.valueOf(gz));
-        Log.d("tone2",String.valueOf(ax)+" "+String.valueOf(ay)+" "+String.valueOf(az));
+        Log.d("gyro",String.valueOf(gx)+" "+String.valueOf(gy)+" "+String.valueOf(gz));
+        Log.d("accelo",String.valueOf(ax)+" "+String.valueOf(ay)+" "+String.valueOf(az));
         // 先把这些用得到的值算好
         double q0q0 = q0*q0;
         double q0q1 = q0*q1;
@@ -337,14 +339,17 @@ public class DeviceControlActivity extends Activity {
                         tmp+="-";
                         id+=2;
                     }
+
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
+                    byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+    //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+      //              float f = int16;
+        //            Log.d("datax",String.valueOf(f));
                     try {
 
                         shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        Log.d("raw",String.valueOf(data[1])+" "+String.valueOf(data[2])+" "+String.valueOf(data[3])+" "+String.valueOf(data[4])
-                                +" "+String.valueOf(data[5])+" "+String.valueOf(data[6])+" "+String.valueOf(data[7])+" "+String.valueOf(data[8]));
                         IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                     }
                     catch(Exception e)
