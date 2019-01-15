@@ -28,6 +28,7 @@ package com.example.user.smartfitnesstrainer.Main.BLE;
         import com.vise.xsnow.event.Subscribe;
 
         import java.util.ArrayList;
+        import java.util.Arrays;
         import java.util.HashMap;
         import java.util.List;
         import java.util.Map;
@@ -209,17 +210,20 @@ catch (Exception e)
         return x_angle;
     }
     double Angy = 0;
-    public double help(String a,String b){
-        int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
-        return ((xtemp<<8) | Integer.parseInt(b,2))/2048.0;
+    public float help(String a,String b){
+        short int16 = (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF));
+        float f = int16/(float)2048.0;
+        Log.d("datax",String.valueOf(f));
+        return f;
     }
-    public double help2(String a,String b){
+    public float help2(String a,String b){
         int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
-        return (((xtemp<<8) | Integer.parseInt(b,2)))* Math.PI / (16.4f * 180.0f);
+        return (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF))* (float)(Math.PI / (16.4f * 180.0f));
     }
     public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
         int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
-        int xtempshifted=(xtemp<<8) | Integer.parseInt(x2,2);
+        int xtempshifted=(xtemp<<7) | Integer.parseInt(x2,2);
+        Log.d("xtempcheck",String.valueOf(xtempshifted));
         double resultx = xtempshifted/2048.0;
         if(resultx>30)return;
         int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
@@ -254,7 +258,7 @@ catch (Exception e)
     }
     double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
     double Ki = 0.008f;
-    double halfT = 0.001f; // 采样周期的一半，用于求解四元数微分方程时计算角增量
+    double halfT = 0.050f; // 采样周期的一半，用于求解四元数微分方程时计算角增量
     double q0 = 1, q1 = 0, q2 = 0, q3 = 0;    // 初始姿态四元数，由上篇博文提到的变换四元数公式得来
     double exInt = 0, eyInt = 0, ezInt = 0;    //当前加计测得的重力加速度在三轴上的分量
     //与用当前姿态计算得来的重力在三轴上的分量的误差的积分
@@ -272,6 +276,8 @@ catch (Exception e)
         double gx = help2( gx1, gx2);
         double gy = help2( gy1, gy2);
         double gz = help2( gz1, gz2);
+        Log.d("gyro",String.valueOf(gx)+" "+String.valueOf(gy)+" "+String.valueOf(gz));
+        Log.d("accelo",String.valueOf(ax)+" "+String.valueOf(ay)+" "+String.valueOf(az));
         // 先把这些用得到的值算好
         double q0q0 = q0*q0;
         double q0q1 = q0*q1;
@@ -326,9 +332,13 @@ catch (Exception e)
         //其中YAW航向角由于加速度计对其没有修正作用，因此此处直接用陀螺仪积分代替
         Log.d("momo","AngleY: "+String.valueOf(Math.asin(-2 * q1 * q3 + 2 * q0* q2)*100)+" AngleX: "+
                 String.valueOf((Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1))*100));
-//        Q_ANGLE.Z = GYRO_I.Z; // yaw
-//        Q_ANGLE.Y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
-//        Q_ANGLE.X = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
+        double z = Math.atan2(2 * q0 * q3 + 2 * q1 * q2,-2 * q2 * q2 - 2 * q3* q3 + 1)* 57.3; // yaw; // yaw
+        double y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
+        double x = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
+
+        double angle = Math.atan2(x,sqrt(pow(x,2)+pow(y,2)+pow(z,2)));
+
+        Log.d("assd",String.valueOf(x)+" "+String.valueOf(y)+" "+String.valueOf(z)+" "+String.valueOf(angle));
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
@@ -340,7 +350,7 @@ catch (Exception e)
             protected Void doInBackground(Void... params) {
                 Log.d("delble",event.getBluetoothLeDevice().getAddress());
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -360,12 +370,18 @@ catch (Exception e)
                         tmp+="-";
                         id+=2;
                     }
+
                     Pattern pattern;
                     pattern=Pattern.compile(Pattern.quote("-"));
                     String[] data =pattern.split(tmp);
+                    String str = Arrays.toString(data);
+                    byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+    //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+      //              float f = int16;
+        //            Log.d("datax",String.valueOf(f));
                     try {
                         shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        //IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                     }
                     catch(Exception e)
                     {
