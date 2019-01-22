@@ -241,20 +241,16 @@ public class CameraFragment extends android.support.v4.app.Fragment {
             if(ViseBle.getInstance().getDeviceMirrorPool()==null||(ViseBle.getInstance().getDeviceMirrorPool()!=null
                     &&ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==0)) {
                 bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
-                new Thread(new Runnable() {
-                    public void run() {
+
                         bluetooth.init();
-                    }
-                }).start();
+
             }
             else if (ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==1)
             {
                 secondBLE = new SecondBLE(bleAdress, getContext(), getActivity());
-                new Thread(new Runnable() {
-                    public void run() {
+
                         secondBLE.init();
-                    }
-                }).start();
+
             }
 
         }

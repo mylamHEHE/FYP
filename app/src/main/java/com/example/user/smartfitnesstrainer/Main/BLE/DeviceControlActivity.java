@@ -347,9 +347,6 @@ public class DeviceControlActivity extends Activity {
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
-        //  BluetoothLeDeviceStore bluetoothLeDeviceStore =
-        //get Data From Device - non-blockingUI
-
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
@@ -398,7 +395,6 @@ public class DeviceControlActivity extends Activity {
             }
 
         }.execute();
-
     }
 
     @Override
