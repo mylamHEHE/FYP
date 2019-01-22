@@ -344,7 +344,8 @@ catch (Exception e)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
       //  BluetoothLeDeviceStore bluetoothLeDeviceStore =
     //get Data From Device - non-blockingUI
-
+        Log.d("eventx",String.valueOf(event.getData()[15]));
+    /*
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
@@ -392,7 +393,7 @@ catch (Exception e)
             }
 
         }.execute();
-
+*/
     }
 
     @Override
