@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
+import com.example.user.smartfitnesstrainer.Main.Splash.StartLoginActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import io.github.inflationx.calligraphy3.CalligraphyConfig;
@@ -39,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run(){
-                Intent homeIntent = new Intent(mContext, HomeActivity.class);
-                startActivity(homeIntent);
+
+                //fix: Intent to login if not login else direct
+                Intent loginIntent = new Intent(mContext, StartLoginActivity.class);
+                startActivity(loginIntent);
                 finish();
 
             }
