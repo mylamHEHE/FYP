@@ -57,7 +57,10 @@ public class DeviceControlActivity extends Activity {
     private TextView mDataAsArray;
     private EditText mInput;
     private EditText mOutput;
-
+    //Data buffer import
+    private ArrayList buffer_Data = new ArrayList();
+    //buffer timer for preventing package loss
+    Timer buf_timer= new Timer();
     private SpCache mSpCache;
     private static final byte[] WRITE_HEADER = new byte[] { 0x23,0x00 };
     //设备信息
@@ -87,6 +90,7 @@ public class DeviceControlActivity extends Activity {
 
 
         Log.d("bluettohd",String.valueOf(BluetoothDeviceManager.getInstance().isConnected(mDevice)));
+        timerTaskforBuffer();
 
         //       showDefaultInfo();
 
@@ -347,15 +351,13 @@ public class DeviceControlActivity extends Activity {
     }
     @Subscribe
     public void showDeviceNotifyData(final NotifyDataEvent event) {
+
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
+
                 Log.d("delble",event.getBluetoothLeDevice().getAddress());
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
@@ -381,9 +383,11 @@ public class DeviceControlActivity extends Activity {
                     //              float f = int16;
                     //            Log.d("datax",String.valueOf(f));
                     try {
+                        buffer_Data.add(data[1]);
 
-                        shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+
+                      //  shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                       // IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
 
                     }
                     catch(Exception e)
@@ -396,7 +400,20 @@ public class DeviceControlActivity extends Activity {
 
         }.execute();
     }
+    private void timerTaskforBuffer(){
+        if(buffer_Data.isEmpty())
+            return;
+        TimerTask showtime= new TimerTask(){//也可以用匿名類別的方式，
 
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                Log.d("timer",String.valueOf(buffer_Data.get(0)));
+                buffer_Data.remove(0);
+            }
+        };
+        buf_timer.schedule(showtime,  100);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
