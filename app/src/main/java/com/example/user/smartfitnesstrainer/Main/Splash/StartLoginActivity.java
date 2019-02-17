@@ -3,6 +3,7 @@ package com.example.user.smartfitnesstrainer.Main.Splash;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,7 +35,18 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.user.smartfitnesstrainer.Main.HomeActivity;
+import com.example.user.smartfitnesstrainer.Main.UserModel.Login;
+import com.example.user.smartfitnesstrainer.Main.UserModel.User;
+import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -41,6 +54,12 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class StartLoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+    Retrofit.Builder builder = new Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("http://10.0.2.2:5000/");
+    Retrofit retrofit = builder.build();
+    UserClient userClient = retrofit.create(UserClient.class);
+    PrefKey prefKey;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -72,7 +91,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
-
+        prefKey= new PrefKey(this);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -174,10 +193,6 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -193,10 +208,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
+
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
@@ -301,7 +313,8 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
 
         private final String mEmail;
         private final String mPassword;
-
+        private String access_token = "";
+        private String renew_token = "";
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -313,6 +326,34 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
 
             try {
                 // Simulate network access.
+                Login login = new Login(mEmail,mPassword);
+                Call<User> call = userClient.login(login);
+                call.enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        if(response.isSuccessful())
+                        {
+                            if(response.body().getAccess_token()!=null) {
+                                access_token = response.body().getAccess_token();
+                                Toast.makeText(StartLoginActivity.this, response.body().getAccess_token(), Toast.LENGTH_SHORT).show();
+
+                            }
+                            else
+                            {
+                                Toast.makeText(StartLoginActivity.this,"Wrong credentials",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(StartLoginActivity.this,"Wrong credentials",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        Toast.makeText(StartLoginActivity.this,"erroor",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
@@ -327,7 +368,10 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
             }
 
             // TODO: register the new account here.
-            return true;
+            if(!access_token.equals(""))
+                return true;
+            else
+           return false;
         }
 
         @Override
@@ -336,7 +380,14 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
             showProgress(false);
 
             if (success) {
-                Toast.makeText(StartLoginActivity.this, "Login successfull", Toast.LENGTH_SHORT).show();
+                prefKey.saveToken(access_token,"");
+                //tomilia: temp use intent for login;
+                Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(loginIntent);
+                finish();
+                //tomilia: network request
+
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
