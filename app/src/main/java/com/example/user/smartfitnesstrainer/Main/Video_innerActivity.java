@@ -39,12 +39,13 @@ public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
 ImageView image;
 RecyclerView rv,videorv;
-Video_inner_desp_adapter vida,vida2;
+Video_inner_desp_adapter vida;
+Video_inner_playlist_adapter vida2;
 Button start;
     //varss
 
     private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<Integer> mImageUrls = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
 
     private ArrayList<String> videoNames = new ArrayList<>();
@@ -59,24 +60,31 @@ Button start;
         rv = findViewById(R.id.basic_desp);
         rv.setNestedScrollingEnabled(false);
         Log.d("create","createx");
-        LinearLayoutManager llm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        rv.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL,false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rv.getContext(),
                 llm.getOrientation());
         rv.addItemDecoration(dividerItemDecoration);
-        rv.setLayoutManager(llm);
+
         vida = new Video_inner_desp_adapter(getApplicationContext(),mNames,mduration,0);
         rv.setAdapter(vida);
+        rv.setLayoutManager(llm);
             videorv = findViewById(R.id.videolist);
             videorv.setNestedScrollingEnabled(false);
-            LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            videorv.setHasFixedSize(true);
+            LinearLayoutManager llmm = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
             DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
                     llmm.getOrientation());
             videorv.addItemDecoration(dividerItemDecoration2);
-            videorv.setLayoutManager(llmm);
+
             image.setColorFilter(Color.rgb(100, 100, 100), PorterDuff.Mode.LIGHTEN);
-            vida2 = new Video_inner_desp_adapter(getApplicationContext(), videoNames, videoDuration, 1);
+            Log.d("vidas",String.valueOf(videoNames.size()));
+            vida2 = new Video_inner_playlist_adapter(getApplicationContext(), videoNames, mImageUrls,videoDuration, 1);
+            vida2.notifyDataSetChanged();
+
             videorv.setAdapter(vida2);
 
+        videorv.setLayoutManager(llmm);
         VideoView videoView = findViewById(R.id.video);
 /*
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video;
@@ -136,16 +144,14 @@ Button start;
         //mNames.add("Equipment");
         mduration.add("Cardio exercise is any exercise that raises your heart rate.");
        // mduration.add("None");
-
+        mImageUrls.add(R.drawable.vsitpreview);
+        mImageUrls.add(R.drawable.plankpreview);
+        mImageUrls.add(R.drawable.tstablepreview);
+        videoNames.add("V-sit");
         videoNames.add("Plank");
-        videoNames.add("Russian");
-        videoNames.add("Side Plank");
-        videoDuration.add("0:30");
-        videoDuration.add("0:30");
-        videoDuration.add("0:30");
-
+        videoNames.add("T-Stabilization");
     }
-
+/*
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
         RecyclerView recyclerView = findViewById(R.id.recyclerv_view);
@@ -153,4 +159,5 @@ Button start;
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+    */
 }

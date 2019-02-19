@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.BluetoothLeDevice;
 import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
+import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
+import com.example.user.smartfitnesstrainer.Main.Splash.StartLoginActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 import io.github.inflationx.calligraphy3.CalligraphyConfig;
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 1000;
     private static final String TAG = "MainActivity";
     private static final int ACTIVITY_NUM = 0;
-
+    PrefKey prefKey;
     private Context mContext = MainActivity.this;
 
     @Override
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        prefKey = new PrefKey(this);
         setContentView(R.layout.homeactivity);
 
         super.onCreate(savedInstanceState);
@@ -39,11 +41,18 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run(){
-                Intent homeIntent = new Intent(mContext, HomeActivity.class);
-                startActivity(homeIntent);
+                Log.d("checkhi",prefKey.getAccess_token());
+                //fix: Intent to login if not login else direct
+
+                Intent loginIntent = new Intent(mContext, StartLoginActivity.class);
+                startActivity(loginIntent);
                 finish();
 
             }
         },SPLASH_TIME_OUT);
+    }
+    private void check_token_valid()
+    {
+
     }
 }

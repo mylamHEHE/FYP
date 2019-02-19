@@ -12,6 +12,7 @@ import com.example.user.smartfitnesstrainer.Main.BLE.ViseBle;
 import com.example.user.smartfitnesstrainer.Main.Bluetooth_reserve.CameraFragment;
 import com.example.user.smartfitnesstrainer.Main.Profile.MessagesFragment;
 import com.example.user.smartfitnesstrainer.Main.SectionsPagerAdapter;
+import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.MainFragment;
 import com.example.user.smartfitnesstrainer.R;
 
@@ -23,6 +24,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 public class HomeActivity extends AppCompatActivity{
     SectionsPagerAdapter adapter;
     TabLayout tabLayout;
+    PrefKey prefKey;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
@@ -35,10 +37,19 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 */
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ViseBle.getInstance().disconnect();
+    }
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
+        prefKey = new PrefKey(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d("home pager",prefKey.getAccess_token());
         setupViewPager();
     }
     @Override

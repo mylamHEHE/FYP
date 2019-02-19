@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 <LinearLayout
      android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,8 +19,17 @@
         android:layout_height="205dp"
         android:descendantFocusability="blocksDescendants"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/first_name"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            >
+        </TextView>
         <ImageView
-            android:layout_marginTop="25dp"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
@@ -33,20 +42,13 @@
             android:layout_marginLeft="320dp"
             android:id="@+id/setting"
             android:src="@drawable/setting"
+            android:visibility="gone"
             android:background="@null"
             />
-        <TextView
-            android:layout_marginTop="-35dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mylam"
-            android:textStyle="bold"
-            android:textColor="#fff"
-            >
 
 
-        </TextView>
+
+
     </LinearLayout>
     <android.support.v7.widget.CardView
         android:layout_width="350dp"
@@ -76,7 +78,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="125lb"
+            android:id="@+id/weight"
+            android:text="-"
             android:textStyle="bold"
             android:textSize="20sp"
             />
@@ -98,7 +101,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="175cm"
+                    android:id="@+id/height"
+                    android:text="-"
                     android:textStyle="bold"
                     android:textSize="20sp"
                     />
@@ -119,7 +123,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="25(Male)"
+                    android:id="@+id/age"
+                    android:text="-"
                     android:textStyle="bold"
                     android:textSize="20sp"
                     />
