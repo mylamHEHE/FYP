@@ -56,8 +56,6 @@
 
     <style name="Autocomplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
         <item name="colorControlActivated">#000</item>
-        <item name="android:textColorHint">#000</item>
-        <item name="android:textColor">#000</item>
     </style>
 
 </resources>

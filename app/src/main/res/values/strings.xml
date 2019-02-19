@@ -73,8 +73,8 @@
     <string name="title_activity_start_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">   Email</string>
-    <string name="prompt_password">   Password (optional)</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign In</string>
     <string name="action_registration">Registration</string>
     <string name="action_resent_email">Resent Email</string>
