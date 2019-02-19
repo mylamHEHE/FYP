@@ -401,4 +401,3 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         }
     }
 }
-
