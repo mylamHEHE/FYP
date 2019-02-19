@@ -83,7 +83,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    private TextView registration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,14 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                 return false;
             }
         });
-
+        registration=(TextView)findViewById(R.id.registration);
+        registration.bringToFront();
+        registration.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                setContentView(R.layout.registraionactivity);
+            }
+        });
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override

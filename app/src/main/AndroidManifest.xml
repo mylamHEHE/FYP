@@ -47,6 +47,7 @@
         <activity android:name=".Main.ScanActivity" />
         <activity android:name=".Main.BLE.DeviceScanActivity" />
         <activity android:name=".Main.BLE.DeviceDetailActivity" />
+        <activity android:name=".Main.BLE.RegistrationActivity" />
         <activity
             android:name=".Main.BLE.DeviceControlActivity"
             android:theme="@style/MyDialogStyle" />
