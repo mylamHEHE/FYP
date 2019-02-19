@@ -377,21 +377,24 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+
 
             if (success) {
                 prefKey.saveToken(access_token,"");
                 //tomilia: temp use intent for login;
                 Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 startActivity(loginIntent);
                 finish();
+
                 //tomilia: network request
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            showProgress(false);
         }
 
         @Override
