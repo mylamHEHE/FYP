@@ -45,7 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:text="Cardio"
+                        android:id="@+id/name"
                         android:textColor="#fff"
                         android:textStyle="bold"
                         android:fontFamily="@font/latobold"
@@ -72,7 +72,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Easy"
+                                android:id="@+id/difficulty"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -95,7 +95,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Sensor x1"
+                                android:id="@+id/sensor"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"
@@ -117,7 +117,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="All age"
+                                android:id="@+id/age"
                                 android:textColor="#fff"
                                 android:textStyle="bold"
                                 android:textSize="20sp"

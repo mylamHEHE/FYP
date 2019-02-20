@@ -30,15 +30,6 @@
         android:textColor="#ffffff" />
 
 
-    <TextView
-        android:id="@+id/duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:text="6:89"
-        android:textColor="#ffffff"
-        android:textSize="17sp"/>
 
 
 </RelativeLayout>
