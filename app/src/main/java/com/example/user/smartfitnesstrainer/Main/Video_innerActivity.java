@@ -54,6 +54,7 @@ Button start;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_full_video_inner);
+        //get request from playlist selected item
         initBasicDesp();
         initStartButton();
         image = findViewById(R.id.image);
@@ -140,6 +141,8 @@ Button start;
     }
     private void initBasicDesp(){
 
+        //Retrofit get request
+        //playlist/para
         mNames.add("Description");
         //mNames.add("Equipment");
         mduration.add("Cardio exercise is any exercise that raises your heart rate.");
