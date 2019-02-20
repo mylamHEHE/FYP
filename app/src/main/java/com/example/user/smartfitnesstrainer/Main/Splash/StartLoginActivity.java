@@ -104,7 +104,6 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
             }
         });
         registration=(TextView)findViewById(R.id.registration);
-        registration.bringToFront();
         registration.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
