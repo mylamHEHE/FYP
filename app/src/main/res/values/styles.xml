@@ -38,6 +38,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:ellipsize">none</item>
         <item name="android:singleLine">false</item>
+
         <item name="android:scrollHorizontally">false</item>
         <item name="android:maxLines">100</item>
         <item name="android:inputType">textMultiLine</item>
@@ -51,6 +52,10 @@
 
     <style name="GridLayoutTitleTextView">
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Autocomplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="colorControlActivated">#000</item>
     </style>
 
 </resources>

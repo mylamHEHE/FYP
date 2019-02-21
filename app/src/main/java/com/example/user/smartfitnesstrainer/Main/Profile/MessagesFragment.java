@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.Main.MainActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
+import com.example.user.smartfitnesstrainer.Main.UserModel.User;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
 
@@ -32,7 +33,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MessagesFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "MessagesFragment";
-    Retrofit.Builder builder = new Retrofit.Builder()
+    public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("http://10.0.2.2:5000/");
     Retrofit retrofit = builder.build();
@@ -42,11 +43,17 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     List<UserRecyclerItem> uri;
     RecyclerItemAdapter ria;
     PrefKey prefKey;
+    TextView first_name;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
         uri = new ArrayList<>();
+
+        //tomilia: database get text initialize
+        first_name = view.findViewById(R.id.first_name);
+
+
         prefKey = new PrefKey(getActivity().getApplicationContext());
         rv = (RecyclerView)view.findViewById(R.id.rvid);
         rv.setHasFixedSize(true);
@@ -80,14 +87,17 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         }
     }
     private void getProfile(){
-        Call<ResponseBody> call = userClient.getProfile("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token());
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<UserProfile> call = userClient.getProfile("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token());
+        call.enqueue(new Callback<UserProfile>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
                 if (response.isSuccessful()) {
                     try {
-                        Toast.makeText(getActivity(),response.body().string(),Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
+                        //tomilia: get Profile stats
+                        Toast.makeText(getActivity(),response.body().getFirst_name(),Toast.LENGTH_SHORT).show();
+                        first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
+                        //
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -99,7 +109,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<UserProfile> call, Throwable t) {
                 Toast.makeText(getActivity(),"fail",Toast.LENGTH_SHORT).show();
             }
         });

@@ -83,7 +83,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    private TextView registration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,13 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                 return false;
             }
         });
-
+        registration=(TextView)findViewById(R.id.registration);
+        registration.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                setContentView(R.layout.registraionactivity);
+            }
+        });
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -377,21 +383,24 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+
 
             if (success) {
                 prefKey.saveToken(access_token,"");
                 //tomilia: temp use intent for login;
                 Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 startActivity(loginIntent);
                 finish();
+
                 //tomilia: network request
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            showProgress(false);
         }
 
         @Override
@@ -401,4 +410,3 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         }
     }
 }
-
