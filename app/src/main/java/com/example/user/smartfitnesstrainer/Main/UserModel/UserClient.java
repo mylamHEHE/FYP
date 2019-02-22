@@ -11,6 +11,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface UserClient {
     @POST("login")
@@ -19,4 +20,6 @@ public interface UserClient {
     Call<UserProfile> getProfile(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
     @GET("playlist")
     Call<List<Playlist>> getPlaylist(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+    @GET("playlist/{id}")
+    Call<ResponseBody> getPlaylistWithid(@Path("id") int id)
 }
