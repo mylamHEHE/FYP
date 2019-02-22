@@ -143,6 +143,7 @@ Button start;
 
         //Retrofit get request
         //playlist/para
+
         mNames.add("Description");
         //mNames.add("Equipment");
         mduration.add("Cardio exercise is any exercise that raises your heart rate.");
