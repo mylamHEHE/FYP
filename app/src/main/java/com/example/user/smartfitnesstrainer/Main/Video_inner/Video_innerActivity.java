@@ -25,7 +25,10 @@ import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
+import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -60,7 +63,7 @@ Button start;
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<Integer> mImageUrls = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
-
+    private ArrayList<Exercise_Format> exercise_playlist = new ArrayList<>();
     private ArrayList<String> videoNames = new ArrayList<>();
     private ArrayList<String> videoDuration = new ArrayList<>();
     @Override
@@ -100,7 +103,7 @@ Button start;
 
             image.setColorFilter(Color.rgb(100, 100, 100), PorterDuff.Mode.LIGHTEN);
             Log.d("vidas",String.valueOf(videoNames.size()));
-            vida2 = new Video_inner_playlist_adapter(getApplicationContext(), videoNames, mImageUrls,videoDuration, 1);
+            vida2 = new Video_inner_playlist_adapter(getApplicationContext(),exercise_playlist, 1);
             vida2.notifyDataSetChanged();
 
             videorv.setAdapter(vida2);
@@ -159,6 +162,14 @@ Button start;
             }
         });
     }
+    private void MapPlaylist(JSONArray exercise_list) throws JSONException {
+        for (int ite=0; ite<exercise_list.length();ite++)
+        {
+            Exercise_Format exercise_format =  new Gson().fromJson(exercise_list.getString(ite), Exercise_Format.class);
+            exercise_playlist.add(exercise_format);
+        }
+        vida2.notifyDataSetChanged();
+    }
     private void initBasicDesp(){
 
         //Retrofit get request
@@ -184,6 +195,7 @@ Button start;
                         sensor.setText(item_id.getString("equipment"));
                         age.setText(item_id.getString("agegroup"));
                         mduration.add(item_id.getString("description"));
+                        MapPlaylist(obj.getJSONArray("exp_list"));
                         Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
                         vida.notifyDataSetChanged();
 
