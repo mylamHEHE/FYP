@@ -15,6 +15,7 @@ public class Playlist {
     private String difficulty;
     private String equipment;
     private String name;
+    private String description;
 
     public String getAgegroup() {
         return agegroup;
@@ -52,7 +53,14 @@ public class Playlist {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String description) {
         this.name = name;
+    }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setgetDescription(String description) {
+        this.description = description;
     }
 }

@@ -1,20 +1,11 @@
-package com.example.user.smartfitnesstrainer.Main;
+package com.example.user.smartfitnesstrainer.Main.Video_inner;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,15 +15,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.MediaController;
+import android.widget.TextClock;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 //import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
+import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
+import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class Video_innerActivity extends AppCompatActivity {
@@ -41,9 +44,19 @@ ImageView image;
 RecyclerView rv,videorv;
 Video_inner_desp_adapter vida;
 Video_inner_playlist_adapter vida2;
+TextView name;
+TextView difficulty;
+TextView sensor;
+TextView age;
 Button start;
+    PrefKey prefKey;
     //varss
+    public Retrofit.Builder builder = new Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("http://10.0.2.2:5000/");
 
+    Retrofit retrofit = builder.build();
+    UserClient userClient = retrofit.create(UserClient.class);
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<Integer> mImageUrls = new ArrayList<>();
     private ArrayList<String> mduration = new ArrayList<>();
@@ -54,7 +67,14 @@ Button start;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_full_video_inner);
+        name = findViewById(R.id.name);
+        difficulty = findViewById(R.id.difficulty);
+        sensor = findViewById(R.id.sensor);
+        age = findViewById(R.id.age);
+
+        prefKey = new PrefKey(getApplicationContext());
         //get request from playlist selected item
+
         initBasicDesp();
         initStartButton();
         image = findViewById(R.id.image);
@@ -143,10 +163,50 @@ Button start;
 
         //Retrofit get request
         //playlist/para
+        Call<ResponseBody> call = userClient.getPlaylistWithid("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token(),1);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
 
+                    try {
+
+                        //tomilia: get Profile stats
+                        //jsonArray translate[0]
+
+
+                        final JSONObject obj = new JSONObject(response.body().string());
+
+                        final JSONObject item_id = new JSONObject(obj.getString("item_id"));
+                        Log.d("iteem_id",item_id.getString("name"));
+                        name.setText(item_id.getString("name"));
+                        difficulty.setText(item_id.getString("difficulty"));
+                        sensor.setText(item_id.getString("equipment"));
+                        age.setText(item_id.getString("agegroup"));
+                        mduration.add(item_id.getString("description"));
+                        Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
+                        vida.notifyDataSetChanged();
+
+                        //
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"fail",Toast.LENGTH_SHORT).show();
+            }
+        });
         mNames.add("Description");
         //mNames.add("Equipment");
-        mduration.add("Cardio exercise is any exercise that raises your heart rate.");
+
        // mduration.add("None");
         mImageUrls.add(R.drawable.vsitpreview);
         mImageUrls.add(R.drawable.plankpreview);

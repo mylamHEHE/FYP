@@ -42,7 +42,7 @@
             android:name=".Main.VideoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Main.Video_innerActivity"
+            android:name=".Main.Video_inner.Video_innerActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".Main.ScanActivity" />
         <activity android:name=".Main.BLE.DeviceScanActivity" />
