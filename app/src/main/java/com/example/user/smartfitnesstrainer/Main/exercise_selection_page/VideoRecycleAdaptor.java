@@ -20,7 +20,7 @@ import java.util.List;
 
 
 import com.example.user.smartfitnesstrainer.Main.BLE.ToastUtil;
-import com.example.user.smartfitnesstrainer.Main.Video_innerActivity;
+import com.example.user.smartfitnesstrainer.Main.Video_inner.Video_innerActivity;
 import com.example.user.smartfitnesstrainer.R;
 
 public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdaptor.ViewHolder>{

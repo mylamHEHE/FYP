@@ -21,5 +21,5 @@ public interface UserClient {
     @GET("playlist")
     Call<List<Playlist>> getPlaylist(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
     @GET("playlist/{id}")
-    Call<ResponseBody> getPlaylistWithid(@Path("id") int id)
+    Call<ResponseBody> getPlaylistWithid(@Header("Content-Type") String content_type, @Header("Authorization") String authToken,@Path("id") int id);
 }

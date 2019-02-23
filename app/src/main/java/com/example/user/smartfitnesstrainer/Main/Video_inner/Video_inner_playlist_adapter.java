@@ -1,4 +1,4 @@
-package com.example.user.smartfitnesstrainer.Main;
+package com.example.user.smartfitnesstrainer.Main.Video_inner;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
