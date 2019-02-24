@@ -35,7 +35,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "MessagesFragment";
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:5000/");
+            .baseUrl("http://192.168.1.180:5000/");
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
     ImageButton setting;
@@ -94,8 +94,9 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
                 if (response.isSuccessful()) {
                     try {
                         //tomilia: get Profile stats
-                        Toast.makeText(getActivity(),response.body().getFirst_name(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),response.body().getPlayer_history().size(),Toast.LENGTH_SHORT).show();
                         first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
+
                         //
                     } catch (Exception e) {
                         e.printStackTrace();
