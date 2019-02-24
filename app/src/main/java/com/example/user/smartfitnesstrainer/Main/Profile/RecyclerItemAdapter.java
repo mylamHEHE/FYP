@@ -16,9 +16,9 @@ import java.util.List;
 
 public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapter.MessageViewHolder>{
     private Context ctx;
-    private List<UserRecyclerItem> userRecyclerItemList;
+    private List<UserProfile.PlayerHistory> userRecyclerItemList;
 
-    public RecyclerItemAdapter(Context ctx, List<UserRecyclerItem> userRecyclerItemList) {
+    public RecyclerItemAdapter(Context ctx, List<UserProfile.PlayerHistory> userRecyclerItemList) {
         this.ctx = ctx;
         this.userRecyclerItemList = userRecyclerItemList;
     }
@@ -44,9 +44,10 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<RecyclerItemAdapte
 
     @Override
     public void onBindViewHolder(MessageViewHolder holder, int position) {
-        UserRecyclerItem uri = userRecyclerItemList.get(position);
-        holder.title.setText(uri.getHead());
-        holder.create_date.setText(uri.getCreate_date());
+        UserProfile.PlayerHistory uri = userRecyclerItemList.get(position);
+        Log.d("nasmc",uri.getName());
+        holder.title.setText(uri.getName());
+        holder.create_date.setText(uri.getDate());
     }
 
     @Override
