@@ -43,6 +43,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     List<UserRecyclerItem> uri;
     RecyclerItemAdapter ria;
     PrefKey prefKey;
+    List<UserProfile.PlayerHistory> playerHistories = new ArrayList<>();
     TextView first_name;
     @Nullable
     @Override
@@ -55,6 +56,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
 
 
         prefKey = new PrefKey(getActivity().getApplicationContext());
+        getProfile();
         rv = (RecyclerView)view.findViewById(R.id.rvid);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -62,10 +64,10 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         uri.add(new UserRecyclerItem("'Push-up' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Heavyweight' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Upperbody' Series","05/11/2018"));
-        ria = new RecyclerItemAdapter(getContext(),uri);
+        ria = new RecyclerItemAdapter(getContext(),playerHistories);
         rv.setAdapter(ria);
         rv.setNestedScrollingEnabled(true);
-        getProfile();
+
         setting = view.findViewById(R.id.setting);
         setting.setImageResource(R.drawable.setting);
         setting.setOnClickListener(new View.OnClickListener(){
@@ -94,9 +96,12 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
                 if (response.isSuccessful()) {
                     try {
                         //tomilia: get Profile stats
-                        Toast.makeText(getActivity(),response.body().getPlayer_history().size(),Toast.LENGTH_SHORT).show();
-                        first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
 
+                           first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
+                            playerHistories.clear();
+                           playerHistories.addAll(response.body().getPlayer_history());
+                            Log.d("playh",playerHistories.get(0).getName());
+                            ria.notifyDataSetChanged();
                         //
                     } catch (Exception e) {
                         e.printStackTrace();
