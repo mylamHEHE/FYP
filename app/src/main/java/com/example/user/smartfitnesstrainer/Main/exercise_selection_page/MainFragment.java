@@ -24,6 +24,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+
 public class MainFragment extends Fragment {
     /*private static final String TAG = "HomeFragment";
     CardView sport;
@@ -35,7 +37,7 @@ public class MainFragment extends Fragment {
     private static final String TAG = "MessagesFragment";
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:5000/");
+            .baseUrl(URL_Base);
 
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
