@@ -21,12 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
-
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
@@ -42,50 +40,49 @@
                 android:layout_height="200dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/icon"/>
-
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/emailtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_email"
+                android:textSize="15sp"
+                android:textColor="#FFF"/>
+        </LinearLayout>
                 <AutoCompleteTextView
                     android:id="@+id/email"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="@string/prompt_email"
-                    app:hintEnabled="false"
                     android:paddingLeft="10dp"
                     android:inputType="textEmailAddress"
-                    android:theme="@style/Autocomplete"
-                    android:layout_marginTop="16dp"
                     android:maxLines="1"
                     android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
+                <TextView
+                    android:id="@+id/passwordtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_password"
+                    android:textSize="15sp"
+                    android:textColor="#FFF"/>
+            </LinearLayout>
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
+                    android:layout_height="40dp"
                     android:background="@drawable/rounded_edittext"
-                    app:hintEnabled="true"
                     android:paddingLeft="10dp"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
-                    android:theme="@style/Autocomplete"
                     android:inputType="textPassword"
-                    android:layout_marginTop="20dp"
                     android:maxLines="1"
                     android:singleLine="true"/>
-
-            </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/email_sign_in_button"
@@ -97,7 +94,6 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold"
                 android:textColor="#FFF"/>
-
             <LinearLayout
                 android:id="@+id/other"
                 android:layout_width="match_parent"
