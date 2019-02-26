@@ -1,4 +1,4 @@
-package com.example.user.smartfitnesstrainer.Main;
+package com.example.user.smartfitnesstrainer.Main.exercise_selection_page;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,50 +12,27 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
-
-import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.user.smartfitnesstrainer.Main.BLE.SecondDeviceControl;
 import com.example.user.smartfitnesstrainer.Main.BLE.ToastUtil;
+import com.example.user.smartfitnesstrainer.Main.Video_inner.Video_innerActivity;
 import com.example.user.smartfitnesstrainer.R;
-
-import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdaptor.ViewHolder>{
 
     private static final String TAG = "RecyclerViewAdapter";
 
-    private ArrayList<String> mImageNames = new ArrayList<>();
-    private ArrayList<String> mduration = new ArrayList<>();
-    private ArrayList<String> mImages = new ArrayList<>();
+    private List<Playlist> mItem = new ArrayList<>();
     private Context mContext;
 
-    public VideoRecycleAdaptor(Context context, ArrayList<String> imageNames, ArrayList<String> images ,ArrayList<String> duration) {
-        mImageNames = imageNames;
-        mImages = images;
+    public VideoRecycleAdaptor(Context context, List<Playlist> playlists) {
+        mItem=playlists;
         mContext = context;
-        mduration = duration;
     }
 
     @Override
@@ -91,11 +68,10 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(mImages.get(position))
+                .load(mItem.get(position).getCover_photo())
                 .into(holder.image);
 
-        holder.imageName.setText(mImageNames.get(position));
-        holder.duration.setText(mduration.get(position));
+        holder.imageName.setText(mItem.get(position).getName());
        /*
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +89,7 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
 
     @Override
     public int getItemCount() {
-        return mImageNames.size();
+        return mItem.size();
     }
 
 
@@ -122,7 +98,6 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
         ImageView image;
         TextView imageName;
         RelativeLayout parentLayout;
-        TextView duration;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -132,7 +107,6 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
             //image.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             imageName = itemView.findViewById(R.id.image_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
-            duration = itemView.findViewById(R.id.duration);
         }
     }
 }

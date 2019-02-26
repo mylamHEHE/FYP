@@ -49,6 +49,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 
 /**
  * A login screen that offers login via email/password.
@@ -56,7 +57,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class StartLoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:5000/");
+            .baseUrl(URL_Base);
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
     PrefKey prefKey;
@@ -383,21 +384,24 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+
 
             if (success) {
                 prefKey.saveToken(access_token,"");
                 //tomilia: temp use intent for login;
                 Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 startActivity(loginIntent);
                 finish();
+
                 //tomilia: network request
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
+            showProgress(false);
         }
 
         @Override

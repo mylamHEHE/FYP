@@ -1,4 +1,4 @@
-package com.example.user.smartfitnesstrainer.Main;
+package com.example.user.smartfitnesstrainer.Main.Video_inner;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -29,23 +29,19 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
     private static final String TAG = "RecyclerViewAdapter";
     Dialog myVideo;
     ArrayList<Integer> previewvideo = new ArrayList<>();
-    private ArrayList<String> mImageNames = new ArrayList<>();
-    private ArrayList<String> mduration = new ArrayList<>();
-    private ArrayList<Integer> mImages = new ArrayList<>();
+    private ArrayList<Exercise_Format> exercise_formats = new ArrayList<>();
     private Context mContext;
     private int type;
     private int stopPosition;
     private boolean bVideoIsBeingTouched = false;
     private Handler mHandler = new Handler();
 
-    public Video_inner_playlist_adapter(Context context, ArrayList<String> imageNames,ArrayList<Integer> image, ArrayList<String> duration,int type) {
+    public Video_inner_playlist_adapter(Context context, ArrayList<Exercise_Format> exercise_formats,int type) {
         previewvideo.add(R.raw.svsit);
         previewvideo.add(R.raw.tutplunk);
         previewvideo.add(R.raw.tuttstable);
-        mImageNames = imageNames;
-        mImages = image;
         mContext = context;
-        mduration = duration;
+        this.exercise_formats = exercise_formats;
         this.type = type;
     }
 
@@ -75,18 +71,21 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
 
 
                 PlaylistViewHolder viewHolder2 = (PlaylistViewHolder)holder;
-                viewHolder2.name.setText(mImageNames.get(position));
 
+                viewHolder2.name.setText(exercise_formats.get(position).getName());
+                viewHolder2.rb.setRating(exercise_formats.get(position).getDifficulty());
+/*
 try {
     Glide.with(mContext)
             .asBitmap()
             .load(mImages.get(position))
             .into(viewHolder2.imageview);
 }
+
 catch (Exception e)
 {
 
-}
+}*/
 
     }
     public void onPause(VideoView videoView) {
@@ -136,8 +135,8 @@ catch (Exception e)
     }
     @Override
     public int getItemCount() {
-        Log.d("vidxas",String.valueOf(mImageNames.size()));
-        return mImageNames.size();
+        Log.d("vidxas",String.valueOf(exercise_formats.size()));
+        return exercise_formats.size();
     }
 
     public class PlaylistViewHolder extends RecyclerView.ViewHolder {
@@ -146,13 +145,13 @@ catch (Exception e)
         RelativeLayout parentLayout;
         TextView duration;
         ImageView imageview;
+        RatingBar rb;
         public PlaylistViewHolder(final View itemView) {
             super(itemView);
-
+            rb=itemView.findViewById(R.id.difficulty_rating);
             //image.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             name = itemView.findViewById(R.id.image_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
-
             duration = itemView.findViewById(R.id.duration);
             imageview = itemView.findViewById(R.id.image);
         }

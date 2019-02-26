@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.Main.MainActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
+import com.example.user.smartfitnesstrainer.Main.UserModel.User;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
 
@@ -30,11 +31,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+
 public class MessagesFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "MessagesFragment";
-    Retrofit.Builder builder = new Retrofit.Builder()
+    public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:5000/");
+            .baseUrl(URL_Base);
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
     ImageButton setting;
@@ -42,12 +45,20 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     List<UserRecyclerItem> uri;
     RecyclerItemAdapter ria;
     PrefKey prefKey;
+    List<UserProfile.PlayerHistory> playerHistories = new ArrayList<>();
+    TextView first_name;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
         uri = new ArrayList<>();
+
+        //tomilia: database get text initialize
+        first_name = view.findViewById(R.id.first_name);
+
+
         prefKey = new PrefKey(getActivity().getApplicationContext());
+        getProfile();
         rv = (RecyclerView)view.findViewById(R.id.rvid);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -55,10 +66,10 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         uri.add(new UserRecyclerItem("'Push-up' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Heavyweight' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Upperbody' Series","05/11/2018"));
-        ria = new RecyclerItemAdapter(getContext(),uri);
+        ria = new RecyclerItemAdapter(getContext(),playerHistories);
         rv.setAdapter(ria);
         rv.setNestedScrollingEnabled(true);
-        getProfile();
+
         setting = view.findViewById(R.id.setting);
         setting.setImageResource(R.drawable.setting);
         setting.setOnClickListener(new View.OnClickListener(){
@@ -80,14 +91,21 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         }
     }
     private void getProfile(){
-        Call<ResponseBody> call = userClient.getProfile("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token());
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<UserProfile> call = userClient.getProfile("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token());
+        call.enqueue(new Callback<UserProfile>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
                 if (response.isSuccessful()) {
                     try {
-                        Toast.makeText(getActivity(),response.body().string(),Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
+                        //tomilia: get Profile stats
+
+                           first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
+                            playerHistories.clear();
+                           playerHistories.addAll(response.body().getPlayer_history());
+                            Log.d("playh",playerHistories.get(0).getName());
+                            ria.notifyDataSetChanged();
+                        //
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -99,7 +117,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<UserProfile> call, Throwable t) {
                 Toast.makeText(getActivity(),"fail",Toast.LENGTH_SHORT).show();
             }
         });

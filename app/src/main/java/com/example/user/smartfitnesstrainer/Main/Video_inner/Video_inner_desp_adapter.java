@@ -1,35 +1,16 @@
-package com.example.user.smartfitnesstrainer.Main;
+package com.example.user.smartfitnesstrainer.Main.Video_inner;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 //import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.R;
 
@@ -75,9 +56,14 @@ public class Video_inner_desp_adapter extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         Log.d("on9", "onBindViewHolder: called.");
 
-                BasicDespViewHolder viewHolder0 = (BasicDespViewHolder) holder;
-                viewHolder0.name.setText(mImageNames.get(position));
-                viewHolder0.duration.setText(mduration.get(position));
+        try {
+            BasicDespViewHolder viewHolder0 = (BasicDespViewHolder) holder;
+            viewHolder0.name.setText(mImageNames.get(position));
+            viewHolder0.duration.setText(mduration.get(position));
+        }catch (Exception e)
+        {
+
+        }
 
 /*
 try {
