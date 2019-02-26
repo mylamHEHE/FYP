@@ -40,6 +40,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+
 
 public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
@@ -56,7 +58,7 @@ Button start;
     //varss
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://10.0.2.2:5000/");
+            .baseUrl(URL_Base);
 
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
