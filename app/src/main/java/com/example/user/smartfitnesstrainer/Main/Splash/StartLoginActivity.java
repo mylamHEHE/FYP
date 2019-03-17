@@ -35,6 +35,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.RegistrationActivity;
 import com.example.user.smartfitnesstrainer.Main.HomeActivity;
 import com.example.user.smartfitnesstrainer.Main.UserModel.Login;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
@@ -108,7 +109,8 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         registration.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                setContentView(R.layout.registraionactivity);
+                Intent intent = new Intent(getApplicationContext(),RegistrationActivity.class);
+                startActivity(intent);
             }
         });
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
