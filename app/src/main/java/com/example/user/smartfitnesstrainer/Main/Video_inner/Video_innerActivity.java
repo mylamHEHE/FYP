@@ -96,7 +96,7 @@ Button start;
         rv.setAdapter(vida);
         rv.setLayoutManager(llm);
             videorv = findViewById(R.id.videolist);
-            videorv.setNestedScrollingEnabled(false);
+            videorv.setNestedScrollingEnabled(true);
             videorv.setHasFixedSize(true);
             LinearLayoutManager llmm = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
             DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),

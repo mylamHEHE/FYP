@@ -25,8 +25,8 @@ public class HomeActivity extends AppCompatActivity{
     SectionsPagerAdapter adapter;
     TabLayout tabLayout;
     PrefKey prefKey;
-    public static String URL_Base ="http://61.92.83.154" +
-            ":5000/";
+    public static String URL_Base ="http://61.92.83.154:5000/";
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));

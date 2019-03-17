@@ -55,11 +55,13 @@ public class UserProfile {
          * name : Cardio Exercise
          * succuessful : true
          * date : 2011-11-3
+         * ref_id : 1
          */
 
         private String name;
         private boolean succuessful;
         private String date;
+        private int ref_id;
 
         public String getName() {
             return name;
@@ -84,5 +86,20 @@ public class UserProfile {
         public void setDate(String date) {
             this.date = date;
         }
+
+        public int getRef_id() {
+            return ref_id;
+        }
+
+        public void setRef_id(int ref_id) {
+            this.ref_id = ref_id;
+        }
+        /**
+         * name : Cardio Exercise
+         * succuessful : true
+         * date : 2011-11-3
+         */
+
+
     }
 }
