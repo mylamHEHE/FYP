@@ -8,7 +8,7 @@ public class VideoModel {
     String videoUrl;
 
     public VideoModel(String videoUrl) {
-        this.videoUrl = URL_Base+"static/"+videoUrl+".html";
+        this.videoUrl = URL_Base+"static/"+videoUrl+".mp4";
     }
 
 }

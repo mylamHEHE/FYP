@@ -37,7 +37,7 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
     private Handler mHandler = new Handler();
 
     public Video_inner_playlist_adapter(Context context, ArrayList<Exercise_Format> exercise_formats,int type) {
-        previewvideo.add(R.raw.svsit);
+       // previewvideo.add(R.raw.svsit);
         previewvideo.add(R.raw.tutplunk);
         previewvideo.add(R.raw.tuttstable);
         mContext = context;

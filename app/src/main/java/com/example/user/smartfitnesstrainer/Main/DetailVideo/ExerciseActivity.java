@@ -55,6 +55,7 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.tomer.fadingtextview.FadingTextView;
 
@@ -144,12 +145,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             createPlaylist();
             createExerciseModellist();
             firstClip();
-            prepareExoPlayerFromFileUri(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.video));
+
         }
 
     }
     private MediaSource buildMediaSource(Uri uri) {
-
         return new ExtractorMediaSource.Factory(
                 new DefaultHttpDataSourceFactory("exoplayer-codelab")).
                 createMediaSource(uri);
@@ -180,7 +180,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         MediaSource[] mediaSources = new MediaSource[vm.size()];
         for (int i=0;i<vm.size();i++) {
             Uri video_uri = Uri.parse(vm.get(i).videoUrl);
-
+            Log.d("video_x",video_uri.toString());
            mediaSources[i]= buildMediaSource(video_uri);
         }
 
@@ -233,6 +233,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             });
             player.setPlayWhenReady(false);
             //player.prepare(cms);
+           // player.prepare(cms);
+
             simpleExoPlayerView.getPlayer().prepare(cms);
             simpleExoPlayerView.setUseController(false);
         }
@@ -505,6 +507,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                             Log.d("playlistr",arr.getJSONObject(i).get("tut_video").toString());
                             Log.d("playlistr",arr.getJSONObject(i).get("video").toString());
                         }
+                        prepareExoPlayerFromFileUri(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/"));
                         Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
                         //
                     } catch (Exception e) {
@@ -679,6 +682,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     protected void onDestroy() {
         super.onDestroy();
         player.release();
+        if(mp!=null)
             mp.release();
         if(doAsynchronousTask!=null)
         doAsynchronousTask.cancel();
