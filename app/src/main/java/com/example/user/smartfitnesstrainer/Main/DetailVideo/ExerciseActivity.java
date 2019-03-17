@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
+import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.example.user.smartfitnesstrainer.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -55,13 +57,31 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.tomer.fadingtextview.FadingTextView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+
 
 public class ExerciseActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
+    public Retrofit.Builder builder = new Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(URL_Base);
+    PrefKey prefKey;
+    Retrofit retrofit = builder.build();
+    UserClient userClient = retrofit.create(UserClient.class);
     private RecyclerView rv;
     private ExerciseListAdapter ela;
     private ArrayList <String> temp = new ArrayList<>();
@@ -117,6 +137,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     protected void onStart() {
         super.onStart();
         if (!isVideoCreate) {
+            prefKey = new PrefKey(this);
             isVideoCreate =true;
             Log.d("playernum","lc");
             createPlaylist();
@@ -470,6 +491,46 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
 
     protected void createPlaylist(){
+        //video json
+        Call<ResponseBody> call = userClient.getPlaylistWithid("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token(),1);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+
+                        //tomilia: get Profile stats
+                        //jsonArray translate[0]
+
+
+                        final JSONObject obj = new JSONObject(response.body().string());
+
+                        final JSONObject item_id = new JSONObject(obj.getString("item_id"));
+                        Log.d("iteem_id",item_id.getString("name"));
+                        JSONArray arr =obj.getJSONArray("exp_list");
+                        for (int i=0; i < arr.length(); i++) {
+                            Log.d("playlistr",arr.getJSONObject(i).get("tut_video").toString());
+                            Log.d("playlistr",arr.getJSONObject(i).get("video").toString());
+                        }
+                        Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
+                        //
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"fail",Toast.LENGTH_SHORT).show();
+            }
+        });
         VideoModel vid = new VideoModel(R.raw.svsit);
         vm.add(vid);
         VideoModel vid2 = new VideoModel(R.raw.vvsit);
