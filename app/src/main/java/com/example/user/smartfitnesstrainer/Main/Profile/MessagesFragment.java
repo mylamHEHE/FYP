@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+import static java.security.AccessController.getContext;
 
 public class MessagesFragment extends android.support.v4.app.Fragment {
     private static final String TAG = "MessagesFragment";
@@ -51,6 +54,14 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
+//        RelativeLayout rl = (RelativeLayout)view.findViewById(R.id.bottom_rl);
+//
+//        ImageView iv = new ImageView(view.getContext());
+//
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(30, 40);
+//        params.rightMargin = 0;
+//        params.bottomMargin = 0;
+//        rl.addView(iv, params);
         uri = new ArrayList<>();
 
         //tomilia: database get text initialize
@@ -69,15 +80,6 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         ria = new RecyclerItemAdapter(getContext(),playerHistories);
         rv.setAdapter(ria);
         rv.setNestedScrollingEnabled(true);
-
-        setting = view.findViewById(R.id.setting);
-        setting.setImageResource(R.drawable.setting);
-        setting.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Toast.makeText(getActivity(),"Setting is clicked.",Toast.LENGTH_LONG).show();
-            }
-        });
         return view;
     }
     @Override
