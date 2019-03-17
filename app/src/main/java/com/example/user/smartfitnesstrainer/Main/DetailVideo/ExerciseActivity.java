@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.media.MediaExtractor;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.net.Uri;
@@ -147,24 +148,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
 
     }
-    private MediaSource buildMediaSource(int uri){
-        DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(uri));
-        final RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(getApplicationContext());
-        try {
-            rawResourceDataSource.open(dataSpec);
-        } catch (RawResourceDataSource.RawResourceDataSourceException e) {
-            e.printStackTrace();
-        }
+    private MediaSource buildMediaSource(Uri uri) {
 
-        DataSource.Factory factory = new DataSource.Factory() {
-            @Override
-            public DataSource createDataSource() {
-                return rawResourceDataSource;
-            }
-        };
-        MediaSource audioSource =
-                new ExtractorMediaSource(rawResourceDataSource.getUri(),factory, new DefaultExtractorsFactory(), null, null);
-        return audioSource;
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("exoplayer-codelab")).
+                createMediaSource(uri);
     }
     private void roundFinished(){
         Log.d("stageScore",String.valueOf(stageScore));
@@ -191,7 +179,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
         MediaSource[] mediaSources = new MediaSource[vm.size()];
         for (int i=0;i<vm.size();i++) {
-           mediaSources[i]= buildMediaSource(vm.get(i).videoUrl);
+            Uri video_uri = Uri.parse(vm.get(i).videoUrl);
+
+           mediaSources[i]= buildMediaSource(video_uri);
         }
 
         simpleExoPlayerView.setPlayer(player);
@@ -510,6 +500,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         Log.d("iteem_id",item_id.getString("name"));
                         JSONArray arr =obj.getJSONArray("exp_list");
                         for (int i=0; i < arr.length(); i++) {
+                            vm.add(new VideoModel(arr.getJSONObject(i).get("tut_video").toString()));
+                            vm.add(new VideoModel(arr.getJSONObject(i).get("video").toString()));
                             Log.d("playlistr",arr.getJSONObject(i).get("tut_video").toString());
                             Log.d("playlistr",arr.getJSONObject(i).get("video").toString());
                         }
@@ -531,18 +523,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 Toast.makeText(getApplicationContext(),"fail",Toast.LENGTH_SHORT).show();
             }
         });
-        VideoModel vid = new VideoModel(R.raw.svsit);
-        vm.add(vid);
-        VideoModel vid2 = new VideoModel(R.raw.vvsit);
-        vm.add(vid2);
-        VideoModel vid3 = new VideoModel(R.raw.tutplunk);
-        vm.add(vid3);
-        VideoModel vid4 = new VideoModel(R.raw.traplunk);
-        vm.add(vid4);
-        VideoModel vid5 = new VideoModel(R.raw.tuttstable);
-        vm.add(vid5);
-        VideoModel vid6 = new VideoModel(R.raw.realtstable);
-        vm.add(vid6);
     }
     protected void createExerciseModellist(){
         ExerciseModel em = new ExerciseModel("V-Sit",9,11,15,30,2);

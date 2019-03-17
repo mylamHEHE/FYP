@@ -2,11 +2,13 @@ package com.example.user.smartfitnesstrainer.Main.DetailVideo;
 
 import android.net.Uri;
 
-public class VideoModel {
-    int videoUrl;
+import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 
-    public VideoModel(int videoUrl) {
-        this.videoUrl = videoUrl;
+public class VideoModel {
+    String videoUrl;
+
+    public VideoModel(String videoUrl) {
+        this.videoUrl = URL_Base+"static/"+videoUrl+".html";
     }
 
 }
