@@ -53,6 +53,9 @@ TextView name;
 TextView difficulty;
 TextView sensor;
 TextView age;
+ArrayList<String> preview = new ArrayList<>();
+Intent intent;
+int id;
 Button start;
     PrefKey prefKey;
     //varss
@@ -79,9 +82,11 @@ Button start;
 
         prefKey = new PrefKey(getApplicationContext());
         //get request from playlist selected item
-
+        intent=getIntent();
+        id=intent.getIntExtra("id",0);
         initBasicDesp();
         initStartButton();
+        getPreviewUrl();
         image = findViewById(R.id.image);
         rv = findViewById(R.id.basic_desp);
         rv.setNestedScrollingEnabled(false);
@@ -93,25 +98,26 @@ Button start;
         rv.addItemDecoration(dividerItemDecoration);
 
         vida = new Video_inner_desp_adapter(getApplicationContext(),mNames,mduration,0);
+
         rv.setAdapter(vida);
         rv.setLayoutManager(llm);
-            videorv = findViewById(R.id.videolist);
-            videorv.setNestedScrollingEnabled(true);
-            videorv.setHasFixedSize(true);
-            LinearLayoutManager llmm = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-            DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(videorv.getContext(),
-                    llmm.getOrientation());
-            videorv.addItemDecoration(dividerItemDecoration2);
+        //Preview part
 
-            image.setColorFilter(Color.rgb(100, 100, 100), PorterDuff.Mode.LIGHTEN);
+            videorv = findViewById(R.id.videolist);
+          //  videorv.setNestedScrollingEnabled(true);
+
+          //  videorv.setHasFixedSize(true);
+            LinearLayoutManager llmm = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+
             Log.d("vidas",String.valueOf(videoNames.size()));
-            vida2 = new Video_inner_playlist_adapter(getApplicationContext(),exercise_playlist, 1);
+            vida2 = new Video_inner_playlist_adapter(getApplicationContext(),exercise_playlist, 1,preview);
             vida2.notifyDataSetChanged();
 
-            videorv.setAdapter(vida2);
+           // videorv.setAdapter(vida2);
 
         videorv.setLayoutManager(llmm);
         VideoView videoView = findViewById(R.id.video);
+
 /*
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video;
         //String videoPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/video0.mp4";;
@@ -163,6 +169,53 @@ Button start;
 
             }
         });
+    }
+    private void getPreviewUrl()
+    {
+        Log.d("idpreview",String.valueOf(id));
+        Call<ResponseBody> call = userClient.getPlaylistWithid("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token(),1);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+
+                    try {
+
+                        //tomilia: get Profile stats
+                        //jsonArray translate[0]
+
+
+                        final JSONObject obj = new JSONObject(response.body().string());
+
+                        final JSONObject item_id = new JSONObject(obj.getString("item_id"));
+                        Log.d("iteem_id",item_id.getString("name"));
+                        name.setText(item_id.getString("name"));
+                        difficulty.setText(item_id.getString("difficulty"));
+                        sensor.setText(item_id.getString("equipment"));
+                        age.setText(item_id.getString("agegroup"));
+                        mduration.add(item_id.getString("description"));
+                        MapPlaylist(obj.getJSONArray("exp_list"));
+                        Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
+                        vida.notifyDataSetChanged();
+
+                        //
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"fail",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
     private void MapPlaylist(JSONArray exercise_list) throws JSONException {
         for (int ite=0; ite<exercise_list.length();ite++)

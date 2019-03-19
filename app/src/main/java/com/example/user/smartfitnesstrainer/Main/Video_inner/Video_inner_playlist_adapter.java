@@ -28,7 +28,7 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
 
     private static final String TAG = "RecyclerViewAdapter";
     Dialog myVideo;
-    ArrayList<Integer> previewvideo = new ArrayList<>();
+    ArrayList<String> previewvideo = new ArrayList<>();
     private ArrayList<Exercise_Format> exercise_formats = new ArrayList<>();
     private Context mContext;
     private int type;
@@ -36,10 +36,10 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
     private boolean bVideoIsBeingTouched = false;
     private Handler mHandler = new Handler();
 
-    public Video_inner_playlist_adapter(Context context, ArrayList<Exercise_Format> exercise_formats,int type) {
+    public Video_inner_playlist_adapter(Context context, ArrayList<Exercise_Format> exercise_formats,int type,ArrayList<String> previewvideo) {
        // previewvideo.add(R.raw.svsit);
-        previewvideo.add(R.raw.tutplunk);
-        previewvideo.add(R.raw.tuttstable);
+      //  previewvideo.add(R.raw.video0);
+       // previewvideo.add(R.raw.video0);
         mContext = context;
         this.exercise_formats = exercise_formats;
         this.type = type;
@@ -56,7 +56,7 @@ public class Video_inner_playlist_adapter extends RecyclerView.Adapter<RecyclerV
                 final int position = holder2.getAdapterPosition();
                 //check if position exists
                 if (position != RecyclerView.NO_POSITION) {
-                    initPopWindow(v,position);
+                   // initPopWindow(v,position);
                     //TODO whatever you want
                 }
             }

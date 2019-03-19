@@ -342,18 +342,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     return R.raw.chal3tstable;
         }
     }
-    private int currentExerciseInstruction(int currentExercise){
+    private String currentExerciseInstruction(int currentExercise){
 
-        Log.d("instruc",instruction.get(currentExercise).toString());
-        switch (currentExercise)
-        {
-            case 0:
-                return R.raw.vsittut;
-            case 1:
-                return R.raw.tplank;
-            default:
-                return R.raw.tstable;
-        }
+        return instruction.get(currentExercise).instructionUrl;
     }
     private void congrazSound(){
         mp = MediaPlayer.create(getApplicationContext(), R.raw.welldone);

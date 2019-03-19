@@ -51,6 +51,7 @@ public class VideoRecycleAdaptor extends RecyclerView.Adapter<VideoRecycleAdapto
                 else if (position == 0)
                 {
                     Intent homeIntent = new Intent(mContext,Video_innerActivity.class);
+                    homeIntent.putExtra("id",position);
                     mContext.startActivity(homeIntent);
                 }
                 else
