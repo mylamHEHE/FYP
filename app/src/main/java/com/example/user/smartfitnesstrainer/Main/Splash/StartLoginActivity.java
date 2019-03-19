@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.RegistrationActivity;
+import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.HomeActivity;
 import com.example.user.smartfitnesstrainer.Main.UserModel.Login;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
@@ -109,7 +110,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
         registration.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(),RegistrationActivity.class);
+                Intent intent = new Intent(getApplicationContext(),GraphActivity.class);
                 startActivity(intent);
             }
         });

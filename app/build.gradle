@@ -55,4 +55,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     //scanner
     implementation 'com.google.android.gms:play-services:9.8.0'
+    //graph
+    implementation 'com.jjoe64:graphview:4.2.2'
 }
