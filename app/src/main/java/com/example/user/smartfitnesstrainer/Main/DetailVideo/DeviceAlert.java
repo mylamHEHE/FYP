@@ -30,11 +30,11 @@ import java.util.List;
 
 public class DeviceAlert extends DialogFragment
 {
-    int tutVideo;
-    public static DeviceAlert newInstance(int tutVideo) {
+    String tutVideo;
+    public static DeviceAlert newInstance(String tutVideo) {
         DeviceAlert deviceAlert = new DeviceAlert();
         Bundle args = new Bundle();
-        args.putInt("video", tutVideo);
+        args.putString("video", tutVideo);
         deviceAlert.setArguments(args);
         return deviceAlert;
     }
@@ -74,7 +74,7 @@ public class DeviceAlert extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tutVideo = getArguments().getInt("video");
+        tutVideo = getArguments().getString("video");
         Log.d("cretedial",String.valueOf(tutVideo));
     }
 
@@ -89,7 +89,7 @@ public class DeviceAlert extends DialogFragment
 
         VideoView video=(VideoView)view.findViewById(R.id.tutorial_vid);
         Log.d("vieod",video.toString());
-        String path = "android.resource://" + getActivity().getPackageName() + "/" + tutVideo;
+        String path =  tutVideo;
 
 // Init Video
         video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
