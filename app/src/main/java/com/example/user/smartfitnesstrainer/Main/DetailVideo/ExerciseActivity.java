@@ -82,15 +82,15 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
     PrefKey prefKey;
+    Bundle sis;
+    ExerciseListAdapter ela;
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
-    private RecyclerView rv;
-    private ExerciseListAdapter ela;
     private ArrayList <String> temp = new ArrayList<>();
-    private VideoView vf;
     private boolean isVideoCreate = false;
     private Analyticzer analyticzer =new Analyticzer();
     private FadingTextView ftv;
+    private ArrayList<InstructionModel> instruction = new ArrayList<>();
     private ArrayList <VideoModel> vm = new ArrayList<>();
     private ImageButton pause;
     private DeviceAlert devicealert;
@@ -101,7 +101,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ProgressBar pb;
     private int stageScore =0;
     private TextView currentScore;
-    private TextView baseScore;
     private SimpleExoPlayer player;
     private SimpleExoPlayerView simpleExoPlayerView;
     private ImageButton play;
@@ -111,7 +110,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private LinearLayout scoreBoard;
     private Button skipTutor;
     private boolean onFinishRepeat =false;
-    private Bundle sis;
     private TimerTask doAsynchronousTask;
     private MediaPlayer mp;
     private TextView angle;
@@ -345,6 +343,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
     }
     private int currentExerciseInstruction(int currentExercise){
+
+        Log.d("instruc",instruction.get(currentExercise).toString());
         switch (currentExercise)
         {
             case 0:
@@ -502,10 +502,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         Log.d("iteem_id",item_id.getString("name"));
                         JSONArray arr =obj.getJSONArray("exp_list");
                         for (int i=0; i < arr.length(); i++) {
-                            vm.add(new VideoModel(arr.getJSONObject(i).get("tut_video").toString()));
-                            vm.add(new VideoModel(arr.getJSONObject(i).get("video").toString()));
-                            Log.d("playlistr",arr.getJSONObject(i).get("tut_video").toString());
-                            Log.d("playlistr",arr.getJSONObject(i).get("video").toString());
+                            JSONObject tmp=arr.getJSONObject(i);
+                            vm.add(new VideoModel(tmp.get("tut_video").toString()));
+                            vm.add(new VideoModel(tmp.get("video").toString()));
+                            instruction.add(new InstructionModel(tmp.get("wear_tutorial_video").toString()));
                         }
                         prepareExoPlayerFromFileUri(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/"));
                         Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
