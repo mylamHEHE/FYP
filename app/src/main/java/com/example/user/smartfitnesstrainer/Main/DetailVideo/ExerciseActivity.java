@@ -158,6 +158,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             onFinishRepeat =true;
             totalRound.add(stageScore);
             stageScore = 0;
+            //addjson to the graph represnet
+
             currentScore.setText(String.valueOf(stageScore));
 
     }
@@ -451,6 +453,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 rl.setVisibility(View.GONE);
                 pb.setVisibility(View.INVISIBLE);
                 player.setPlayWhenReady(true);
+                /*
+                the graph should be shown
+                1.with moving motion
+                2.with transparency
+                3.marking motion per sec and into list
+
+                 */
                 currentExercise++;
                 callAsynchronousTask();
                 isTutorMode = 1;
