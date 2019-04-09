@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.RegistrationActivity;
+import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.HomeActivity;
 import com.example.user.smartfitnesstrainer.Main.UserModel.Login;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
@@ -86,6 +87,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
     private View mProgressView;
     private View mLoginFormView;
     private TextView registration;
+    private TextView graph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +105,14 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                     return true;
                 }
                 return false;
+            }
+        });
+        graph=(TextView)findViewById(R.id.forget_email);
+        graph.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(),GraphActivity.class);
+                startActivity(intent);
             }
         });
         registration=(TextView)findViewById(R.id.registration);
