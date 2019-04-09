@@ -75,6 +75,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
+import static com.google.android.exoplayer2.Player.STATE_ENDED;
 
 
 public class ExerciseActivity extends AppCompatActivity implements DialogInterface.OnDismissListener {
@@ -104,6 +105,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private SimpleExoPlayer player;
     private SimpleExoPlayerView simpleExoPlayerView;
     private ImageButton play;
+    private int num_of_exercise=0;
     private ArrayList<Integer> totalRound =new ArrayList<>();
     private RelativeLayout rl;
     private RelativeLayout rl0;
@@ -158,7 +160,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             onFinishRepeat =true;
             totalRound.add(stageScore);
             stageScore = 0;
-            //addjson to the graph represnet
+            //addjson to the graph represnet for each round
 
             currentScore.setText(String.valueOf(stageScore));
 
@@ -191,17 +193,44 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             player.addListener(new SimpleExoPlayer.DefaultEventListener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    if(playbackState == Player.STATE_ENDED)
+                    Log.d("statech", String.valueOf(playbackState));
+                    if(playbackState == 4)
                     {
-                        if(!onFinishRepeat) {
                             roundFinished();
                             Log.d("plex", String.valueOf(totalRound.size()));
 
                             for (int x : totalRound) {
                                 Log.d("roundscore", String.valueOf(x));
                             }
+                            /*
+                            1.list of json to the graph
+                            2.score to the exercise
+                            3.rating
+                            4.improvement(marker)
+                             */
+                            //testing
+                        ArrayList<ArrayList<Integer>> aList =
+                                new ArrayList<ArrayList<Integer>>();
+                        ArrayList<Integer> a1 = new ArrayList<Integer>();
+                        a1.add(1);
+                        a1.add(2);
+                        aList.add(a1);
+
+                        ArrayList<Integer> a2 = new ArrayList<Integer>();
+                        a2.add(5);
+                        aList.add(a2);
+
+                        ArrayList<Integer> a3 = new ArrayList<Integer>();
+                        a3.add(10);
+                        a3.add(20);
+                        a3.add(30);
+                        aList.add(a3);
+
+                        Result_Maker resultMaker = new Result_Maker(totalRound,aList);
+                            //temp gen
+
+                            resultMaker.makeJSON();
                             finish();
-                        }
                     }
 
                     Log.d("playState",String.valueOf(player.getCurrentPosition()));
@@ -213,8 +242,14 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     int currentPosition = 0;
                     currentPosition = player.getCurrentWindowIndex();
                     Log.d("playState",String.valueOf(currentPosition));
+                    Log.d("reaseon",String.valueOf(reason));
+                    if(player.getPlaybackState()==STATE_ENDED)
+                    {
+                        Log.d("finish","vid");
+                    }
                     if(isTutorMode==1)
                     {
+
                         //Finish one round
                         roundFinished();
                         Log.d("try","sessionmode");
@@ -227,6 +262,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     player.setPlayWhenReady(false);
                     animationAfterExercise();
                     super.onTracksChanged(trackGroups, trackSelections);
+                    Log.d("num_kf_ex",String.valueOf(num_of_exercise+" "+currentExercise));
+                    if(num_of_exercise==currentExercise)
+                    {
+                        finish();
+                    }
 
 
                 }
@@ -234,8 +274,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             player.setPlayWhenReady(false);
             //player.prepare(cms);
            // player.prepare(cms);
-
-            simpleExoPlayerView.getPlayer().prepare(cms);
+            player.prepare(cms);
+            simpleExoPlayerView.setPlayer(player);
             simpleExoPlayerView.setUseController(false);
         }
 
@@ -332,7 +372,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         });
         mp.start();
     }
-
+    /*
+    to be put into sql
+     */
     private int currentExerciseSound(int currentExercise){
         switch (currentExercise)
         {
@@ -502,8 +544,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         final JSONObject item_id = new JSONObject(obj.getString("item_id"));
                         Log.d("iteem_id",item_id.getString("name"));
                         JSONArray arr =obj.getJSONArray("exp_list");
+                        num_of_exercise=arr.length();
                         for (int i=0; i < arr.length(); i++) {
                             JSONObject tmp=arr.getJSONObject(i);
+
                             vm.add(new VideoModel(tmp.get("tut_video").toString()));
                             vm.add(new VideoModel(tmp.get("video").toString()));
                             instruction.add(new InstructionModel(tmp.get("wear_tutorial_video").toString()));
@@ -547,6 +591,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         ftv.setTexts(tmps);
     }
     private void pausePlayer(){
+        if(player!=null)
         player.setPlayWhenReady(false);
         simpleExoPlayerView.setUseController(true);
         simpleExoPlayerView.showController();

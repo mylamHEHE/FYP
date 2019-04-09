@@ -24,11 +24,11 @@ public class GraphActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-            int sender = intent.getIntExtra("sender_name",0);
+            Double sender = intent.getDoubleExtra("sender_name",0);
             Log.d("shb",String.valueOf(sender));
 
             //tommy change 78
-            if(sender==78)sender=0;
+            if(sender==78)sender=0.0;
 
 
 

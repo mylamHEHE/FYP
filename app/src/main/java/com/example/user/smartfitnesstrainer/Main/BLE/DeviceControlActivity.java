@@ -233,10 +233,7 @@ public class DeviceControlActivity extends Activity {
         Log.d("shb",String.valueOf(nx)+" "+String.valueOf(ny)+" "+String.valueOf(nz)+" "+
                 " tanxz: "+String.valueOf((int)(angle*100))+" tanxyz: "+String.valueOf((int)(LS*100))+ "Avg: " + String.valueOf(((int)(angle*100)+(int)(LS*100))*0.5));
 
-        Intent it = new Intent("tw.android.MY_BROADCAST1");
-        Log.d("broadcast?",String.valueOf((int)(angle*100)));
-        it.putExtra("sender_name", (int)(angle*100));
-        sendBroadcast(it);
+
         // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
     }
     double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
@@ -338,7 +335,10 @@ public class DeviceControlActivity extends Activity {
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
-
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        Log.d("broadcast?",String.valueOf((elevation_acc+elevationGyro)/2));
+        it.putExtra("sender_name", (elevation_acc+elevationGyro)/2);
+        sendBroadcast(it);
         return (elevation_acc+elevationGyro)/2;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
@@ -385,9 +385,8 @@ public class DeviceControlActivity extends Activity {
                     try {
                         buffer_Data.add(data[1]);
 
-
-                      //  shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                       // IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                       // shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
 
                     }
                     catch(Exception e)
@@ -401,6 +400,7 @@ public class DeviceControlActivity extends Activity {
         }.execute();
     }
     private void timerTaskforBuffer(){
+        Log.d("timer","hei");
         if(buffer_Data.isEmpty())
             return;
         TimerTask showtime= new TimerTask(){//也可以用匿名類別的方式，
