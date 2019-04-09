@@ -12,30 +12,44 @@
             android:orientation="vertical"
             android:gravity="center">
             <TextView
-                android:id="@+id/Graph"
+                android:id="@+id/Game1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Accelerometer"
+                android:text="Game1"
                 android:textSize="30sp"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:textColor="#000"/>
             <com.jjoe64.graphview.GraphView
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:id="@+id/graph"
+                android:layout_height="150dp"
+                android:id="@+id/graph1"
             />
             <TextView
-                android:id="@+id/Graph1"
+                android:id="@+id/Game2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gyroscope"
+                android:text="Game2"
                 android:textSize="30sp"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:textColor="#000"/>
             <com.jjoe64.graphview.GraphView
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:id="@+id/graph1"
+                android:layout_height="150dp"
+                android:id="@+id/graph2"
                 />
+            <TextView
+                android:id="@+id/Game3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Game3"
+                android:textSize="30sp"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:textColor="#000"/>
+            <com.jjoe64.graphview.GraphView
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:id="@+id/graph3"
+                />
+
         </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
