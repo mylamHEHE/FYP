@@ -87,6 +87,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
     private View mProgressView;
     private View mLoginFormView;
     private TextView registration;
+    private TextView graph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,11 +107,19 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                 return false;
             }
         });
+        graph=(TextView)findViewById(R.id.forget_email);
+        graph.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(),GraphActivity.class);
+                startActivity(intent);
+            }
+        });
         registration=(TextView)findViewById(R.id.registration);
         registration.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(),GraphActivity.class);
+                Intent intent = new Intent(getApplicationContext(),RegistrationActivity.class);
                 startActivity(intent);
             }
         });
