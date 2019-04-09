@@ -1,21 +1,27 @@
 package com.example.user.smartfitnesstrainer.Main.Profile;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.MainActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
@@ -50,6 +56,8 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     PrefKey prefKey;
     List<UserProfile.PlayerHistory> playerHistories = new ArrayList<>();
     TextView first_name;
+
+    FloatingActionButton myFab;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -66,7 +74,13 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
 
         //tomilia: database get text initialize
         first_name = view.findViewById(R.id.first_name);
-
+        myFab = (FloatingActionButton) view.findViewById(R.id.fab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),GraphActivity.class);
+                startActivity(intent);
+            }
+        });
 
         prefKey = new PrefKey(getActivity().getApplicationContext());
         getProfile();
