@@ -460,6 +460,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 3.marking motion per sec and into list
 
                  */
+
                 currentExercise++;
                 callAsynchronousTask();
                 isTutorMode = 1;

@@ -184,7 +184,7 @@ public class DeviceControlActivity extends Activity {
         }
     }
 
-    double Angy = 0;
+//    double Angy = 0;
     public float help(String a,String b){
         short int16 = (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF));
         float f = int16/(float)2048.0;
@@ -195,56 +195,56 @@ public class DeviceControlActivity extends Activity {
         int xtemp = Integer.parseInt(a,2);//<<8+Integer.parseInt(x2,16);
         return (short)(((Integer.parseInt(a,2) & 0xFF) << 8) | (Integer.parseInt(b,2) & 0xFF))* (float)(Math.PI / (16.4f * 180.0f));
     }
-    public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
-        int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
-        int xtempshifted=(xtemp<<7) | Integer.parseInt(x2,2);
-        Log.d("xtempcheck",String.valueOf(xtempshifted));
-        double resultx = xtempshifted/2048.0;
-        if(resultx>30)return;
-        int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
-        int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
-        double resulty = ytempshifted/2048.0;
-        int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
-        int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
-        double resultz = ztempshifted/2048.0;
-
-        double nx = help(x1,x2);
-        double ny = help(y1,y2);
-        double nz = help(z1,z2);
-
-        double ngx = help2(x1,x2);
-        double ngy = help2(y1,y2);
-        double ngz = help2(z1,z2);
-
-        //variable for complement filter
-        int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
-        int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
-        double resultg = gtempshifted *  Math.PI / (16.4f * 180.0f);
-        /*final tuning*/
-        float angle = (float)Math.atan2(ny,sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
-        float LS = (float)Math.atan2(nx,sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
-        float elevation = (float)Math.atan2(sqrt(nx*nx+ny*ny),sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
-
-
-
-        double offset_angle = 0.08;//hardcode with 90 degree
-        Angy = 0.998*(Angy + resultg*100/1000)+0.02*angle;
-
-        Log.d("shb",String.valueOf(nx)+" "+String.valueOf(ny)+" "+String.valueOf(nz)+" "+
-                " tanxz: "+String.valueOf((int)(angle*100))+" tanxyz: "+String.valueOf((int)(LS*100))+ "Avg: " + String.valueOf(((int)(angle*100)+(int)(LS*100))*0.5));
-
-        Intent it = new Intent("tw.android.MY_BROADCAST1");
-        Log.d("broadcast?",String.valueOf((int)(angle*100)));
-        it.putExtra("sender_name", (int)(angle*100));
-        sendBroadcast(it);
-        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
-    }
+//    public void shiftHighByte(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2){
+//        int xtemp = Integer.parseInt(x1,2);//<<8+Integer.parseInt(x2,16);
+//        int xtempshifted=(xtemp<<7) | Integer.parseInt(x2,2);
+//        Log.d("xtempcheck",String.valueOf(xtempshifted));
+//        double resultx = xtempshifted/2048.0;
+//        if(resultx>30)return;
+//        int ytemp = Integer.parseInt(y1,2);//<<8+Integer.parseInt(x2,16);
+//        int ytempshifted=(ytemp<<8) | Integer.parseInt(y2,2);
+//        double resulty = ytempshifted/2048.0;
+//        int ztemp = Integer.parseInt(z1,2);//<<8+Integer.parseInt(x2,16);
+//        int ztempshifted=(ztemp<<8) | Integer.parseInt(z2,2);
+//        double resultz = ztempshifted/2048.0;
+//
+//        double nx = help(x1,x2);
+//        double ny = help(y1,y2);
+//        double nz = help(z1,z2);
+//
+//        double ngx = help2(x1,x2);
+//        double ngy = help2(y1,y2);
+//        double ngz = help2(z1,z2);
+//
+//        //variable for complement filter
+//        int gtemp = Integer.parseInt(gx1,2);//<<8+Integer.parseInt(x2,16);
+//        int gtempshifted=(gtemp<<8) | Integer.parseInt(gx2,2);
+//        double resultg = gtempshifted *  Math.PI / (16.4f * 180.0f);
+//        /*final tuning*/
+//        float angle = (float)Math.atan2(ny,sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
+//        float LS = (float)Math.atan2(nx,sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
+//        float elevation = (float)Math.atan2(sqrt(nx*nx+ny*ny),sqrt(pow(nx,2)+pow(ny,2)+pow(nz,2)));
+//
+//
+//
+//        double offset_angle = 0.08;//hardcode with 90 degree
+//        Angy = 0.998*(Angy + resultg*100/1000)+0.02*angle;
+//
+//        Log.d("shb",String.valueOf(nx)+" "+String.valueOf(ny)+" "+String.valueOf(nz)+" "+
+//                " tanxz: "+String.valueOf((int)(angle*100))+" tanxyz: "+String.valueOf((int)(LS*100))+ "Avg: " + String.valueOf(((int)(angle*100)+(int)(LS*100))*0.5));
+//
+//        Intent it = new Intent("tw.android.MY_BROADCAST1");
+//        Log.d("broadcast?",String.valueOf((int)(angle*100)));
+//        it.putExtra("sender_name", (int)(angle*100));
+//        sendBroadcast(it);
+//        // Log.d("shb",Integer.toBinaryString(resultx)+" "+Integer.toBinaryString(resulty)+" "+Integer.toBinaryString(resultz));
+//    }
     double Kp = 10.0f; // 这里的KpKi是用于调整加速度计修正陀螺仪的速度
     double Ki = 0.008f;
     double halfT = 0.050f; // 采样周期的一半，用于求解四元数微分方程时计算角增量
     double q0 = 1, q1 = 0, q2 = 0, q3 = 0;    // 初始姿态四元数，由上篇博文提到的变换四元数公式得来
     double exInt = 0, eyInt = 0, ezInt = 0;    //当前加计测得的重力加速度在三轴上的分量
-    //与用当前姿态计算得来的重力在三轴上的分量的误差的积分
+//    //与用当前姿态计算得来的重力在三轴上的分量的误差的积分
     public double IMUupdate(String x1,String x2,String y1,String y2,String z1,String z2,String gx1,String gx2,String gy1,String gy2,String gz1,String gz2)//g表陀螺仪，a表加计
     {
 
@@ -338,8 +338,11 @@ public class DeviceControlActivity extends Activity {
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
-
-        return (elevation_acc+elevationGyro)/2;
+        double result=(elevation_acc+elevationGyro)/2;
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        it.putExtra("sender_name",result);
+        sendBroadcast(it);
+        return result;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
         double result[] = new double[4];
@@ -356,14 +359,12 @@ public class DeviceControlActivity extends Activity {
             @Override
             protected Void doInBackground(Void... params) {
 
-                Log.d("delble",event.getBluetoothLeDevice().getAddress());
 
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
 
                     int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
-                    Log.d("shiftevent",String.valueOf(Integer.toBinaryString(i)));
                     String tmp = "";
                     int id = 0;
 
@@ -386,8 +387,8 @@ public class DeviceControlActivity extends Activity {
                         buffer_Data.add(data[1]);
 
 
-                      //  shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                       // IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                        //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
 
                     }
                     catch(Exception e)
