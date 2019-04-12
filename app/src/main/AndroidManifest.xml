@@ -49,6 +49,8 @@
         <activity android:name=".Main.BLE.DeviceDetailActivity" />
         <activity android:name=".Main.BLE.RegistrationActivity" />
         <activity android:name=".Main.GraphActivity" />
+        <activity android:name=".Main.ForgetPasswordActivty" />
+        <activity android:name=".Main.ResentEmailActivity" />
         <activity
             android:name=".Main.BLE.DeviceControlActivity"
             android:theme="@style/MyDialogStyle" />

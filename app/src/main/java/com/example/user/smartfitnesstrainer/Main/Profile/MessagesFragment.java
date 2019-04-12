@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.MainActivity;
+import com.example.user.smartfitnesstrainer.Main.ResentEmailActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
@@ -77,7 +78,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         myFab = (FloatingActionButton) view.findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(),GraphActivity.class);
+                Intent intent = new Intent(getContext(),ResentEmailActivity.class);
                 startActivity(intent);
             }
         });
