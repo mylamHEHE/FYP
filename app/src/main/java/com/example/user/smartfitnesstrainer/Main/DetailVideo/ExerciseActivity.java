@@ -120,6 +120,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private double currentreading=0.0;
     private Handler mHandler = new Handler();
     private int lastXPoint = 2;
+    private int lastXPoint1 = 2;
     private LineGraphSeries<DataPoint> series, series1;
     private double graph_pt;
 
@@ -615,7 +616,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 new DataPoint(0,40),
         });
         addRandomDataPoint();
-        addRandomDataPoint1();
+        //addRandomDataPoint1();
         series1.setColor(Color.RED);
 
         graph.addSeries(series);
@@ -624,6 +625,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(90);
         graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(20);
 //graph end
     }
@@ -684,7 +686,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
-
         exerciseStarts();
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
@@ -695,17 +696,19 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void run(){
                 lastXPoint++;
                 series.appendData(new DataPoint(lastXPoint,graph_pt),false,100);
+                series1.appendData(new DataPoint(lastXPoint,40),false,100);
                 addRandomDataPoint();
             }
         },1000);
     }
-    private void addRandomDataPoint1(){
-        mHandler.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                series1.appendData(new DataPoint(120,40),true,100);
-                addRandomDataPoint1();
-            }
-        },1000);
-    }
+//    private void addRandomDataPoint1(){
+//        mHandler.postDelayed(new Runnable(){
+//            @Override
+//            public void run(){
+//                //lastXPoint1++;
+//                series1.appendData(new DataPoint(lastXPoint,40),true,100);
+//                addRandomDataPoint1();
+//            }
+//        },1000);
+//    }
 }
