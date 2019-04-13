@@ -62,21 +62,22 @@ public class GraphActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
 
-
+                        //convert integer point to each graph
 
                         JSONArray round = new JSONArray(response.body().getRound_data());
                         for(int rot=0;rot<round.length();rot++)
                         {
+                            Log.d("yeaz"+String.valueOf(exercise_key),String.valueOf(round.length()));
                             Log.d("yea"+String.valueOf(exercise_key),String.valueOf(rot));
-                            JSONObject each = new JSONObject(round.get(rot).toString());
-/*
+                            JSONArray each = new JSONArray(round.get(rot).toString());
+
                             ArrayList<Integer> graphplot = new ArrayList<>();
                             for (int point=0;point<each.length();point++)
                             {
                                 graphplot.add(each.getInt(point));
                             }
                             createGraph(graphplot);
-                            */
+
                         }
 
                         //tomilia: get Profile stats
@@ -101,7 +102,12 @@ public class GraphActivity extends AppCompatActivity {
     }
     private void createGraph(ArrayList<Integer> graph)
     {
-        Log.d("tagx",graph.toArray().toString());
+        for(int x:graph)
+        {
+            Log.d("tagx",String.valueOf(x));
+        }
+
+
     }
     @Override
     protected void onDestroy()
