@@ -141,6 +141,17 @@
                 </LinearLayout>
                 -->
             </LinearLayout>
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FFF">
+                <com.jjoe64.graphview.GraphView
+                    android:layout_width="200dp"
+                    android:layout_height="100dp"
+                    android:id="@+id/graph"
+                    />
+            </RelativeLayout>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

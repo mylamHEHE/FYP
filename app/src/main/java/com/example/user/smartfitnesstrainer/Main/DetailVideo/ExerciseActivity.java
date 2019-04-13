@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.media.MediaExtractor;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
@@ -57,6 +58,9 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.tomer.fadingtextview.FadingTextView;
 
 import org.json.JSONArray;
@@ -84,6 +88,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             .baseUrl(URL_Base);
     PrefKey prefKey;
     Bundle sis;
+    String name_of_exercise;
     ExerciseListAdapter ela;
     Retrofit retrofit = builder.build();
     UserClient userClient = retrofit.create(UserClient.class);
@@ -116,23 +121,26 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private MediaPlayer mp;
     private TextView angle;
     private double currentreading=0.0;
+    private Handler mHandler = new Handler();
+    private int lastXPoint = 2;
+    private LineGraphSeries<DataPoint> series, series1;
+    private double graph_pt;
+
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
-             int sender = intent.getIntExtra("sender_name",0);
+            int sender = intent.getIntExtra("sender_name",0);
+            graph_pt = intent.getDoubleExtra("sender_name",0);
             Log.d("shb",String.valueOf(sender));
+            Log.d("924",String.valueOf(graph_pt));
 
             //tommy change 78
-            if(sender==78)sender=0;
+            //if(sender==78)sender=0;
             angle.setText(String.valueOf(sender));
             currentreading+=sender;
-
-
-
         }
-
     }
     private MyBroadcaseReceiver1 m_MyReceiver1;
     @Override
@@ -145,9 +153,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             createPlaylist();
             createExerciseModellist();
             firstClip();
-
         }
-
     }
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource.Factory(
@@ -157,11 +163,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void roundFinished(){
         Log.d("stageScore",String.valueOf(stageScore));
 
-            onFinishRepeat =true;
             totalRound.add(stageScore);
             stageScore = 0;
-            //addjson to the graph represnet for each round
 
+            //addjson to the graph represnet
             currentScore.setText(String.valueOf(stageScore));
 
     }
@@ -194,14 +199,16 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                     Log.d("statech", String.valueOf(playbackState));
-                    if(playbackState == 4)
+                    if(playbackState == 4 && !onFinishRepeat)
                     {
+                        onFinishRepeat=true;
                             roundFinished();
                             Log.d("plex", String.valueOf(totalRound.size()));
 
                             for (int x : totalRound) {
                                 Log.d("roundscore", String.valueOf(x));
                             }
+                            Log.d("onfinishrep",String.valueOf(onFinishRepeat));
                             /*
                             1.list of json to the graph
                             2.score to the exercise
@@ -226,7 +233,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         a3.add(30);
                         aList.add(a3);
 
-                        Result_Maker resultMaker = new Result_Maker(totalRound,aList);
+                        Result_Maker resultMaker = new Result_Maker(getApplicationContext(),name_of_exercise,num_of_exercise,totalRound,aList);
                             //temp gen
 
                             resultMaker.makeJSON();
@@ -500,7 +507,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 1.with moving motion
                 2.with transparency
                 3.marking motion per sec and into list
-
+//GraphActicity
                  */
 
                 currentExercise++;
@@ -542,12 +549,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         final JSONObject obj = new JSONObject(response.body().string());
 
                         final JSONObject item_id = new JSONObject(obj.getString("item_id"));
-                        Log.d("iteem_id",item_id.getString("name"));
+                        name_of_exercise=item_id.getString("name");
                         JSONArray arr =obj.getJSONArray("exp_list");
                         num_of_exercise=arr.length();
                         for (int i=0; i < arr.length(); i++) {
                             JSONObject tmp=arr.getJSONObject(i);
-
+                            //tomilia: referal , name or id???
                             vm.add(new VideoModel(tmp.get("tut_video").toString()));
                             vm.add(new VideoModel(tmp.get("video").toString()));
                             instruction.add(new InstructionModel(tmp.get("wear_tutorial_video").toString()));
@@ -647,38 +654,26 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 pausePlayer();
             }
         });
+//graph start
+        GraphView graph = (GraphView)findViewById(R.id.graph);
+        series = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(0,0),
+        });
+        series1 = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(0,40),
+        });
+        addRandomDataPoint();
+        addRandomDataPoint1();
+        series1.setColor(Color.RED);
 
-        // initializePlayer();
-       /* MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(vf);
-        vf.setMediaController(mediaController);
-*/
-      /*  rv.setAdapter(ela);
-        LinearLayoutManager llmm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rv.setLayoutManager(llmm);
-        */
-        /*Uri uri = Uri.parse("android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.video);
-        vf.setVideoURI(uri);
-        */
-        /*vf.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (!bVideoIsBeingTouched) {
-                    bVideoIsBeingTouched = true;
-                    if (videoview.isPlaying()) {
-                        onPause(videoview);
-                    } else {
-                        Log.d("vid",String.valueOf(videoview.isPlaying()));
-                        onResume(videoview);
-                    }
-
-                    bVideoIsBeingTouched = false;
-
-                }
-                return true;
-            }
-        });vf.start();*/
-
+        graph.addSeries(series);
+        graph.addSeries(series1);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(90);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMaxX(20);
+//graph end
     }
 
     public void onClickSkip(View v)
@@ -741,5 +736,29 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         exerciseStarts();
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
+    }
+    private void saveCurrentExercisePoint()
+    {
+
+    }
+    private void addRandomDataPoint(){
+        mHandler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                lastXPoint++;
+                saveCurrentExercisePoint();
+                series.appendData(new DataPoint(lastXPoint,graph_pt),false,100);
+                addRandomDataPoint();
+            }
+        },1000);
+    }
+    private void addRandomDataPoint1(){
+        mHandler.postDelayed(new Runnable(){
+            @Override
+            public void run(){
+                series1.appendData(new DataPoint(lastXPoint,40),true,100);
+                addRandomDataPoint1();
+            }
+        },1000);
     }
 }

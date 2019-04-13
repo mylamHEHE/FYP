@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.MainActivity;
+import com.example.user.smartfitnesstrainer.Main.ResentEmailActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
@@ -77,7 +78,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         myFab = (FloatingActionButton) view.findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(),GraphActivity.class);
+                Intent intent = new Intent(getContext(),ResentEmailActivity.class);
                 startActivity(intent);
             }
         });
@@ -91,7 +92,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         uri.add(new UserRecyclerItem("'Push-up' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Heavyweight' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Upperbody' Series","05/11/2018"));
-        ria = new RecyclerItemAdapter(getContext(),playerHistories);
+        ria = new RecyclerItemAdapter(getActivity(),getContext(),playerHistories);
         rv.setAdapter(ria);
         rv.setNestedScrollingEnabled(true);
         return view;
@@ -118,6 +119,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
                            first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
                             playerHistories.clear();
                            playerHistories.addAll(response.body().getPlayer_history());
+                        Log.d("playh",String.valueOf(playerHistories.get(0).getRef_id()));
                             Log.d("playh",playerHistories.get(0).getName());
                             ria.notifyDataSetChanged();
                         //

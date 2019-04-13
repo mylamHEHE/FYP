@@ -36,8 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.user.smartfitnesstrainer.Main.BLE.RegistrationActivity;
+import com.example.user.smartfitnesstrainer.Main.ForgetPasswordActivty;
 import com.example.user.smartfitnesstrainer.Main.GraphActivity;
 import com.example.user.smartfitnesstrainer.Main.HomeActivity;
+import com.example.user.smartfitnesstrainer.Main.ResentEmailActivity;
 import com.example.user.smartfitnesstrainer.Main.UserModel.Login;
 import com.example.user.smartfitnesstrainer.Main.UserModel.User;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
@@ -87,7 +89,8 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
     private View mProgressView;
     private View mLoginFormView;
     private TextView registration;
-    private TextView graph;
+    private TextView forget_email;
+    private TextView resent_email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,11 +110,19 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                 return false;
             }
         });
-        graph=(TextView)findViewById(R.id.forget_email);
-        graph.setOnClickListener(new View.OnClickListener(){
+        resent_email=(TextView)findViewById(R.id.resent_email);
+        resent_email.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(),GraphActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ResentEmailActivity.class);
+                startActivity(intent);
+            }
+        });
+        forget_email=(TextView)findViewById(R.id.forget_email);
+        forget_email.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(), ForgetPasswordActivty.class);
                 startActivity(intent);
             }
         });
