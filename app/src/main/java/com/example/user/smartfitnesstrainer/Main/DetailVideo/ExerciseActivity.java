@@ -122,6 +122,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private int lastXPoint = 2;
     private int lastXPoint1 = 2;
     private LineGraphSeries<DataPoint> series, series1, reset_series;
+
     private double graph_pt;
     private GraphView graph;
 
@@ -617,7 +618,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 new DataPoint(0,0),
         });
         addRandomDataPoint();
-        addRandomDataPoint1();
+        //addRandomDataPoint1();
         series1.setColor(Color.RED);
 
         graph.addSeries(series);
@@ -626,6 +627,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(90);
         graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(20);
 //graph end
     }
@@ -695,6 +697,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void run(){
                 lastXPoint++;
                 series.appendData(new DataPoint(lastXPoint,graph_pt),false,100);
+                series1.appendData(new DataPoint(lastXPoint,40),false,100);
                 addRandomDataPoint();
             }
         },1000);
@@ -709,4 +712,5 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             }
         },1000);
     }
+
 }
