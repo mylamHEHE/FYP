@@ -122,9 +122,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private int lastXPoint = 2;
     private int lastXPoint1 = 2;
     private LineGraphSeries<DataPoint> series, series1, reset_series;
-
     private double graph_pt;
     private GraphView graph;
+    //private int graphNumber = 0;
 
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -162,11 +162,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     private void roundFinished(){
         Log.d("stageScore",String.valueOf(stageScore));
-            onFinishRepeat =true;
-            totalRound.add(stageScore);
-            stageScore = 0;
-            //addjson to the graph represnet
-            currentScore.setText(String.valueOf(stageScore));
+        onFinishRepeat =true;
+        totalRound.add(stageScore);
+        stageScore = 0;
+        //addjson to the graph represnet
+        currentScore.setText(String.valueOf(stageScore));
     }
     private void prepareExoPlayerFromFileUri(Uri uri) {
         if (player!=null)
@@ -186,7 +186,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         for (int i=0;i<vm.size();i++) {
             Uri video_uri = Uri.parse(vm.get(i).videoUrl);
             Log.d("video_x",video_uri.toString());
-           mediaSources[i]= buildMediaSource(video_uri);
+            mediaSources[i]= buildMediaSource(video_uri);
         }
 
         simpleExoPlayerView.setPlayer(player);
@@ -238,7 +238,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             });
             player.setPlayWhenReady(false);
             //player.prepare(cms);
-           // player.prepare(cms);
+            // player.prepare(cms);
 
             simpleExoPlayerView.getPlayer().prepare(cms);
             simpleExoPlayerView.setUseController(false);
@@ -263,8 +263,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void skipAvaliable()
     {
         if(skipTutor.getVisibility()==View.GONE)
-        skipTutor.setVisibility(View.VISIBLE);
-      //  else if(skipTutor.getVisibility()==View.VISIBLE)
+            skipTutor.setVisibility(View.VISIBLE);
+        //  else if(skipTutor.getVisibility()==View.VISIBLE)
         //skipTutor.setVisibility(View.GONE);
     }
     //choser
@@ -293,10 +293,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             GrpahAppear();
         }
     }
+
     private void deviceCheck(){
         devicealert = DeviceAlert.newInstance(currentExerciseInstruction(currentExercise));
 
-       // devicealert.setArguments();
+        // devicealert.setArguments();
         devicealert.show(getFragmentManager(),"Edit");
     }
     private void introSound(){
@@ -342,8 +343,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 return R.raw.challegeonevsit;
             case 1:
                 return R.raw.challegetwoplank;
-                default:
-                    return R.raw.chal3tstable;
+            default:
+                return R.raw.chal3tstable;
         }
     }
     private String currentExerciseInstruction(int currentExercise){
@@ -408,15 +409,20 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     private void GrpahAppear()
     {
-        if(graph.getVisibility()==View.GONE)
+        if(graph.getVisibility()==View.GONE){
+//            lastXPoint = 2;
+//            addRandomDataPoint1();
+//            graph.addSeries(series);
+//            graph.addSeries(series1);
             graph.setVisibility(View.VISIBLE);
+        }
         else if(graph.getVisibility()==View.VISIBLE){
             graph.setVisibility(View.GONE);
+            //graph.removeAllSeries();
         }
     }
     //tutor mode
     private void tutorMode(){
-
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
         GrpahAppear();
         noSkip();
@@ -428,7 +434,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         new CountDownTimer(6000,1000) {
 
             public void onTick(long millisUntilFinished) {
-               // congradulationAudio
+                // congradulationAudio
                 //here you can have your logic to set text to edittext
             }
 
@@ -448,9 +454,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         pb.setVisibility(View.VISIBLE);
         new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
-                    if (rl.getVisibility() == View.GONE)
+                if (rl.getVisibility() == View.GONE)
                     rl.setVisibility(View.VISIBLE);
-                    mTextField.setText(String.valueOf(millisUntilFinished / 1000+1));
+                mTextField.setText(String.valueOf(millisUntilFinished / 1000+1));
                 //here you can have your logic to set text to edittext
             }
 
@@ -577,7 +583,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         angle = findViewById(R.id.angle);
         scoreBoard = findViewById(R.id.scoreboard);
         currentScore = findViewById(R.id.score);
-    //    baseScore = findViewById(R.id.basescore);
+        //    baseScore = findViewById(R.id.basescore);
         rl.setVisibility(View.GONE);
         Log.d("pkxt","owow");
         m_MyReceiver1 = new MyBroadcaseReceiver1();
@@ -627,7 +633,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(90);
         graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(20);
 //graph end
     }
@@ -659,9 +664,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         try {
                             Log.d("readffromace",String.valueOf(currentExercise-1)+" "+String.valueOf(currentreading/40));
                             if(analyticzer.analyze(currentExercise-1,currentreading/40)){
-                               scoreAdder();
+                                scoreAdder();
                             }
-                         currentreading=0;
+                            currentreading=0;
 
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
@@ -681,7 +686,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         if(mp!=null)
             mp.release();
         if(doAsynchronousTask!=null)
-        doAsynchronousTask.cancel();
+            doAsynchronousTask.cancel();
         unregDevice();
     }
 
@@ -695,22 +700,24 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         mHandler.postDelayed(new Runnable(){
             @Override
             public void run(){
-                lastXPoint++;
-                series.appendData(new DataPoint(lastXPoint,graph_pt),false,100);
-                series1.appendData(new DataPoint(lastXPoint,40),false,100);
+                lastXPoint = lastXPoint + 1;
+                lastXPoint1 = lastXPoint1 + 1;
+                series.appendData(new DataPoint(lastXPoint1,graph_pt),true,100);
+                series1.appendData(new DataPoint(lastXPoint,40),true,100);
                 addRandomDataPoint();
             }
         },1000);
     }
-    private void addRandomDataPoint1(){
-        mHandler.postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                lastXPoint1++;
-                series1.appendData(new DataPoint(0,40),true,100);
-                addRandomDataPoint1();
-            }
-        },1000);
-    }
-
+//    private void addRandomDataPoint1(){
+//        mHandler.postDelayed(new Runnable(){
+//            @Override
+//            public void run(){
+//                lastXPoint = lastXPoint + 1;
+//                lastXPoint1 = lastXPoint1 + 1;
+//                series.appendData(new DataPoint(lastXPoint1,graph_pt),true,100);
+//                series1.appendData(new DataPoint(lastXPoint,40),true,100);
+//                addRandomDataPoint1();
+//            }
+//        },1000);
+//    }
 }
