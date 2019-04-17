@@ -120,8 +120,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private double currentreading=0.0;
     private Handler mHandler = new Handler();
     private int lastXPoint = 2;
-    private LineGraphSeries<DataPoint> series, series1;
+    private int lastXPoint1 = 2;
+    private LineGraphSeries<DataPoint> series, series1, reset_series;
     private double graph_pt;
+    private GraphView graph;
 
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -159,13 +161,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     private void roundFinished(){
         Log.d("stageScore",String.valueOf(stageScore));
-
             onFinishRepeat =true;
             totalRound.add(stageScore);
             stageScore = 0;
             //addjson to the graph represnet
             currentScore.setText(String.valueOf(stageScore));
-
     }
     private void prepareExoPlayerFromFileUri(Uri uri) {
         if (player!=null)
@@ -261,7 +261,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     private void skipAvaliable()
     {
-
         if(skipTutor.getVisibility()==View.GONE)
         skipTutor.setVisibility(View.VISIBLE);
       //  else if(skipTutor.getVisibility()==View.VISIBLE)
@@ -272,19 +271,16 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         Log.d("animationaftere",String.valueOf(isTutorMode));
         if (isTutorMode==0)
         {
-
             unregDevice();
-
             introMode();
-
+            GrpahAppear();
         }
         else if (isTutorMode == 1)
         {
-
             pauseCounter();
-            scoreBoardAppear();
             skipAvaliable();
             unregisterReceiver(m_MyReceiver1);
+            scoreBoardAppear();
             tutorMode();
         }
         else
@@ -293,6 +289,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             unregDevice();
             deviceCheck();
             scoreBoardAppear();
+            GrpahAppear();
         }
     }
     private void deviceCheck(){
@@ -404,15 +401,23 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void scoreBoardAppear()
     {
         if(scoreBoard.getVisibility()==View.GONE)
-        scoreBoard.setVisibility(View.VISIBLE);
+            scoreBoard.setVisibility(View.VISIBLE);
         else if(scoreBoard.getVisibility()==View.VISIBLE)
             scoreBoard.setVisibility(View.GONE);
+    }
+    private void GrpahAppear()
+    {
+        if(graph.getVisibility()==View.GONE)
+            graph.setVisibility(View.VISIBLE);
+        else if(graph.getVisibility()==View.VISIBLE){
+            graph.setVisibility(View.GONE);
+        }
     }
     //tutor mode
     private void tutorMode(){
 
         ExerciseModel currentem = exerciseModelArrayList.get(currentExercise);
-
+        GrpahAppear();
         noSkip();
         congrazSound();
         String[] tmps = {"Well done!","Challenge "+(currentExercise+1)+"\n"+currentem.name};
@@ -439,21 +444,16 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
     //player mode
     private void exerciseStarts(){
-
         pb.setVisibility(View.VISIBLE);
-
         new CountDownTimer(3000, 1000) {
-
             public void onTick(long millisUntilFinished) {
                     if (rl.getVisibility() == View.GONE)
                     rl.setVisibility(View.VISIBLE);
                     mTextField.setText(String.valueOf(millisUntilFinished / 1000+1));
-
                 //here you can have your logic to set text to edittext
             }
 
             public void onFinish() {
-
                 rl.setVisibility(View.GONE);
                 pb.setVisibility(View.INVISIBLE);
                 player.setPlayWhenReady(true);
@@ -522,7 +522,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 else
                 {
                     //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
-
                 }
             }
 
@@ -566,7 +565,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
         setContentView(R.layout.activity_exercise);
         pause = findViewById(R.id.exo_pause);
-
         play = findViewById(R.id.exo_play);
         skipTutor = findViewById(R.id.skiptut);
         rl = findViewById(R.id.timerrl);
@@ -582,8 +580,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         rl.setVisibility(View.GONE);
         Log.d("pkxt","owow");
         m_MyReceiver1 = new MyBroadcaseReceiver1();
-
-
         ela = new ExerciseListAdapter(this,temp);
         play.setOnClickListener(new View.OnClickListener()
         {
@@ -597,7 +593,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 pause.setVisibility(View.VISIBLE);
             }
         });
-
         pause.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -606,13 +601,20 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 pausePlayer();
             }
         });
-//graph start
-        GraphView graph = (GraphView)findViewById(R.id.graph);
+        createGraph();
+    }
+
+    public void createGraph(){
+        //graph start
+        graph = (GraphView)findViewById(R.id.graph);
         series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0,0),
         });
         series1 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0,40),
+        });
+        reset_series = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(0,0),
         });
         addRandomDataPoint();
         addRandomDataPoint1();
@@ -635,7 +637,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     private void scoreAdder()
     {
-
         stageScore++;
         currentScore.setText(String.valueOf(stageScore));
         mp = MediaPlayer.create(getApplicationContext(), R.raw.ding);
@@ -684,7 +685,6 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
-
         exerciseStarts();
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
@@ -703,7 +703,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         mHandler.postDelayed(new Runnable(){
             @Override
             public void run(){
-                series1.appendData(new DataPoint(120,40),true,100);
+                lastXPoint1++;
+                series1.appendData(new DataPoint(0,40),true,100);
                 addRandomDataPoint1();
             }
         },1000);
