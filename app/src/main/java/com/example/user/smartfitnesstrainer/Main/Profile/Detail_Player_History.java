@@ -13,6 +13,7 @@ public class Detail_Player_History {
 
     private int ref_id;
     private String name;
+    private String list_name;
     private boolean succuessful;
     private String round_data;
     private int total_exercise;
@@ -49,7 +50,14 @@ public class Detail_Player_History {
     public void setRound_data(String round_data) {
         this.round_data = round_data;
     }
-
+    public String getList_name()
+    {
+        return list_name;
+    }
+    public void setList_name(String list_name)
+    {
+        this.list_name = list_name;
+    }
     public int getTotal_exercise() {
         return total_exercise;
     }

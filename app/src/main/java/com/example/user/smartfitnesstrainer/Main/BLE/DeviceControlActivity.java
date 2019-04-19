@@ -58,7 +58,7 @@ public class DeviceControlActivity extends Activity {
     private EditText mInput;
     private EditText mOutput;
     //Data buffer import
-    private ArrayList buffer_Data = new ArrayList();
+    private ArrayList<Double> buffer_Data = new ArrayList();
     //buffer timer for preventing package loss
     Timer buf_timer= new Timer();
     private SpCache mSpCache;
@@ -90,7 +90,6 @@ public class DeviceControlActivity extends Activity {
 
 
         Log.d("bluettohd",String.valueOf(BluetoothDeviceManager.getInstance().isConnected(mDevice)));
-        timerTaskforBuffer();
 
         //       showDefaultInfo();
 
@@ -264,8 +263,6 @@ public class DeviceControlActivity extends Activity {
 
         norm = sqrt(pow(ax,2)+pow(ay,2)+pow(az,2));
         double elevation_acc = Math.asin(sqrt(ax*ax+ay*ay)/norm) * 180 /PI;
-        Log.d("gyro", String.valueOf(gx) + " " + String.valueOf(gy) + " " + String.valueOf(gz));
-        Log.d("accelo", String.valueOf(ax) + " " + String.valueOf(ay) + " " + String.valueOf(az));
         // 先把这些用得到的值算好
         double q0q0 = q0 * q0;
         double q0q1 = q0 * q1;
@@ -319,8 +316,6 @@ public class DeviceControlActivity extends Activity {
 
         //四元数到欧拉角的转换，公式推导见博文一
         //其中YAW航向角由于加速度计对其没有修正作用，因此此处直接用陀螺仪积分代替
-        Log.d("momo","AngleY: "+String.valueOf(Math.asin(-2 * q1 * q3 + 2 * q0* q2)*100)+" AngleX: "+
-                String.valueOf((Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1))*100));
         double z = Math.atan2(2 * q0 * q3 + 2 * q1 * q2,-2 * q2 * q2 - 2 * q3* q3 + 1)* 57.3; // yaw; // yaw
         double y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
         double x = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
@@ -333,15 +328,16 @@ public class DeviceControlActivity extends Activity {
         double zss = last_result[3];
 ////cos
         double elevationGyro = Math.asin(sqrt(xss*xss+yss*yss)/sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2))) * 180 /PI;
-        Log.d("assd",String.valueOf(x)+" "+String.valueOf(y)+" "+String.valueOf(z));
-        Log.d("q123",String.valueOf(q0)+" "+String.valueOf(q1)+" "+String.valueOf(q2)+" "+String.valueOf(q3));
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
 
         double result=(elevation_acc+elevationGyro)/2;
+
+        //timer get buffer average in one sec
         Intent it = new Intent("tw.android.MY_BROADCAST1");
         it.putExtra("sender_name",result);
+
         sendBroadcast(it);
         return result;
     }
@@ -385,7 +381,7 @@ public class DeviceControlActivity extends Activity {
                     //              float f = int16;
                     //            Log.d("datax",String.valueOf(f));
                     try {
-                        buffer_Data.add(data[1]);
+                        //buffer_Data.add(data[1]);
 
                         //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                         IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
@@ -401,20 +397,10 @@ public class DeviceControlActivity extends Activity {
 
         }.execute();
     }
-    private void timerTaskforBuffer(){
+    private void timerTaskforBuffer(double result){
         Log.d("timer","hei");
-        if(buffer_Data.isEmpty())
-            return;
-        TimerTask showtime= new TimerTask(){//也可以用匿名類別的方式，
 
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Log.d("timer",String.valueOf(buffer_Data.get(0)));
-                buffer_Data.remove(0);
-            }
-        };
-        buf_timer.schedule(showtime,  100);
+
     }
     @Override
     protected void onDestroy() {

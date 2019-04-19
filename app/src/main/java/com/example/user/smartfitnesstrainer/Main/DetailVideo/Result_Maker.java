@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,34 +35,53 @@ public class Result_Maker {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
     Retrofit retrofit = builder.build();
+
     UserClient userClient = retrofit.create(UserClient.class);
+    Call<ResponseBody> example;
     ArrayList<Integer> score;
     int num_of_exercise;
     ArrayList<ArrayList<Integer>> resultset;
     String name_of_exercise;
+    String id;
     PrefKey prefKey;
+    ArrayList<String> name_of_exercise_set;
     /*
     To make json
     1.get arraylist of saved angle
     2.get score
     3.comment????
      */
-    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<ArrayList<Integer>> resultset) {
+    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<String> name_of_exercise_set,ArrayList<ArrayList<Integer>> resultset) {
         this.score = score;
         this.num_of_exercise=num_of_exercise;
         this.resultset = resultset;
         this.name_of_exercise = name_of_exercise;
+        this.name_of_exercise_set = name_of_exercise_set;
         prefKey = new PrefKey(context);
     }
     public void makeJSON(){
+        int counttemp=0;
+        for(ArrayList<Integer> x:resultset)
+        {
+
+                Log.d("round"+counttemp,String.valueOf(x.size()));
+
+            for (int y:x)
+            {
+                Log.d("round"+counttemp,String.valueOf(y));
+            }
+            counttemp++;
+        }
         JSONObject ret_obj=new JSONObject();
         JSONArray score_json = new JSONArray(score);
         JSONArray result_json = new JSONArray(resultset);
+        JSONArray name_json = new JSONArray(name_of_exercise_set);
         try {
-            ret_obj.put("user_id",30);
+            //user_id
 
             ret_obj.put("name",name_of_exercise);
             ret_obj.put("total_exercise",num_of_exercise);
+            ret_obj.put("list_exercise",name_json);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
             ret_obj.put("date",formatter.format(date));
@@ -78,20 +98,26 @@ public class Result_Maker {
             e.printStackTrace();
         }
     }
+    public String getId()
+    {
+        return id;
+    }
     public void post_result(JSONObject ret_obj) throws InterruptedException {
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), ret_obj.toString());
-        Call<ResponseBody> example = userClient.postRecord("application/json","Bearer "+prefKey.getAccess_token(),body);
-
+        example =userClient.postRecord("application/json","Bearer "+prefKey.getAccess_token(),body);
         example.enqueue(
                 new Callback<ResponseBody>() {
                     @Override public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
                     {
                         try
                         {
-                            Log.d("resbo",response.body().string());
+                            JSONObject result_id=new JSONObject(response.body().string());
+                             id= result_id.get("id").toString();
+                            Log.d("resbo", id);
                         }
-                        catch (IOException e)
-                        {
+                       catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -101,7 +127,7 @@ public class Result_Maker {
                         Log.d("fail","fail");
                     }
                 }
-                );
+        );
 
     }
 }
