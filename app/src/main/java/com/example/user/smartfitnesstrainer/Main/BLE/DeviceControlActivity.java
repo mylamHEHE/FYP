@@ -25,6 +25,7 @@ import com.example.user.smartfitnesstrainer.R;
 import com.vise.xsnow.cache.SpCache;
 import com.vise.xsnow.event.BusManager;
 import com.vise.xsnow.event.Subscribe;
+import com.vise.xsnow.event.inner.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,6 +143,7 @@ public class DeviceControlActivity extends Activity {
     public void showConnectedDevice(ConnectEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
+                event.getDeviceMirror().getBluetoothLeDevice().getAddress();
                 Log.d("abcd","abcd");
                 ToastUtil.showToast(DeviceControlActivity.this, "Connect Success!");
 //                mConnectionState.setText("true");
@@ -349,48 +351,51 @@ public class DeviceControlActivity extends Activity {
         result[3] = (a*h+b*g-c*f+d*e);
         return result;
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.NEW_THREAD)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
 
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
+                try {
+                    Log.d("delble", event.getBluetoothLeDevice().getAddress());
 
+                    if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
+                            && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
+                        String result = HexUtil.encodeHexStr(event.getData());
 
-                if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
-                        && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
-                    String result = HexUtil.encodeHexStr(event.getData());
+                        int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
+                        String tmp = "";
+                        int id = 0;
 
-                    int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
-                    String tmp = "";
-                    int id = 0;
+                        while (id < result.length()) {
 
-                    while(id<result.length())
-                    {
+                            tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+                            tmp += "-";
+                            id += 2;
+                        }
 
-                        tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        tmp+="-";
-                        id+=2;
+                        Pattern pattern;
+                        pattern = Pattern.compile(Pattern.quote("-"));
+                        String[] data = pattern.split(tmp);
+                        byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+                        //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+                        //              float f = int16;
+                        //            Log.d("datax",String.valueOf(f));
+                        try {
+                            //buffer_Data.add(data[1]);
+
+                            //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                            IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+
+                        } catch (Exception e) {
+
+                        }
                     }
+                }
+                catch(Exception e)
+                {
 
-                    Pattern pattern;
-                    pattern=Pattern.compile(Pattern.quote("-"));
-                    String[] data =pattern.split(tmp);
-                    byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
-                    //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
-                    //              float f = int16;
-                    //            Log.d("datax",String.valueOf(f));
-                    try {
-                        //buffer_Data.add(data[1]);
-
-                        //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
-
-                    }
-                    catch(Exception e)
-                    {
-
-                    }
                 }
                 return null;
             }

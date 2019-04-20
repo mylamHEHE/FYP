@@ -25,6 +25,7 @@ public class BluetoothDeviceManager {
     private ConnectEvent connectEvent = new ConnectEvent();
     private CallbackDataEvent callbackDataEvent = new CallbackDataEvent();
     private NotifyDataEvent notifyDataEvent = new NotifyDataEvent();
+    int counter=0;
 
     /**
      * 连接回调
@@ -53,13 +54,14 @@ public class BluetoothDeviceManager {
     /**
      * 接收数据回调
      */
-    private IBleCallback receiveCallback = new IBleCallback() {
+    private IBleCallback bCallback = new IBleCallback() {
         @Override
         public void onSuccess(final byte[] data, BluetoothGattChannel bluetoothGattInfo, BluetoothLeDevice bluetoothLeDevice) {
             if (data == null) {
                 return;
             }
-            ViseLog.i("notify success:" + HexUtil.encodeHexStr(data));
+            Log.i("vkx","notify success:" + HexUtil.encodeHexStr(data)+" "+bluetoothLeDevice.getAddress());
+
             BusManager.getBus().post(notifyDataEvent.setData(data)
                     .setBluetoothLeDevice(bluetoothLeDevice)
                     .setBluetoothGattChannel(bluetoothGattInfo));
@@ -70,20 +72,43 @@ public class BluetoothDeviceManager {
             if (exception == null) {
                 return;
             }
-            ViseLog.i("notify fail:" + exception.getDescription());
+            Log.i("vkcx","notify fail:" + exception.getDescription());
+        }
+    };
+    private IBleCallback receiveCallback = new IBleCallback() {
+        @Override
+        public void onSuccess(final byte[] data, BluetoothGattChannel bluetoothGattInfo, BluetoothLeDevice bluetoothLeDevice) {
+            if (data == null) {
+                return;
+            }
+            Log.i("vkx","notify success:" + HexUtil.encodeHexStr(data)+" "+bluetoothLeDevice.getAddress());
+
+            BusManager.getBus().post(notifyDataEvent.setData(data)
+                    .setBluetoothLeDevice(bluetoothLeDevice)
+                    .setBluetoothGattChannel(bluetoothGattInfo));
+        }
+
+        @Override
+        public void onFailure(BleException exception) {
+            if (exception == null) {
+                return;
+            }
+            Log.i("vkcx","notify fail:" + exception.getDescription());
         }
     };
 
     /**
      * 操作数据回调
      */
+    //tomilia
     private IBleCallback bleCallback = new IBleCallback() {
         @Override
         public void onSuccess(final byte[] data, BluetoothGattChannel bluetoothGattInfo, BluetoothLeDevice bluetoothLeDevice) {
             if (data == null) {
                 return;
             }
-            ViseLog.i("callback success:" + HexUtil.encodeHexStr(data));
+            Log.i("succcess","callback success:" + HexUtil.encodeHexStr(data));
+
             BusManager.getBus().post(callbackDataEvent.setData(data).setSuccess(true)
                     .setBluetoothLeDevice(bluetoothLeDevice)
                     .setBluetoothGattChannel(bluetoothGattInfo));
@@ -101,7 +126,7 @@ public class BluetoothDeviceManager {
             if (exception == null) {
                 return;
             }
-            ViseLog.i("callback fail:" + exception.getDescription());
+            Log.i("failx","callback fail:" + exception.getDescription());
             BusManager.getBus().post(callbackDataEvent.setSuccess(false));
         }
     };
@@ -156,6 +181,7 @@ public class BluetoothDeviceManager {
     public void bindChannel(BluetoothLeDevice bluetoothLeDevice, PropertyType propertyType, UUID serviceUUID,
                                  UUID characteristicUUID, UUID descriptorUUID) {
         DeviceMirror deviceMirror = mDeviceMirrorPool.getDeviceMirror(bluetoothLeDevice);
+
         if (deviceMirror != null) {
             BluetoothGattChannel bluetoothGattChannel = new BluetoothGattChannel.Builder()
                     .setBluetoothGatt(deviceMirror.getBluetoothGatt())
@@ -164,7 +190,16 @@ public class BluetoothDeviceManager {
                     .setCharacteristicUUID(characteristicUUID)
                     .setDescriptorUUID(descriptorUUID)
                     .builder();
-            deviceMirror.bindChannel(bleCallback, bluetoothGattChannel);
+
+            if(counter<=6) {
+                deviceMirror.bindChannel(bleCallback, bluetoothGattChannel);
+                counter++;
+            }
+            else{
+                deviceMirror.bindChannel(bCallback, bluetoothGattChannel);
+                Log.d("devicx",String.valueOf(counter));
+            }
+
         }
     }
 

@@ -94,7 +94,7 @@ public class DeviceMirror {
          */
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
-            ViseLog.i("onConnectionStateChange  status: " + status + " ,newState: " + newState +
+            Log.d("conn","onConnectionStateChange  status: " + status + " ,newState: " + newState +
                     "  ,thread: " + Thread.currentThread());
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 gatt.discoverServices();

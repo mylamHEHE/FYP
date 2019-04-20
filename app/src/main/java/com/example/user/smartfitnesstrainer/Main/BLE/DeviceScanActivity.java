@@ -48,6 +48,10 @@ public class DeviceScanActivity extends AppCompatActivity {
         public void onDeviceFound(final BluetoothLeDevice bluetoothLeDevice) {
             ViseLog.i("Founded Scan Device:" + bluetoothLeDevice);
             bluetoothLeDeviceStore.addDevice(bluetoothLeDevice);
+            for(BluetoothLeDevice x :bluetoothLeDeviceStore.getDeviceList())
+            {
+                Log.d("trialget",x.getAddress());
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

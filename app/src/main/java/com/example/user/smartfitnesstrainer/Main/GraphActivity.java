@@ -41,6 +41,7 @@ import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 
 public class GraphActivity extends AppCompatActivity {
     private TextView name_text;
+    private TextView date_text;
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
@@ -75,12 +76,14 @@ public class GraphActivity extends AppCompatActivity {
 
                         JSONArray round = new JSONArray(response.body().getRound_data());
                         String name=response.body().getName();
+                        String date=response.body().getDate();
                         for(int rot=0;rot<round.length();rot++)
                         {
                             Log.d("yeaz"+String.valueOf(exercise_key),String.valueOf(response.body().getRef_id()));
 
                             Log.d("yea"+String.valueOf(exercise_key),String.valueOf(rot));
                             JSONArray each = new JSONArray(round.get(rot).toString());
+
                             JSONArray name_list = new JSONArray(response.body().getList_name());
                             ArrayList<Integer> graphplot = new ArrayList<>();
                             ArrayList<String> list_name = new ArrayList<>();
@@ -94,6 +97,7 @@ public class GraphActivity extends AppCompatActivity {
                             }
                             //tomilia: add to name_list
                             name_text.setText(name);
+                            date_text.setText(date);
                             createGraph(graphplot,list_name);
 
                         }
@@ -144,6 +148,7 @@ public class GraphActivity extends AppCompatActivity {
         super.onCreate(savedInstanceSate);
         setContentView(R.layout.graph);
         name_text = findViewById(R.id.name_text);
+        date_text = findViewById(R.id.date_text);
         prefKey = new PrefKey(getApplicationContext());
         if (getIntent().hasExtra("exkey")) {
             int x = getIntent().getIntExtra("exkey",0);

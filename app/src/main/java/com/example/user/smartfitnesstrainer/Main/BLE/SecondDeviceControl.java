@@ -21,9 +21,12 @@ import com.example.user.smartfitnesstrainer.R;
 import com.vise.xsnow.cache.SpCache;
 import com.vise.xsnow.event.BusManager;
 import com.vise.xsnow.event.Subscribe;
+import com.vise.xsnow.event.inner.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.lang.Math.pow;
@@ -61,6 +64,7 @@ public class SecondDeviceControl extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_device_control);
+       // BusManager.setBus();
         BusManager.getBus().register(this);
         init();
     }
@@ -87,6 +91,7 @@ public class SecondDeviceControl extends Activity {
     }
     private void writeHead(BluetoothGattService bgs){
         mSpCache.put(WRITE_CHARACTERISTI_UUID_KEY + mDevice.getAddress(), bgs.getCharacteristics().get(1).getUuid().toString());
+
         BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_WRITE, bgs.getUuid(), bgs.getCharacteristics().get(1).getUuid(), null);
         // ((EditText) findViewById(R.id.show_write_characteristic)).setText(bgs.getCharacteristics().get(1).getUuid().toString());
         BluetoothDeviceManager.getInstance().write(mDevice, HexUtil.decodeHex(new char[]{'2','3','0','0'}));
@@ -95,8 +100,10 @@ public class SecondDeviceControl extends Activity {
     }
     private void notifyHead(BluetoothGattService bgs){
         mSpCache.put(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress(), bgs.getCharacteristics().get(0).getUuid().toString());
+        Log.d("notifd",mDevice.getAddress());
         // ((EditText) findViewById(R.id.show_notify_characteristic)).setText(bgs.getCharacteristics().get(0).getUuid().toString());
         BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_NOTIFY, bgs.getUuid(), bgs.getCharacteristics().get(0).getUuid(), null);
+
         BluetoothDeviceManager.getInstance().registerNotify(mDevice, false);
 
     }
@@ -107,6 +114,7 @@ public class SecondDeviceControl extends Activity {
             DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
             Log.d("bletest2", String.valueOf(deviceMirror.getBluetoothLeDevice().getAddress()));
             for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
+                Log.d("bletest2x", String.valueOf(bgs.getUuid().toString()));
                 if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
 
                     writeHead(bgs);
@@ -123,15 +131,68 @@ public class SecondDeviceControl extends Activity {
         }
 
     }
-    @Subscribe
+    private void displayGattServices(final List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        String uuid;
+        final String unknownServiceString = "unknown_service";
+        final String unknownCharaString = "unknown_characteristic";
+        final List<Map<String, String>> gattServiceData = new ArrayList<>();
+        final List<List<Map<String, String>>> gattCharacteristicData = new ArrayList<>();
+
+        mGattServices = new ArrayList<>();
+        mGattCharacteristics = new ArrayList<>();
+
+        // Loops through available GATT Services.
+        for (final BluetoothGattService gattService : gattServices) {
+            final Map<String, String> currentServiceData = new HashMap<>();
+            uuid = gattService.getUuid().toString();
+            currentServiceData.put(LIST_NAME, uk.co.alt236.bluetoothlelib.resolvers.GattAttributeResolver.getAttributeName(uuid, unknownServiceString));
+            currentServiceData.put(LIST_UUID, uuid);
+            gattServiceData.add(currentServiceData);
+
+            final List<Map<String, String>> gattCharacteristicGroupData = new ArrayList<>();
+            final List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
+            final List<BluetoothGattCharacteristic> charas = new ArrayList<>();
+
+            // Loops through available Characteristics.
+            for (final BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
+                charas.add(gattCharacteristic);
+                final Map<String, String> currentCharaData = new HashMap<>();
+                uuid = gattCharacteristic.getUuid().toString();
+                currentCharaData.put(LIST_NAME, uk.co.alt236.bluetoothlelib.resolvers.GattAttributeResolver.getAttributeName(uuid, unknownCharaString));
+                currentCharaData.put(LIST_UUID, uuid);
+                gattCharacteristicGroupData.add(currentCharaData);
+            }
+
+            mGattServices.add(gattService);
+            mGattCharacteristics.add(charas);
+            gattCharacteristicData.add(gattCharacteristicGroupData);
+        }
+
+        return ;
+    }
+    @Subscribe(threadMode = ThreadMode.NEW_THREAD)
     public void showConnectedDevice(ConnectEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
                 Log.d("abcd","abcd");
+                //displayGattServices(event.getDeviceMirror().getBluetoothGatt().getServices());
                 ToastUtil.showToast(SecondDeviceControl.this, "Connect Success!");
 //                mConnectionState.setText("true");
                 testBluetoothAvability();
+                /*if (event.getDeviceMirror() != null && event.getDeviceMirror().getBluetoothGatt() != null) {
+
+                    final BluetoothGattService service = mGattServices.get(2);
+                    final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(2).get(0);
+                    final int charaProp = characteristic.getProperties();
+
+                    mSpCache.put(NOTIFY_CHARACTERISTIC_UUID_KEY + mDevice.getAddress(), characteristic.getUuid().toString());
+                    BluetoothDeviceManager.getInstance().bindChannel(mDevice, PropertyType.PROPERTY_NOTIFY, service.getUuid(), characteristic.getUuid(), null);
+                    BluetoothDeviceManager.getInstance().registerNotify(mDevice, false);//啟動監聽
+
+                }
                 invalidateOptionsMenu();
+                */
                 if (event.getDeviceMirror() != null && event.getDeviceMirror().getBluetoothGatt() != null) {
                     finish();
                     //     simpleExpandableListAdapter = displayGattServices(event.getDeviceMirror().getBluetoothGatt().getServices());
@@ -324,41 +385,39 @@ public class SecondDeviceControl extends Activity {
             @Override
             protected Void doInBackground(Void... params) {
                 Log.d("delble2",event.getBluetoothLeDevice().getAddress());
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
                         && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
                     String result = HexUtil.encodeHexStr(event.getData());
+try {
+    int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
 
-                    int i = (event.getData()[1] & 0xff) << 8 | (short) (event.getData()[2] << 8);
+    String tmp = "";
+    int id = 0;
 
-                    String tmp = "";
-                    int id = 0;
+    while (id < result.length()) {
 
-                    while(id<result.length())
-                    {
+        tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+        tmp += "-";
+        id += 2;
+    }
+    Pattern pattern;
+    pattern = Pattern.compile(Pattern.quote("-"));
+    String[] data = pattern.split(tmp);
+    try {
+        shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+        //IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+    } catch (Exception e) {
 
-                        tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        tmp+="-";
-                        id+=2;
-                    }
-                    Pattern pattern;
-                    pattern=Pattern.compile(Pattern.quote("-"));
-                    String[] data =pattern.split(tmp);
-                    try {
-                        shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        //IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
-                    }
-                    catch(Exception e)
-                    {
+    }
+}catch (Exception e)
+{
 
-                    }
+}
                 }
                 return null;
             }
+
 
         }.execute();
 
