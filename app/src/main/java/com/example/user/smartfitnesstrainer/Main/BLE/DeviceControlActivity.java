@@ -336,10 +336,10 @@ public class DeviceControlActivity extends Activity {
         double result=(elevation_acc+elevationGyro)/2;
 
         //timer get buffer average in one sec
-        Intent it = new Intent("tw.android.MY_BROADCAST1");
-        it.putExtra("sender_name",result);
+       // Intent it = new Intent("tw.android.MY_BROADCAST1");
+        //it.putExtra("sender_name",result);
 
-        sendBroadcast(it);
+        //sendBroadcast(it);
         return result;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
@@ -353,53 +353,94 @@ public class DeviceControlActivity extends Activity {
     @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
 
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
+                Log.d("heart", String.valueOf(event.getBluetoothLeDevice().getAddress()));
                 try {
-                    Log.d("delble", event.getBluetoothLeDevice().getAddress());
-
-                    if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
-                            && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
-                        String result = HexUtil.encodeHexStr(event.getData());
-
-                        int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
-                        String tmp = "";
-                        int id = 0;
-
-                        while (id < result.length()) {
-
-                            tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
-                            tmp += "-";
-                            id += 2;
-                        }
-
-                        Pattern pattern;
-                        pattern = Pattern.compile(Pattern.quote("-"));
-                        String[] data = pattern.split(tmp);
-                        byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
-                        //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
-                        //              float f = int16;
-                        //            Log.d("datax",String.valueOf(f));
-                        try {
-                            //buffer_Data.add(data[1]);
-
-                            //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                            IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
-
-                        } catch (Exception e) {
-
-                        }
+                    if(!event.getBluetoothLeDevice().getAddress().equals("45:53:3C:3D:14:D8")) {
+                        d9Device(event);
+                    }
+                    else
+                    {
+                        d8Device(event);
                     }
                 }
                 catch(Exception e)
                 {
 
                 }
-                return null;
+                return;
+
+    }
+    private void d8Device(NotifyDataEvent event){
+
+
+        if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
+                && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
+            String result = HexUtil.encodeHexStr(event.getData());
+
+            int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
+            String tmp = "";
+            int id = 0;
+
+            while (id < result.length()) {
+
+                tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+                tmp += "-";
+                id += 2;
             }
 
-        }.execute();
+            Pattern pattern;
+            pattern = Pattern.compile(Pattern.quote("-"));
+            String[] data = pattern.split(tmp);
+            byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+            //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+            //              float f = int16;
+            //            Log.d("datax",String.valueOf(f));
+            try {
+                //buffer_Data.add(data[1]);
+
+                //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                Log.d("delble1", String.valueOf(quad_res));
+            } catch (Exception e) {
+
+            }
+        }
+    }
+    private void d9Device(NotifyDataEvent event){
+
+
+        if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
+                && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
+            String result = HexUtil.encodeHexStr(event.getData());
+
+            int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
+            String tmp = "";
+            int id = 0;
+
+            while (id < result.length()) {
+
+                tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+                tmp += "-";
+                id += 2;
+            }
+
+            Pattern pattern;
+            pattern = Pattern.compile(Pattern.quote("-"));
+            String[] data = pattern.split(tmp);
+            byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+            //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+            //              float f = int16;
+            //            Log.d("datax",String.valueOf(f));
+            try {
+                //buffer_Data.add(data[1]);
+
+                //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                Log.d("delble2", String.valueOf(quad_res));
+            } catch (Exception e) {
+
+            }
+        }
     }
     private void timerTaskforBuffer(double result){
         Log.d("timer","hei");
