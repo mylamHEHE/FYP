@@ -139,11 +139,10 @@ public class DeviceControlActivity extends Activity {
         }
 
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showConnectedDevice(ConnectEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
-                event.getDeviceMirror().getBluetoothLeDevice().getAddress();
                 Log.d("abcd","abcd");
                 ToastUtil.showToast(DeviceControlActivity.this, "Connect Success!");
 //                mConnectionState.setText("true");
@@ -166,7 +165,7 @@ public class DeviceControlActivity extends Activity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceCallbackData(CallbackDataEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
@@ -351,7 +350,7 @@ public class DeviceControlActivity extends Activity {
         result[3] = (a*h+b*g-c*f+d*e);
         return result;
     }
-    @Subscribe(threadMode = ThreadMode.NEW_THREAD)
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
 
         new AsyncTask<Void,Void,Void>(){

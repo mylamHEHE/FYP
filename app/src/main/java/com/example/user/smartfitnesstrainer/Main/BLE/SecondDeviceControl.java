@@ -210,7 +210,7 @@ public class SecondDeviceControl extends Activity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.NEW_THREAD)
     public void showDeviceCallbackData(CallbackDataEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
@@ -379,7 +379,7 @@ public class SecondDeviceControl extends Activity {
 //        Q_ANGLE.Y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
 //        Q_ANGLE.X = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.NEW_THREAD)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
         new AsyncTask<Void,Void,Void>(){
             @Override
