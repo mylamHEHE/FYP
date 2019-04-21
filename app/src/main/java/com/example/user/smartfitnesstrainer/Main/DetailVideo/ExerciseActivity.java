@@ -127,7 +127,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private double currentreading = 0.0;
     private Handler mHandler = new Handler();
     private int lastXPoint = 2, lastXPoint1 = 2, lastXPoint2 = 2;
-    private LineGraphSeries<DataPoint> series, series1, series2, series3, series4, series5, reset_series;
+    private LineGraphSeries<DataPoint> series0, series1, series2, series3, series4, series5;
     private double graph_pt;
 
     private GraphView graph;
@@ -391,15 +391,19 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 break;
             case 2:
                 graph.removeAllSeries();
-                Log.d("create2",String.valueOf(graphNumber));
                 lastXPoint1=2;
                 createGraph1();
+                Log.d("create2",String.valueOf(graphNumber));
                 break;
             case 3:
                 graph.removeAllSeries();
-                Log.d("create3",String.valueOf(graphNumber));
                 lastXPoint2=2;
                 createGraph2();
+                Log.d("create3",String.valueOf(graphNumber));
+                break;
+            default:
+                Log.d("create4",String.valueOf(graphNumber));
+                graphNumber = 0;
                 break;
         }
     }
@@ -838,8 +842,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void run() {
                 lastXPoint++;
-                series.appendData(new DataPoint(lastXPoint,graph_pt),true,100);
-                series1.appendData(new DataPoint(lastXPoint,40),true,100);
+                series0.appendData(new DataPoint(lastXPoint,graph_pt),true,100);
+                series1.appendData(new DataPoint(lastXPoint,30),true,100);
                 saveCurrentExercisePoint();
                 //series.appendData(new DataPoint(lastXPoint, graph_pt), false, 100);
                 addRandomDataPoint();
@@ -870,7 +874,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void run() {
                 lastXPoint2++;
                 series4.appendData(new DataPoint(lastXPoint2,graph_pt),true,100);
-                series5.appendData(new DataPoint(lastXPoint2,40),true,100);
+                series5.appendData(new DataPoint(lastXPoint2,450),true,100);
                 saveCurrentExercisePoint();
                 //series.appendData(new DataPoint(lastXPoint2, graph_pt), false, 100);
                 addRandomDataPoint2();
@@ -884,17 +888,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         //graph start
         Log.d("createGraph0",String.valueOf(graphNumber));
 
-        series = new LineGraphSeries<>(new DataPoint[]{
+        series0 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 0),
         });
         series1 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 40),
+                new DataPoint(0, 30),
         });
         addRandomDataPoint();
         //addRandomDataPoint1();
         series1.setColor(Color.RED);
 
-        graph.addSeries(series);
+        graph.addSeries(series0);
         graph.addSeries(series1);
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
@@ -937,7 +941,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 new DataPoint(0, 0),
         });
         series5 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 40),
+                new DataPoint(0, 45),
         });
 
         addRandomDataPoint2();
