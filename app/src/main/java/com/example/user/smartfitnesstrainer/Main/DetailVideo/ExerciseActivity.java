@@ -124,7 +124,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private LineGraphSeries<DataPoint> series, series1, reset_series;
     private double graph_pt;
     private GraphView graph;
-    //private int graphNumber = 0;
+    private int graphNumber = 0;
 
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -274,6 +274,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         {
             unregDevice();
             introMode();
+            switchgraph();
             GrpahAppear();
         }
         else if (isTutorMode == 1)
@@ -290,10 +291,68 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             unregDevice();
             deviceCheck();
             scoreBoardAppear();
+            switchgraph();
             GrpahAppear();
         }
     }
+    private  void switchgraph(){
+        graphNumber++;
+        switch (graphNumber){
+            case 1:createGraph();
+                Log.d("create1",String.valueOf(graphNumber));
+            break;
+            case 3:graph.removeAllSeries();
+                Log.d("create2",String.valueOf(graphNumber));
+                lastXPoint=2;
+                graph = (GraphView)findViewById(R.id.graph1);
+                series = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,0),
+                });
+                series1 = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,40),
+                });
+                reset_series = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,0),
+                });
+                addRandomDataPoint();
+                //addRandomDataPoint1();
+                series1.setColor(Color.RED);
 
+                graph.addSeries(series);
+                graph.addSeries(series1);
+                graph.getViewport().setYAxisBoundsManual(true);
+                graph.getViewport().setMinY(0);
+                graph.getViewport().setMaxY(90);
+                graph.getViewport().setXAxisBoundsManual(true);
+                graph.getViewport().setMaxX(20);
+            break;
+            case 5:
+                Log.d("create3",String.valueOf(graphNumber));graph.removeAllSeries();
+            lastXPoint=2;
+                graph = (GraphView)findViewById(R.id.graph1);
+                series = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,0),
+                });
+                series1 = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,40),
+                });
+                reset_series = new LineGraphSeries<>(new DataPoint[]{
+                        new DataPoint(0,0),
+                });
+                addRandomDataPoint();
+                //addRandomDataPoint1();
+                series1.setColor(Color.RED);
+
+                graph.addSeries(series);
+                graph.addSeries(series1);
+                graph.getViewport().setYAxisBoundsManual(true);
+                graph.getViewport().setMinY(0);
+                graph.getViewport().setMaxY(90);
+                graph.getViewport().setXAxisBoundsManual(true);
+                graph.getViewport().setMaxX(20);
+            break;
+        }
+    }
     private void deviceCheck(){
         devicealert = DeviceAlert.newInstance(currentExerciseInstruction(currentExercise));
 
@@ -410,15 +469,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void GrpahAppear()
     {
         if(graph.getVisibility()==View.GONE){
-//            lastXPoint = 2;
-//            addRandomDataPoint1();
-//            graph.addSeries(series);
-//            graph.addSeries(series1);
             graph.setVisibility(View.VISIBLE);
         }
         else if(graph.getVisibility()==View.VISIBLE){
             graph.setVisibility(View.GONE);
-            //graph.removeAllSeries();
         }
     }
     //tutor mode
@@ -503,11 +557,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 if (response.isSuccessful()) {
 
                     try {
-
                         //tomilia: get Profile stats
                         //jsonArray translate[0]
-
-
                         final JSONObject obj = new JSONObject(response.body().string());
 
                         final JSONObject item_id = new JSONObject(obj.getString("item_id"));
@@ -608,12 +659,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 pausePlayer();
             }
         });
-        createGraph();
     }
 
     public void createGraph(){
         //graph start
-        graph = (GraphView)findViewById(R.id.graph);
+        graph = (GraphView)findViewById(R.id.graph1);
         series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0,0),
         });
@@ -700,9 +750,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         mHandler.postDelayed(new Runnable(){
             @Override
             public void run(){
-                lastXPoint = lastXPoint + 1;
-                lastXPoint1 = lastXPoint1 + 1;
-                series.appendData(new DataPoint(lastXPoint1,graph_pt),true,100);
+                lastXPoint++;
+                series.appendData(new DataPoint(lastXPoint,graph_pt),true,100);
                 series1.appendData(new DataPoint(lastXPoint,40),true,100);
                 addRandomDataPoint();
             }
