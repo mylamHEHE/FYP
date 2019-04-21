@@ -244,14 +244,11 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                         Log.d("bleadr", x.getAddress());
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
+                    bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
 
+                    bluetooth.init();
                 }
-                bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
-
-                        bluetooth.init();
-
             }
             else if (ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==1)
             {

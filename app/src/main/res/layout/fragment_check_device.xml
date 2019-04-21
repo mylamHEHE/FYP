@@ -9,6 +9,14 @@
        android:layout_height="wrap_content"
        android:layout_gravity="center_horizontal"
        android:textStyle="bold"
+       android:id="@+id/left_hand"
+       android:text="Instruction"/>
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center_horizontal"
+       android:textStyle="bold"
+       android:id="@+id/right_hand"
        android:text="Instruction"/>
 
    <VideoView

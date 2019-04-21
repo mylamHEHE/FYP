@@ -21,6 +21,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.BluetoothDifferenter;
 import com.example.user.smartfitnesstrainer.R;
 import com.vise.xsnow.cache.SpCache;
 import com.vise.xsnow.event.BusManager;
@@ -122,6 +123,7 @@ public class DeviceControlActivity extends Activity {
 
             DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
             Log.d("bletest", deviceMirror.getBluetoothLeDevice().getAddress());
+            BluetoothDifferenter.FIRST_BLUETOOTH_DEV = deviceMirror.getBluetoothLeDevice();
             for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
                 Log.d("bletest", String.valueOf(bgs.getUuid()));
                 if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
@@ -336,10 +338,7 @@ public class DeviceControlActivity extends Activity {
         double result=(elevation_acc+elevationGyro)/2;
 
         //timer get buffer average in one sec
-       // Intent it = new Intent("tw.android.MY_BROADCAST1");
-        //it.putExtra("sender_name",result);
 
-        //sendBroadcast(it);
         return result;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
@@ -401,6 +400,10 @@ public class DeviceControlActivity extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble1", String.valueOf(quad_res));
+                Intent it = new Intent("tw.android.MY_BROADCAST1");
+                it.putExtra("first_dev",quad_res);
+
+                sendBroadcast(it);
             } catch (Exception e) {
 
             }
@@ -437,6 +440,10 @@ public class DeviceControlActivity extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble2", String.valueOf(quad_res));
+                Intent it = new Intent("tw.android.MY_BROADCAST1");
+                it.putExtra("first_dev",quad_res);
+
+                sendBroadcast(it);
             } catch (Exception e) {
 
             }

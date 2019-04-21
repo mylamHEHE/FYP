@@ -103,6 +103,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ArrayList<VideoModel> vm = new ArrayList<>();
     private ImageButton pause;
     ArrayList<ArrayList<Integer>> round_list = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> second_round_list = new ArrayList<>();
     private DeviceAlert devicealert;
     private TextView mTextField;
     private int isTutorMode = 0;
@@ -129,8 +130,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private int lastXPoint = 2;
     private LineGraphSeries<DataPoint> series, series1;
     private double graph_pt;
+    private double second_graph_pt;
     private ArrayList<Double> buffer_Data=new ArrayList<>();
+    private ArrayList<Double> second_buffer_Data = new ArrayList<>();
     private ArrayList<Integer> getRound_Data = new ArrayList<>();
+    private ArrayList<Integer> second_getRound_Data = new ArrayList<>();
     int countx=0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -139,31 +143,39 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
             buffer_Data.add(result);
 
+
         }
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
             // TODO Auto-generated method stub
-            graph_pt = intent.getDoubleExtra("sender_name", 0);
+            graph_pt = intent.getDoubleExtra("first_dev", 0);
+            Log.d("grappg",graph_pt+"");
+            if(graph_pt!=0)
             addToBuffer(graph_pt);
             //tommy change 78
-            //if(sender==78)sender=0;
+            //if(sender==78)sender=0;\
 
         }
     }
+
     private Timer mTimer;
     private void setTimerTask() {
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                /*
+                first sensor
+                 */
                 if(buffer_Data.size()!=0) {
                     countx++;
                     double sum = 0;
                     for (double sum_of_data : buffer_Data) {
                         sum += sum_of_data;
                     }
-                    Log.d("bufy", String.valueOf(sum+" "+buffer_Data.size()));
                     final double buf = sum / buffer_Data.size();
-                    Log.d("bufx", String.valueOf(buf));
+                    Log.d("bufx1", String.valueOf(buf));
                     getRound_Data.add((int)buf);
 
 /*
@@ -178,13 +190,74 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     });
                     buffer_Data.clear();
                 }
+                /*
+                second sensor
+                 */
+
+
+            }
+        }, 1000, 1000/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
+    }
+    public class MyBroadcaseReceiver2 extends BroadcastReceiver {
+
+        public void addToSecondBuffer(double result)
+        {
+
+            second_buffer_Data.add(result);
+
+        }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // TODO Auto-generated method stub
+            second_graph_pt = intent.getDoubleExtra("second_dev",0);
+            if(second_graph_pt!=0);
+            addToSecondBuffer(second_graph_pt);
+            //tommy change 78
+            //if(sender==78)sender=0;
+
+        }
+    }
+    private Timer mTimer2;
+    private void setTimerTask2() {
+        mTimer2.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                /*
+                first sensor
+                 */
+                if(second_buffer_Data.size()!=0) {
+
+                    double sum = 0;
+                    for (double sum_of_data : second_buffer_Data) {
+                        sum += sum_of_data;
+                    }
+                    final double buf = sum / second_buffer_Data.size();
+                    Log.d("buf2x", String.valueOf(buf));
+                    second_getRound_Data.add((int)buf);
+
+/*
+ angle.setText(String.valueOf((int)buf));
+                    currentreading += (int)buf;
+ */                 runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           // angle.setText(String.valueOf((int)buf));
+                           // currentreading += (int)buf;
+                        }
+                    });
+                    second_buffer_Data.clear();
+                }
+                /*
+                second sensor
+                 */
 
 
             }
         }, 1000, 1000/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
     }
     private MyBroadcaseReceiver1 m_MyReceiver1;
-
+    private MyBroadcaseReceiver2 m_MyReceiver2;
     @Override
     protected void onStart() {
         super.onStart();
@@ -192,9 +265,15 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             prefKey = new PrefKey(this);
             isVideoCreate = true;
             Log.d("playernum", "lc");
-            createPlaylist();
-            createExerciseModellist();
-            firstClip();
+            new Thread(new Runnable() {
+                public void run() {
+                    createPlaylist();
+                    createExerciseModellist();
+                    firstClip();
+                }
+            }).start();
+
+
         }
     }
 
@@ -208,16 +287,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         Log.d("stageScore", String.valueOf(stageScore));
 
         ArrayList<Integer> tmp=new ArrayList<>();
+        ArrayList<Integer> tmp2 = new ArrayList<>();
         tmp.addAll(getRound_Data);
         round_list.add(tmp);
+        tmp2.addAll(second_getRound_Data);
+        second_round_list.add(tmp2);
         mTimer.cancel();
+        mTimer2.cancel();
         getRound_Data.clear();
-
+        second_getRound_Data.clear();
         Log.d("nodatax",String.valueOf(round_list.get(0).size()));
-        for(int i:round_list.get(0))
-        {
-            Log.d("nodata",String.valueOf(i));
-        }
+
         totalRound.add(stageScore);
         stageScore = 0;
 
@@ -333,6 +413,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void unregDevice() {
         try {
             unregisterReceiver(m_MyReceiver1);
+            unregisterReceiver(m_MyReceiver2);
         } catch (Exception e) {
 
         }
@@ -366,6 +447,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             scoreBoardAppear();
             skipAvaliable();
             unregisterReceiver(m_MyReceiver1);
+            unregisterReceiver(m_MyReceiver2);
             tutorMode();
         } else {
             noSkip();
@@ -565,8 +647,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void receiverOpen(){
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
+        IntentFilter itFilter2 = new IntentFilter("tw.android.MY_BROADCAST2");
+        registerReceiver(m_MyReceiver2,itFilter2);
         mTimer = new Timer();
         setTimerTask();
+        mTimer2 = new Timer();
+        setTimerTask2();
         first_in_data=true;
     }
     @Override
@@ -581,6 +667,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         super.onPause();
         unregDevice();
         mTimer.cancel();
+        mTimer2.cancel();
         pausePlayer();
     }
 
@@ -668,6 +755,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             sis = savedInstanceState;
         }
         mTimer = new Timer();
+        mTimer2 = new Timer();
         setContentView(R.layout.activity_exercise);
         pause = findViewById(R.id.exo_pause);
 
@@ -686,7 +774,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         rl.setVisibility(View.GONE);
         Log.d("pkxt", "owow");
         m_MyReceiver1 = new MyBroadcaseReceiver1();
-
+        m_MyReceiver2 = new MyBroadcaseReceiver2();
 
         ela = new ExerciseListAdapter(this, temp);
         play.setOnClickListener(new View.OnClickListener() {
@@ -770,7 +858,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         timer.schedule(doAsynchronousTask, 0, 2000); //execute in every 50000 ms
     }
 
-
+    public void onFinish() {
+        unregDevice();
+        mTimer2.cancel();
+        mTimer.cancel();
+        finish(); // if you want this activity to go away
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -811,9 +904,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         @Override
         protected String doInBackground(Void... voids) {
 
-
-            Result_Maker resultMaker = new Result_Maker(getApplicationContext(), name_of_exercise, num_of_exercise, totalRound, list_of_exer_name,round_list);
+            for(int i:round_list.get(0))
+            {
+                Log.d("nodata",String.valueOf(i));
+            }
+            for(int i:second_round_list.get(0))
+            {
+                Log.d("secondnodata",String.valueOf(i));
+            }
+            Result_Maker resultMaker = new Result_Maker(getApplicationContext(), name_of_exercise, num_of_exercise, totalRound, list_of_exer_name,round_list,second_round_list);
             //temp gen
+
             Log.d("round:lis ",String.valueOf(round_list.size()));
             resultMaker.makeJSON();
             String id;

@@ -40,7 +40,8 @@ public class Result_Maker {
     Call<ResponseBody> example;
     ArrayList<Integer> score;
     int num_of_exercise;
-    ArrayList<ArrayList<Integer>> resultset;
+    ArrayList<ArrayList<Integer>> firstresultset;
+    ArrayList<ArrayList<Integer>> secondresultset;
     String name_of_exercise;
     String id;
     PrefKey prefKey;
@@ -51,20 +52,22 @@ public class Result_Maker {
     2.get score
     3.comment????
      */
-    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<String> name_of_exercise_set,ArrayList<ArrayList<Integer>> resultset) {
+    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<String> name_of_exercise_set,ArrayList<ArrayList<Integer>> firstresultset,ArrayList<ArrayList<Integer>> secondresultset) {
         this.score = score;
         this.num_of_exercise=num_of_exercise;
-        this.resultset = resultset;
+        this.firstresultset = firstresultset;
+        this.secondresultset = secondresultset;
         this.name_of_exercise = name_of_exercise;
         this.name_of_exercise_set = name_of_exercise_set;
+        this.secondresultset=secondresultset;
         prefKey = new PrefKey(context);
     }
     public void makeJSON(){
         int counttemp=0;
-        for(ArrayList<Integer> x:resultset)
+        for(ArrayList<Integer> x:firstresultset)
         {
 
-                Log.d("round"+counttemp,String.valueOf(x.size()));
+                Log.d("rounds"+counttemp,String.valueOf(x.size()));
 
             for (int y:x)
             {
@@ -72,9 +75,21 @@ public class Result_Maker {
             }
             counttemp++;
         }
+        for(ArrayList<Integer> x:secondresultset)
+        {
+
+            Log.d("2rounds"+counttemp,String.valueOf(x.size()));
+
+            for (int y:x)
+            {
+                Log.d("2round"+counttemp,String.valueOf(y));
+            }
+            counttemp++;
+        }
         JSONObject ret_obj=new JSONObject();
         JSONArray score_json = new JSONArray(score);
-        JSONArray result_json = new JSONArray(resultset);
+        JSONArray result_json = new JSONArray(firstresultset);
+        JSONArray second_result_json = new JSONArray(secondresultset);
         JSONArray name_json = new JSONArray(name_of_exercise_set);
         try {
             //user_id
@@ -86,8 +101,8 @@ public class Result_Maker {
             Date date = new Date();
             ret_obj.put("date",formatter.format(date));
             ret_obj.put("score",score_json);
-            ret_obj.put("result",result_json);
-
+            ret_obj.put("first_ble_result",result_json);
+            ret_obj.put("second_ble_result",second_result_json);
             Log.d("stringify",ret_obj.toString());
         } catch (JSONException e) {
             e.printStackTrace();
