@@ -237,9 +237,17 @@ public class CameraFragment extends android.support.v4.app.Fragment {
         if (requestCode == QR_CODE_SCAN && resultCode == RESULT_OK && data != null) {
             
             bleAdress = data.getStringExtra("address");
-            Log.d("bleadr",bleAdress);
             if(ViseBle.getInstance().getDeviceMirrorPool()==null||(ViseBle.getInstance().getDeviceMirrorPool()!=null
                     &&ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==0)) {
+                try {
+                    for (BluetoothLeDevice x : ViseBle.getInstance().getDeviceMirrorPool().getDeviceList()) {
+                        Log.d("bleadr", x.getAddress());
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
                 bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
 
                         bluetooth.init();

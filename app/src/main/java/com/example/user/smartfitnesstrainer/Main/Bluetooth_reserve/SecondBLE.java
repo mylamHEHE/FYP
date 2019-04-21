@@ -87,6 +87,7 @@ public class SecondBLE {
                     {
                         if(ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==0) {
                             Log.d("blegetfirst",bluetoothLeDevice.getAddress());
+
                             Intent intent = new Intent(activity, DeviceControlActivity.class);
                             intent.putExtra("ble", bluetoothLeDevice);
                             activity.startActivity(intent);

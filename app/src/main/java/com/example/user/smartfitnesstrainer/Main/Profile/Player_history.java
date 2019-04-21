@@ -11,6 +11,16 @@ public class Player_history {
     private String name;
     private boolean succuessful;
     private String date;
+    private String historyID;
+
+    public String getHistoryID()
+    {
+        return historyID;
+    }
+
+    public void setHistoryID(String historyID) {
+        this.historyID = historyID;
+    }
 
     public String getName() {
         return name;

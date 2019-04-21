@@ -92,7 +92,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         uri.add(new UserRecyclerItem("'Push-up' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Heavyweight' Series","05/11/2018"));
         uri.add(new UserRecyclerItem("'Upperbody' Series","05/11/2018"));
-        ria = new RecyclerItemAdapter(getContext(),playerHistories);
+        ria = new RecyclerItemAdapter(getActivity(),getContext(),playerHistories);
         rv.setAdapter(ria);
         rv.setNestedScrollingEnabled(true);
         return view;
@@ -119,6 +119,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
                            first_name.setText(response.body().getFirst_name()+" "+response.body().getLast_name());
                             playerHistories.clear();
                            playerHistories.addAll(response.body().getPlayer_history());
+                        Log.d("playh",String.valueOf(playerHistories.get(0).getRef_id()));
                             Log.d("playh",playerHistories.get(0).getName());
                             ria.notifyDataSetChanged();
                         //
