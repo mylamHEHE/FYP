@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +48,7 @@ import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 public class GraphActivity extends AppCompatActivity {
     private TextView name_text;
     private TextView date_text;
+    private String[][] name_of_sensor_work = new String[][];
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
@@ -55,9 +57,11 @@ public class GraphActivity extends AppCompatActivity {
     PrefKey prefKey;
     int name_counter=0;
     int current_render_graph=0;
-    private LineGraphSeries<DataPoint> series1x, series1y, series2x, series2y, series3x, series3y;
+    private LineGraphSeries<DataPoint> series1x, series1y, series2x, series2y, series3x, series3y,series4x, series4y;
     private PointsGraphSeries dot1x;
     private PointsGraphSeries dot2x;
+    private PointsGraphSeries dot3x;
+    private PointsGraphSeries dot4x;
     public double addORminus(double pre, double cur){
         if(cur == pre){
             return cur;
@@ -114,8 +118,14 @@ public class GraphActivity extends AppCompatActivity {
         JSONArray each = new JSONArray(round.get(rot).toString());
         JSONArray second_each = new JSONArray(second_round.get(rot).toString());
         JSONArray name_list = new JSONArray(response.body().getList_name());
+        //first device pitch
         ArrayList<Integer> graphplot = new ArrayList<>();
+        //second device pitch
+            ArrayList<Integer> graphplot_pitch2 = new ArrayList<>();
+            //first device roll
         ArrayList<Integer> second_graphplot = new ArrayList<>();
+        //second device roll
+            ArrayList<Integer> second_graphplot_pitch2 = new ArrayList<>();
         ArrayList<String> list_name = new ArrayList<>();
         for(int a=0;a<name_list.length();a++)
         {
@@ -123,16 +133,21 @@ public class GraphActivity extends AppCompatActivity {
         }
         for (int point=0;point<each.length();point++)
         {
-            graphplot.add(each.getInt(point));
+            JSONArray pitch_point= each.getJSONArray(point);
+
+                graphplot.add(pitch_point.getInt(0));
+                graphplot_pitch2.add(pitch_point.getInt(1));
         }
             for (int point=0;point<second_each.length();point++)
             {
-                second_graphplot.add(second_each.getInt(point));
+                JSONArray pitch_point= second_each.getJSONArray(point);
+                second_graphplot.add(pitch_point.getInt(0));
+                second_graphplot_pitch2.add(pitch_point.getInt(1));
             }
         //tomilia: add to name_list
 
-        createGraph(second_graphplot,graphplot,list_name);
-
+        createGraph(graphplot_pitch2,graphplot,list_name);
+        createRollGraph(second_graphplot_pitch2,second_graphplot);
         }
 
     }
@@ -154,6 +169,22 @@ public class GraphActivity extends AppCompatActivity {
             name[i]=list_name.get(i);
         }
         onGraphCreate(ret2,ret,name);
+
+    }
+    private void createRollGraph(ArrayList<Integer> graph2,ArrayList<Integer> graph)
+    {
+        int[] ret = new int[graph.size()];
+        int[] ret2 = new int[graph2.size()];
+        for (int i=0; i < ret.length; i++)
+        {
+            ret[i] = graph.get(i).intValue();
+        }
+        for (int i=0; i < ret2.length; i++)
+        {
+            ret2[i] = graph2.get(i).intValue();
+        }
+
+        onRollGraphCreate(ret2,ret);
 
     }
     @Override
@@ -244,6 +275,7 @@ public class GraphActivity extends AppCompatActivity {
         graph3.addSeries(series3y);
         */
     }
+
     private void onGraphCreate(int [] graph2,int[] graph,String[] name){
 
 
@@ -256,8 +288,9 @@ public class GraphActivity extends AppCompatActivity {
 
         TextView tv3=new TextView(getApplicationContext());
         tv3.setText(name[name_counter]);
-        tv3.setTextSize(20f);
+        tv3.setTextSize(30f);
         tv3.setTextColor(Color.LTGRAY);
+        tv3.setGravity(Gravity.CENTER);
         tv3.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         for(int y:graph)
         {
@@ -280,7 +313,7 @@ public class GraphActivity extends AppCompatActivity {
         for(int i = 0; i < graph.length; i++){
 
             y1 = graph[i];
-            dot1x.appendData(new DataPoint(x1,y1), true, 60);
+           // dot1x.appendData(new DataPoint(x1,y1), true, 60);
             series1x.appendData(new DataPoint(x1,45), true, 60);
             series1y.appendData(new DataPoint(x1,y1), true, 60);
             x1 = x1 + 1;
@@ -288,7 +321,7 @@ public class GraphActivity extends AppCompatActivity {
         for(int i = 0; i < graph2.length; i++){
 
             y2 = graph2[i];
-            dot2x.appendData(new DataPoint(x2,y2), true, 60);
+            //dot2x.appendData(new DataPoint(x2,y2), true, 60);
             series2x.appendData(new DataPoint(x2,45), true, 60);
             series2y.appendData(new DataPoint(x2,y2), true, 60);
             x2 = x2 + 1;
@@ -355,4 +388,108 @@ public class GraphActivity extends AppCompatActivity {
         */
     }
 
+    private void onRollGraphCreate(int [] graph2,int[] graph){
+
+
+        double x1 = 0, y1 = 0;
+        double x2 = 0, y2 = 0;
+        double x3 = 0, y3 = 5;
+
+        //TextView tv1 = findViewById(R.id.textView1);
+        // tv1.setText("vksdovks");
+
+        for(int y:graph)
+        {
+            Log.d("grapx",String.valueOf(y));
+        }
+        GraphView graphroll = new GraphView(getApplicationContext());
+
+        // GraphView graph2 = (GraphView)findViewById(R.id.graph2);
+        //GraphView graph3 = (GraphView)findViewById(R.id.graph3);
+        series3x = new LineGraphSeries<>();
+        series3y = new LineGraphSeries<>();
+        dot3x = new PointsGraphSeries<>();
+
+        series4x = new LineGraphSeries<>();
+        series4y = new LineGraphSeries<>();
+        dot4x = new PointsGraphSeries<>();
+        //series3x = new LineGraphSeries<>();
+        //series3y = new LineGraphSeries<>();
+
+        for(int i = 0; i < graph.length; i++){
+
+            y1 = graph[i];
+            //dot3x.appendData(new DataPoint(x1,y1), true, 60);
+            series3x.appendData(new DataPoint(x1,45), true, 60);
+            series3y.appendData(new DataPoint(x1,y1), true, 60);
+            x1 = x1 + 1;
+        }
+        for(int i = 0; i < graph2.length; i++){
+
+            y2 = graph2[i];
+           // dot4x.appendData(new DataPoint(x2,y2), true, 60);
+            series4x.appendData(new DataPoint(x2,45), true, 60);
+            series4y.appendData(new DataPoint(x2,y2), true, 60);
+            x2 = x2 + 1;
+        }
+
+        dot3x.setShape(PointsGraphSeries.Shape.POINT);
+        dot3x.setColor(Color.BLUE);
+        dot3x.setSize(15f);
+        dot3x.setShape(PointsGraphSeries.Shape.POINT);
+        dot3x.setColor(Color.MAGENTA);
+        dot3x.setSize(15f);
+        graphroll.getViewport().setXAxisBoundsManual(true);
+
+        graphroll.getViewport().setMinX(0);
+        graphroll.getViewport().setMaxX(graph.length);
+        graphroll.getViewport().setScrollable(true);
+        series3x.setColor(Color.RED);
+        series3y.setColor(Color.GREEN);
+        series4x.setColor(Color.RED);
+        series4y.setColor(Color.YELLOW);
+        graphroll.addSeries(series3x);
+        graphroll.addSeries(series3y);
+        graphroll.addSeries(dot3x);
+        graphroll.addSeries(series4x);
+        graphroll.addSeries(series4y);
+        graphroll.addSeries(dot4x);
+        graphroll.getGridLabelRenderer().setGridColor(Color.WHITE);
+        graphroll.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
+        graphroll.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
+
+        graphroll.invalidate();
+
+        graphroll.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+
+        //layout.addView(tv3);
+        layout.addView(graphroll);
+        /*
+        int numDataPoints2 = 90;
+        for(int i = 0; i < numDataPoints2; i++){
+            x2 = x2 + 0.1;
+            y2 = addORminus(0,1);
+            series2x.appendData(new DataPoint(x2,0), true, 60);
+            series2y.appendData(new DataPoint(x2,3), true, 60);
+        }
+        series2x.setColor(Color.RED);
+        series2y.setColor(Color.GREEN);
+        graph2.addSeries(series2x);
+        graph2.addSeries(series2y);
+
+        int numDataPoints3 = 90;
+        for(int i = 0; i < numDataPoints3; i++){
+            x3 = x3 + 0.1;
+            y3 = addORminus(3,3);
+            series3x.appendData(new DataPoint(x3,25), true, 60);
+            series3y.appendData(new DataPoint(x3,4), true, 60);
+        }
+        series3x.setColor(Color.RED);
+        series3y.setColor(Color.GREEN);
+        graph3.addSeries(series3x);
+        graph3.addSeries(series3y);
+        */
+    }
 }

@@ -32,5 +32,12 @@ public class PrefKey {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPref.getString("refresh_token","");
     }
-
+    public void removeAccessToken(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPref.edit().remove("access_token").apply();
+    }
+    public void removeRefreshToken(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPref.edit().remove("refresh_token").apply();
+    }
 }

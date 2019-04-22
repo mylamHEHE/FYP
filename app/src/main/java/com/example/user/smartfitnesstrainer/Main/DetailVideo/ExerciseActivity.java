@@ -104,8 +104,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ArrayList<InstructionModel> instruction = new ArrayList<>();
     private ArrayList<VideoModel> vm = new ArrayList<>();
     private ImageButton pause;
-    ArrayList<ArrayList<Integer>> round_list = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> second_round_list = new ArrayList<>();
+    ArrayList<ArrayList<Integer[]>> round_list = new ArrayList<>();
+    ArrayList<ArrayList<Integer[]>> second_round_list = new ArrayList<>();
     private DeviceAlert devicealert;
     private TextView mTextField;
     private int isTutorMode = 0;
@@ -136,12 +136,14 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private double second_graph_pt_pitch;
     private double second_graph_pt_roll;
     private GraphView graph;
+    private GraphView graph_roll;
     private int graphNumber = 0;
     private ArrayList<Double> buffer_Data=new ArrayList<>();
     private ArrayList<Double> roll_buffer_Data=new ArrayList<>();
     private ArrayList<Double> second_buffer_Data = new ArrayList<>();
-    private ArrayList<Integer> getRound_Data = new ArrayList<>();
-    private ArrayList<Integer> second_getRound_Data = new ArrayList<>();
+    private ArrayList<Double> second_roll_buffer_Data = new ArrayList<>();
+    private ArrayList<Integer[]> getRound_Data = new ArrayList<>();
+    private ArrayList<Integer[]> second_getRound_Data = new ArrayList<>();
     int countx=0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -179,12 +181,16 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 /*
                 first sensor
                  */
-                if(buffer_Data.size()!=0) {
+                if(buffer_Data.size()!=0&&second_buffer_Data.size()!=0) {
                     countx++;
                     double sum = 0;
+                    double sum_sec=0;
                     try {
                         for (double sum_of_data : buffer_Data) {
                             sum += sum_of_data;
+                        }
+                        for (double sum_of_data : second_buffer_Data) {
+                            sum_sec += sum_of_data;
                         }
                     }
                     catch (Exception e)
@@ -192,8 +198,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
                     }
                     final double buf = sum / buffer_Data.size();
+                    final double buf_sec = sum_sec / second_buffer_Data.size();
                     Log.d("bufx1", String.valueOf(buf));
-                    getRound_Data.add((int)buf);
+                    getRound_Data.add(new Integer[]{(int)buf,(int)buf_sec});
 
 /*
  angle.setText(String.valueOf((int)buf));
@@ -206,6 +213,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                         }
                     });
                     buffer_Data.clear();
+                    second_buffer_Data.clear();
                 }
                 /*
                 second sensor
@@ -216,7 +224,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }, 1000, 500/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
     }
     public class MyBroadcaseReceiver2 extends BroadcastReceiver {
+        public void addToSecondRollBuffer(double result)
+        {
 
+            second_roll_buffer_Data.add(result);
+
+        }
         public void addToSecondBuffer(double result)
         {
 
@@ -232,6 +245,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             Log.d("second_graph",second_graph_pt_pitch+" "+second_graph_pt_roll);
             if(second_graph_pt_pitch!=0);
                 addToSecondBuffer(second_graph_pt_pitch);
+            if(second_graph_pt_roll!=0)
+                addToSecondRollBuffer(second_graph_pt_roll);
             //tommy change 78
             //if(sender==78)sender=0;
 
@@ -245,21 +260,26 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 /*
                 first sensor
                  */
-                if(second_buffer_Data.size()!=0) {
+                if(second_roll_buffer_Data.size()!=0&&roll_buffer_Data.size()!=0) {
 
                     double sum = 0;
+                    double sumofroll=0;
                     try {
-                        for (double sum_of_data : second_buffer_Data) {
+                        for (double sum_of_data : roll_buffer_Data) {
                             sum += sum_of_data;
+                        }
+                        for (double sum_of_data : second_roll_buffer_Data) {
+                            sumofroll += sum_of_data;
                         }
                     }
                     catch (Exception e)
                     {
 
                     }
-                    final double buf = sum / second_buffer_Data.size();
+                    final double buf = sum / roll_buffer_Data.size();
+                    final double buf_sec = sumofroll / second_roll_buffer_Data.size();
                     Log.d("buf2x", String.valueOf(buf));
-                    second_getRound_Data.add((int)buf);
+                    second_getRound_Data.add(new Integer[]{(int)buf,(int)buf_sec});
 
 /*
  angle.setText(String.valueOf((int)buf));
@@ -271,7 +291,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                            // currentreading += (int)buf;
                         }
                     });
-                    second_buffer_Data.clear();
+                    roll_buffer_Data.clear();
+                    second_roll_buffer_Data.clear();
                 }
                 /*
                 second sensor
@@ -312,8 +333,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void roundFinished() {
         Log.d("stageScore", String.valueOf(stageScore));
 
-        ArrayList<Integer> tmp=new ArrayList<>();
-        ArrayList<Integer> tmp2 = new ArrayList<>();
+        ArrayList<Integer[]> tmp=new ArrayList<>();
+        ArrayList<Integer[]> tmp2 = new ArrayList<>();
         tmp.addAll(getRound_Data);
         round_list.add(tmp);
         tmp2.addAll(second_getRound_Data);
@@ -445,6 +466,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             mHandler.removeCallbacks(runGraph);
             series0.resetData(new DataPoint[]{new DataPoint(0,graph_pt_pitch)});
             series1.resetData(new DataPoint[]{new DataPoint(0,second_graph_pt_pitch)});
+            series2.resetData(new DataPoint[]{new DataPoint(0,graph_pt_roll)});
+            series3.resetData(new DataPoint[]{new DataPoint(0,second_graph_pt_roll)});
             mGraphTimer.interrupt();
 
 
@@ -499,10 +522,14 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void run() {
                 //series0.resetData(generateData());
-                if(getRound_Data.size()!=0)
-                series0.appendData(new DataPoint(counter, getRound_Data.get(getRound_Data.size()-1)), false, 300);
-                if(second_getRound_Data.size()!=0)
-                    series1.appendData(new DataPoint(counter, second_getRound_Data.get(second_getRound_Data.size()-1)), false, 300);
+                if(getRound_Data.size()!=0) {
+                    series0.appendData(new DataPoint(counter, getRound_Data.get(getRound_Data.size() - 1)[0]), false, 300);
+                    series1.appendData(new DataPoint(counter, getRound_Data.get(getRound_Data.size() - 1)[1]), false, 300);
+                }
+                if(second_getRound_Data.size()!=0) {
+                    series2.appendData(new DataPoint(counter, second_getRound_Data.get(second_getRound_Data.size() - 1)[0]), false, 300);
+                    series3.appendData(new DataPoint(counter, second_getRound_Data.get(second_getRound_Data.size() - 1)[1]), false, 300);
+                }
                 counter+=0.5;
                 mHandler.postDelayed(this, 500);
 
@@ -697,6 +724,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         }
         else if(graph.getVisibility()==View.VISIBLE){
             graph.setVisibility(View.GONE);
+        }
+        if(graph_roll.getVisibility()==View.GONE){
+            graph_roll.setVisibility(View.VISIBLE);
+        }
+        else if(graph_roll.getVisibility()==View.VISIBLE){
+            graph_roll.setVisibility(View.GONE);
         }
     }
     //tutor mode
@@ -896,6 +929,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         scoreBoard = findViewById(R.id.scoreboard);
         currentScore = findViewById(R.id.score);
         graph = (GraphView)findViewById(R.id.graph1);
+        graph_roll = (GraphView)findViewById(R.id.graph2);
         //    baseScore = findViewById(R.id.basescore);
         rl.setVisibility(View.GONE);
         Log.d("pkxt", "owow");
@@ -903,6 +937,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         m_MyReceiver2 = new MyBroadcaseReceiver2();
         //create graph frame
         createGraph();
+        createGraph1();
         ela = new ExerciseListAdapter(this, temp);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -998,14 +1033,15 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         @Override
         protected String doInBackground(Void... voids) {
 
-            for(int i:round_list.get(0))
+            for(Integer[] i:round_list.get(0))
             {
                 Log.d("nodata",String.valueOf(i));
             }
-            for(int i:second_round_list.get(0))
+            for(Integer[] i:second_round_list.get(0))
             {
                 Log.d("secondnodata",String.valueOf(i));
             }
+
             Result_Maker resultMaker = new Result_Maker(getApplicationContext(), name_of_exercise, num_of_exercise, totalRound, list_of_exer_name,round_list,second_round_list);
             //temp gen
 
@@ -1017,6 +1053,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             }
             while(id==null);
             Log.d("idx",id);
+
             return id;
         }
 
@@ -1089,43 +1126,57 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         });
         //addRandomDataPoint();
         //addRandomDataPoint1();
+        series0.setColor(Color.YELLOW);
         series1.setColor(Color.GREEN);
 
 
         //graph.addSeries(series1);
+        //graph.getViewport().setYAxisBoundsManual(true);
+        //graph.getViewport().setMinY(0);
+        //graph.getViewport().setMaxY(90);
         graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(0);
+        graph.getViewport().setMinY(-90);
         graph.getViewport().setMaxY(90);
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(20);
         graph.addSeries(series0);
         graph.addSeries(series1);
+        graph.setTitle("Leg Elevation");
+        graph.setTitleColor(Color.WHITE);
 //graph end
     }
 
     public void createGraph1(){
-        //graph start
-        Log.d("createGraph1",String.valueOf(graphNumber));
+
 
         series2 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 0),
+                new DataPoint(0, graph_pt_roll),
         });
+
         series3 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 40),
+                new DataPoint(0, second_graph_pt_roll),
         });
-
-        addRandomDataPoint1();
+        //addRandomDataPoint();
         //addRandomDataPoint1();
-        series2.setColor(Color.RED);
+        series2.setColor(Color.YELLOW);
+        series3.setColor(Color.GREEN);
 
-        graph.addSeries(series2);
-        graph.addSeries(series3);
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(90);
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMaxX(20);
+
+        //graph.addSeries(series1);
+        //graph.getViewport().setYAxisBoundsManual(true);
+        //graph.getViewport().setMinY(0);
+        //graph.getViewport().setMaxY(90);
+        graph_roll.getViewport().setYAxisBoundsManual(true);
+        graph_roll.getViewport().setMinY(-90);
+        graph_roll.getViewport().setMaxY(90);
+        graph_roll.getViewport().setXAxisBoundsManual(true);
+        graph_roll.getViewport().setMinX(0);
+        graph_roll.getViewport().setMaxX(20);
+        graph_roll.addSeries(series2);
+        graph_roll.addSeries(series3);
+        graph_roll.setTitle("Leg Rotation");
+        graph_roll.setTitleColor(Color.WHITE);
 //graph end
     }
 
@@ -1146,11 +1197,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
         graph.addSeries(series4);
         graph.addSeries(series5);
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(90);
+
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMaxX(20);
+
 //graph end
     }
 }

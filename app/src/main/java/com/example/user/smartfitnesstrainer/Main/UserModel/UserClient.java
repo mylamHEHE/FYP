@@ -31,4 +31,9 @@ public interface UserClient {
     Call<Detail_Player_History> getRecord(@Header("Content-Type") String content_type, @Header("Authorization") String authToken, @Path("id") int id);
     @POST("token/refresh")
     Call<Refresh> getAccess_token(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+    @POST("logout/access")
+    Call<ResponseBody> logOutAccess(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+    @POST("logout/refresh")
+    Call<ResponseBody> logOutRefresh(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+
 }

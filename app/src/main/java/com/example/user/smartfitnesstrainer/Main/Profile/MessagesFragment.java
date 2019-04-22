@@ -57,7 +57,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     PrefKey prefKey;
     List<UserProfile.PlayerHistory> playerHistories = new ArrayList<>();
     TextView first_name;
-
+    FloatingActionButton logout;
     FloatingActionButton myFab;
     @Nullable
     @Override
@@ -72,6 +72,13 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
 //        params.bottomMargin = 0;
 //        rl.addView(iv, params);
         uri = new ArrayList<>();
+        logout = (FloatingActionButton)view.findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
 
         //tomilia: database get text initialize
         first_name = view.findViewById(R.id.first_name);
@@ -136,6 +143,66 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void onFailure(Call<UserProfile> call, Throwable t) {
+                Toast.makeText(getActivity(),"fail",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void logout()
+    {
+
+        Call<ResponseBody> call = userClient.logOutAccess("application/x-www-form-urlencoded","Bearer "+prefKey.getAccess_token());
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        //tomilia: get Profile stats
+                        prefKey.removeAccessToken();
+                        //
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+
+                    //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getActivity(),"fail",Toast.LENGTH_SHORT).show();
+            }
+        });
+        Call<ResponseBody> call2 = userClient.logOutRefresh("application/x-www-form-urlencoded","Bearer "+prefKey.getRefresh_token());
+        call2.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        //tomilia: get Profile stats
+                        prefKey.removeRefreshToken();
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+
+                        getActivity().finish();
+                        startActivity(intent);
+                        //
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+
+                    //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(getActivity(),"fail",Toast.LENGTH_SHORT).show();
             }
         });

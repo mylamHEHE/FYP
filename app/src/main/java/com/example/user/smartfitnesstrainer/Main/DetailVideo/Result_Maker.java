@@ -40,8 +40,8 @@ public class Result_Maker {
     Call<ResponseBody> example;
     ArrayList<Integer> score;
     int num_of_exercise;
-    ArrayList<ArrayList<Integer>> firstresultset;
-    ArrayList<ArrayList<Integer>> secondresultset;
+    ArrayList<ArrayList<Integer[]>> firstresultset;
+    ArrayList<ArrayList<Integer[]>> secondresultset;
     String name_of_exercise;
     String id;
     PrefKey prefKey;
@@ -52,7 +52,7 @@ public class Result_Maker {
     2.get score
     3.comment????
      */
-    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<String> name_of_exercise_set,ArrayList<ArrayList<Integer>> firstresultset,ArrayList<ArrayList<Integer>> secondresultset) {
+    public Result_Maker(Context context, String name_of_exercise, int num_of_exercise, ArrayList<Integer> score, ArrayList<String> name_of_exercise_set,ArrayList<ArrayList<Integer[]>> firstresultset,ArrayList<ArrayList<Integer[]>> secondresultset) {
         this.score = score;
         this.num_of_exercise=num_of_exercise;
         this.firstresultset = firstresultset;
@@ -64,25 +64,25 @@ public class Result_Maker {
     }
     public void makeJSON(){
         int counttemp=0;
-        for(ArrayList<Integer> x:firstresultset)
+        for(ArrayList<Integer[]> x:firstresultset)
         {
 
                 Log.d("rounds"+counttemp,String.valueOf(x.size()));
 
-            for (int y:x)
+            for (Integer[] y:x)
             {
-                Log.d("round"+counttemp,String.valueOf(y));
+                Log.d("round"+counttemp,String.valueOf(y[0]+" "+y[1]));
             }
             counttemp++;
         }
-        for(ArrayList<Integer> x:secondresultset)
+        for(ArrayList<Integer[]> x:secondresultset)
         {
 
             Log.d("2rounds"+counttemp,String.valueOf(x.size()));
 
-            for (int y:x)
+            for (Integer[] y:x)
             {
-                Log.d("2round"+counttemp,String.valueOf(y));
+                Log.d("2round"+counttemp,String.valueOf(y[0]+" "+y[1]));
             }
             counttemp++;
         }
@@ -90,6 +90,8 @@ public class Result_Maker {
         JSONArray score_json = new JSONArray(score);
         JSONArray result_json = new JSONArray(firstresultset);
         JSONArray second_result_json = new JSONArray(secondresultset);
+        Log.d("pitch_json",result_json.toString());
+        Log.d("roll_json",second_result_json.toString());
         JSONArray name_json = new JSONArray(name_of_exercise_set);
         try {
             //user_id

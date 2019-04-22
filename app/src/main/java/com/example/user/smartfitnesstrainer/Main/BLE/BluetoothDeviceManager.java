@@ -183,7 +183,7 @@ public class BluetoothDeviceManager {
         ViseBle.config()
                 .setScanTimeout(-1)//扫描超时时间，这里设置为永久扫描
                 .setScanRepeatInterval(5 * 1000)//扫描间隔5秒
-                .setConnectTimeout(10 * 1000)//连接超时时间
+                .setConnectTimeout(6 * 1000)//连接超时时间
                 .setOperateTimeout(5 * 1000)//设置数据操作超时时间
                 .setConnectRetryCount(3)//设置连接失败重试次数
                 .setConnectRetryInterval(1000)//设置连接失败重试间隔时间
