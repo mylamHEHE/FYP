@@ -22,6 +22,7 @@ import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -29,6 +30,7 @@ import com.example.user.smartfitnesstrainer.R;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ public class GraphActivity extends AppCompatActivity {
     int current_render_graph=0;
     private LineGraphSeries<DataPoint> series1x, series1y, series2x, series2y, series3x, series3y;
     private PointsGraphSeries dot1x;
+    private PointsGraphSeries dot2x;
     public double addORminus(double pre, double cur){
         if(cur == pre){
             return cur;
@@ -76,34 +79,15 @@ public class GraphActivity extends AppCompatActivity {
 
                         //convert integer point to each graph
 
-                        JSONArray round = new JSONArray(response.body().getRound_data());
+                        JSONArray round = new JSONArray(response.body().getFirst_round_data());
+                        JSONArray second_round = new JSONArray(response.body().getSecond_round_data());
                         String name=response.body().getName();
                         String date=response.body().getDate();
-                        for(int rot=0;rot<round.length();rot++)
-                        {
-                            Log.d("yeaz"+String.valueOf(exercise_key),String.valueOf(response.body().getRef_id()));
 
-                            Log.d("yea"+String.valueOf(exercise_key),String.valueOf(rot));
-                            JSONArray each = new JSONArray(round.get(rot).toString());
+                          first_round(second_round,round,response);
 
-                            JSONArray name_list = new JSONArray(response.body().getList_name());
-                            ArrayList<Integer> graphplot = new ArrayList<>();
-                            ArrayList<String> list_name = new ArrayList<>();
-                            for(int a=0;a<name_list.length();a++)
-                            {
-                                list_name.add(name_list.getString(a));
-                            }
-                            for (int point=0;point<each.length();point++)
-                            {
-                                graphplot.add(each.getInt(point));
-                            }
-                            //tomilia: add to name_list
-                            name_text.setText(name);
-                            date_text.setText(date);
-                            createGraph(graphplot,list_name);
-
-                        }
-
+                        name_text.setText(name);
+                        date_text.setText(date);
                         //tomilia: get Profile stats
 
                         //
@@ -124,19 +108,52 @@ public class GraphActivity extends AppCompatActivity {
             }
         });
     }
-    private void createGraph(ArrayList<Integer> graph,ArrayList<String> list_name)
+    private void first_round(JSONArray second_round,JSONArray round,Response<Detail_Player_History> response) throws JSONException {
+        for(int rot=0;rot<round.length();rot++)
+        {
+        JSONArray each = new JSONArray(round.get(rot).toString());
+        JSONArray second_each = new JSONArray(second_round.get(rot).toString());
+        JSONArray name_list = new JSONArray(response.body().getList_name());
+        ArrayList<Integer> graphplot = new ArrayList<>();
+        ArrayList<Integer> second_graphplot = new ArrayList<>();
+        ArrayList<String> list_name = new ArrayList<>();
+        for(int a=0;a<name_list.length();a++)
+        {
+            list_name.add(name_list.getString(a));
+        }
+        for (int point=0;point<each.length();point++)
+        {
+            graphplot.add(each.getInt(point));
+        }
+            for (int point=0;point<second_each.length();point++)
+            {
+                second_graphplot.add(second_each.getInt(point));
+            }
+        //tomilia: add to name_list
+
+        createGraph(second_graphplot,graphplot,list_name);
+
+        }
+
+    }
+    private void createGraph(ArrayList<Integer> graph2,ArrayList<Integer> graph,ArrayList<String> list_name)
     {
         int[] ret = new int[graph.size()];
+        int[] ret2 = new int[graph2.size()];
         String[] name = new String[list_name.size()];
         for (int i=0; i < ret.length; i++)
         {
             ret[i] = graph.get(i).intValue();
         }
+        for (int i=0; i < ret2.length; i++)
+        {
+            ret2[i] = graph2.get(i).intValue();
+        }
         for(int i=0;i<name.length;i++)
         {
             name[i]=list_name.get(i);
         }
-        onGraphCreate(ret,name);
+        onGraphCreate(ret2,ret,name);
 
     }
     @Override
@@ -163,8 +180,7 @@ public class GraphActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+               finish();
             }
         });
         //receive broadcast
@@ -228,11 +244,11 @@ public class GraphActivity extends AppCompatActivity {
         graph3.addSeries(series3y);
         */
     }
-    private void onGraphCreate(int[] graph,String[] name){
+    private void onGraphCreate(int [] graph2,int[] graph,String[] name){
 
 
         double x1 = 0, y1 = 0;
-        double x2 = 0, y2 = 5;
+        double x2 = 0, y2 = 0;
         double x3 = 0, y3 = 5;
 
         //TextView tv1 = findViewById(R.id.textView1);
@@ -241,7 +257,7 @@ public class GraphActivity extends AppCompatActivity {
         TextView tv3=new TextView(getApplicationContext());
         tv3.setText(name[name_counter]);
         tv3.setTextSize(20f);
-
+        tv3.setTextColor(Color.LTGRAY);
         tv3.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         for(int y:graph)
         {
@@ -254,8 +270,10 @@ public class GraphActivity extends AppCompatActivity {
         series1x = new LineGraphSeries<>();
         series1y = new LineGraphSeries<>();
         dot1x = new PointsGraphSeries<>();
-        //series2x = new LineGraphSeries<>();
-        //series2y = new LineGraphSeries<>();
+
+        series2x = new LineGraphSeries<>();
+        series2y = new LineGraphSeries<>();
+        dot2x = new PointsGraphSeries<>();
         //series3x = new LineGraphSeries<>();
         //series3y = new LineGraphSeries<>();
 
@@ -267,11 +285,21 @@ public class GraphActivity extends AppCompatActivity {
             series1y.appendData(new DataPoint(x1,y1), true, 60);
             x1 = x1 + 1;
         }
+        for(int i = 0; i < graph2.length; i++){
+
+            y2 = graph2[i];
+            dot2x.appendData(new DataPoint(x2,y2), true, 60);
+            series2x.appendData(new DataPoint(x2,45), true, 60);
+            series2y.appendData(new DataPoint(x2,y2), true, 60);
+            x2 = x2 + 1;
+        }
 
         dot1x.setShape(PointsGraphSeries.Shape.POINT);
         dot1x.setColor(Color.BLUE);
         dot1x.setSize(15f);
-
+        dot2x.setShape(PointsGraphSeries.Shape.POINT);
+        dot2x.setColor(Color.MAGENTA);
+        dot2x.setSize(15f);
         graph1.getViewport().setXAxisBoundsManual(true);
 
         graph1.getViewport().setMinX(0);
@@ -279,13 +307,22 @@ public class GraphActivity extends AppCompatActivity {
         graph1.getViewport().setScrollable(true);
         series1x.setColor(Color.RED);
         series1y.setColor(Color.GREEN);
+        series2x.setColor(Color.RED);
+        series2y.setColor(Color.YELLOW);
         graph1.addSeries(series1x);
         graph1.addSeries(series1y);
         graph1.addSeries(dot1x);
+        graph1.addSeries(series2x);
+        graph1.addSeries(series2y);
+        graph1.addSeries(dot2x);
+        graph1.getGridLabelRenderer().setGridColor(Color.WHITE);
+        graph1.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
+        graph1.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
 
         graph1.invalidate();
 
         graph1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
+
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
         layout.addView(tv3);
         layout.addView(graph1);

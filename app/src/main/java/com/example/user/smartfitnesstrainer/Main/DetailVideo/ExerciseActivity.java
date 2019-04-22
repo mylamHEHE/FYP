@@ -69,6 +69,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -89,6 +90,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             .baseUrl(URL_Base);
     PrefKey prefKey;
     Bundle sis;
+    Thread mGraphTimer;
     String name_of_exercise;
     ExerciseListAdapter ela;
     Retrofit retrofit = builder.build();
@@ -103,6 +105,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private ArrayList<VideoModel> vm = new ArrayList<>();
     private ImageButton pause;
     ArrayList<ArrayList<Integer>> round_list = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> second_round_list = new ArrayList<>();
     private DeviceAlert devicealert;
     private TextView mTextField;
     private int isTutorMode = 0;
@@ -129,11 +132,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private int lastXPoint = 2, lastXPoint1 = 2, lastXPoint2 = 2;
     private LineGraphSeries<DataPoint> series0, series1, series2, series3, series4, series5;
     private double graph_pt;
-
+    private double second_graph_pt;
     private GraphView graph;
     private int graphNumber = 0;
     private ArrayList<Double> buffer_Data=new ArrayList<>();
+    private ArrayList<Double> second_buffer_Data = new ArrayList<>();
     private ArrayList<Integer> getRound_Data = new ArrayList<>();
+    private ArrayList<Integer> second_getRound_Data = new ArrayList<>();
     int countx=0;
     public class MyBroadcaseReceiver1 extends BroadcastReceiver {
 
@@ -142,31 +147,45 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
             buffer_Data.add(result);
 
+
         }
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
             // TODO Auto-generated method stub
-            graph_pt = intent.getDoubleExtra("sender_name", 0);
+            graph_pt = intent.getDoubleExtra("first_dev", 0);
+            Log.d("grappg",graph_pt+"");
+            if(graph_pt!=0)
             addToBuffer(graph_pt);
             //tommy change 78
-            //if(sender==78)sender=0;
+            //if(sender==78)sender=0;\
 
         }
     }
+
     private Timer mTimer;
     private void setTimerTask() {
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                /*
+                first sensor
+                 */
                 if(buffer_Data.size()!=0) {
                     countx++;
                     double sum = 0;
-                    for (double sum_of_data : buffer_Data) {
-                        sum += sum_of_data;
+                    try {
+                        for (double sum_of_data : buffer_Data) {
+                            sum += sum_of_data;
+                        }
                     }
-                    Log.d("bufy", String.valueOf(sum+" "+buffer_Data.size()));
+                    catch (Exception e)
+                    {
+
+                    }
                     final double buf = sum / buffer_Data.size();
-                    Log.d("bufx", String.valueOf(buf));
+                    Log.d("bufx1", String.valueOf(buf));
                     getRound_Data.add((int)buf);
 
 /*
@@ -181,13 +200,80 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                     });
                     buffer_Data.clear();
                 }
+                /*
+                second sensor
+                 */
 
 
             }
-        }, 1000, 1000/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
+        }, 1000, 500/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
+    }
+    public class MyBroadcaseReceiver2 extends BroadcastReceiver {
+
+        public void addToSecondBuffer(double result)
+        {
+
+            second_buffer_Data.add(result);
+
+        }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // TODO Auto-generated method stub
+            second_graph_pt = intent.getDoubleExtra("second_dev",0);
+            if(second_graph_pt!=0);
+            addToSecondBuffer(second_graph_pt);
+            //tommy change 78
+            //if(sender==78)sender=0;
+
+        }
+    }
+    private Timer mTimer2;
+    private void setTimerTask2() {
+        mTimer2.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                /*
+                first sensor
+                 */
+                if(second_buffer_Data.size()!=0) {
+
+                    double sum = 0;
+                    try {
+                        for (double sum_of_data : second_buffer_Data) {
+                            sum += sum_of_data;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                    final double buf = sum / second_buffer_Data.size();
+                    Log.d("buf2x", String.valueOf(buf));
+                    second_getRound_Data.add((int)buf);
+
+/*
+ angle.setText(String.valueOf((int)buf));
+                    currentreading += (int)buf;
+ */                 runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           // angle.setText(String.valueOf((int)buf));
+                           // currentreading += (int)buf;
+                        }
+                    });
+                    second_buffer_Data.clear();
+                }
+                /*
+                second sensor
+                 */
+
+
+            }
+        }, 1000, 500/* 表示1000毫秒之後，每隔1000毫秒執行一次 */);
     }
     private MyBroadcaseReceiver1 m_MyReceiver1;
-
+    private MyBroadcaseReceiver2 m_MyReceiver2;
     @Override
     protected void onStart() {
         super.onStart();
@@ -195,9 +281,15 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             prefKey = new PrefKey(this);
             isVideoCreate = true;
             Log.d("playernum", "lc");
-            createPlaylist();
-            createExerciseModellist();
-            firstClip();
+            new Thread(new Runnable() {
+                public void run() {
+                    createPlaylist();
+                    createExerciseModellist();
+                    firstClip();
+                }
+            }).start();
+
+
         }
     }
 
@@ -212,16 +304,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         Log.d("stageScore", String.valueOf(stageScore));
 
         ArrayList<Integer> tmp=new ArrayList<>();
+        ArrayList<Integer> tmp2 = new ArrayList<>();
         tmp.addAll(getRound_Data);
         round_list.add(tmp);
+        tmp2.addAll(second_getRound_Data);
+        second_round_list.add(tmp2);
         mTimer.cancel();
+        mTimer2.cancel();
         getRound_Data.clear();
-
+        second_getRound_Data.clear();
         Log.d("nodatax",String.valueOf(round_list.get(0).size()));
-        for(int i:round_list.get(0))
-        {
-            Log.d("nodata",String.valueOf(i));
-        }
+
         totalRound.add(stageScore);
         stageScore = 0;
 
@@ -339,6 +432,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void unregDevice() {
         try {
             unregisterReceiver(m_MyReceiver1);
+            unregisterReceiver(m_MyReceiver2);
+            mHandler.removeCallbacks(runGraph);
+            series0.resetData(new DataPoint[]{new DataPoint(0,graph_pt)});
+            series1.resetData(new DataPoint[]{new DataPoint(0,second_graph_pt)});
+            mGraphTimer.interrupt();
+
+
         } catch (Exception e) {
 
         }
@@ -369,7 +469,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         {
             pauseCounter();
             skipAvaliable();
-            unregisterReceiver(m_MyReceiver1);
+            unregDevice();
             scoreBoardAppear();
             tutorMode();
         } else {
@@ -380,8 +480,59 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             GrpahAppear();
         }
     }
+
+    private Runnable runGraph;
+    private double graph2LastXValue = 5d;
+
+    private void timerForGraph(){
+        runGraph = new Runnable() {
+            double counter=0;
+            @Override
+            public void run() {
+                //series0.resetData(generateData());
+                if(getRound_Data.size()!=0)
+                series0.appendData(new DataPoint(counter, getRound_Data.get(getRound_Data.size()-1)), false, 300);
+                if(second_getRound_Data.size()!=0)
+                    series1.appendData(new DataPoint(counter, second_getRound_Data.get(second_getRound_Data.size()-1)), false, 300);
+                counter+=0.5;
+                mHandler.postDelayed(this, 500);
+
+            }
+        };
+        mHandler.post(runGraph);
+
+/*
+        mTimer2 = new Runnable() {
+            @Override
+            public void run() {
+                graph2LastXValue += 1d;
+                mSeries2.appendData(new DataPoint(graph2LastXValue, getRandom()), true, 40);
+                mHandler.postDelayed(this, 200);
+            }
+        };
+        mHandler.postDelayed(mTimer2, 1000);
+*/
+    }
+    private int generateData() {
+        int count = 30;
+        DataPoint[] values = new DataPoint[count];
+            int f = mRand.nextInt()%40*2;
+        Log.d("now data",f+"");
+        return f;
+    }
+
+    double mLastRandom = 2;
+    Random mRand = new Random();
+    private double getRandom() {
+        return mLastRandom += mRand.nextDouble()*0.5 - 0.25;
+    }
     private void switchgraph(){
+
+
+        timerForGraph();
+
         Log.d("createsw",String.valueOf(graphNumber));
+        /*
         switch (graphNumber){
             case 1:
                 graph.removeAllSeries();
@@ -406,6 +557,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
                 graphNumber = 0;
                 break;
         }
+        */
+
     }
 
     private void deviceCheck() {
@@ -581,6 +734,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             }
 
             public void onFinish() {
+                //tomilia
                 rl.setVisibility(View.GONE);
                 pb.setVisibility(View.INVISIBLE);
                 player.setPlayWhenReady(true);
@@ -592,7 +746,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 //GraphActicity
                  */
                 Log.d("exercisehi","start");
-                graphNumber++;
+                //graphNumber++;
                 switchgraph();
                 Log.d("exercisehi","start1");
                 receiverOpen();
@@ -607,8 +761,13 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private void receiverOpen(){
         IntentFilter itFilter = new IntentFilter("tw.android.MY_BROADCAST1");
         registerReceiver(m_MyReceiver1, itFilter);
+        IntentFilter itFilter2 = new IntentFilter("tw.android.MY_BROADCAST2");
+        registerReceiver(m_MyReceiver2,itFilter2);
         mTimer = new Timer();
         setTimerTask();
+        mTimer2 = new Timer();
+        setTimerTask2();
+
         first_in_data=true;
     }
     @Override
@@ -622,7 +781,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     protected void onPause() {
         super.onPause();
         unregDevice();
+
         mTimer.cancel();
+        mTimer2.cancel();
         pausePlayer();
     }
 
@@ -696,6 +857,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         simpleExoPlayerView.setUseController(true);
         simpleExoPlayerView.showController();
         simpleExoPlayerView.setControllerHideOnTouch(false);
+        /*
+        device?
+        graph?
+         */
         pause.setVisibility(View.INVISIBLE);
     }
 
@@ -706,6 +871,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             sis = savedInstanceState;
         }
         mTimer = new Timer();
+        mTimer2 = new Timer();
+        mGraphTimer= new Thread(runGraph);
         setContentView(R.layout.activity_exercise);
         pause = findViewById(R.id.exo_pause);
         play = findViewById(R.id.exo_play);
@@ -724,6 +891,9 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         rl.setVisibility(View.GONE);
         Log.d("pkxt", "owow");
         m_MyReceiver1 = new MyBroadcaseReceiver1();
+        m_MyReceiver2 = new MyBroadcaseReceiver2();
+        //create graph frame
+        createGraph();
         ela = new ExerciseListAdapter(this, temp);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -785,7 +955,12 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         timer.schedule(doAsynchronousTask, 0, 2000); //execute in every 50000 ms
     }
 
-
+    public void onFinish() {
+        unregDevice();
+        mTimer2.cancel();
+        mTimer.cancel();
+        finish(); // if you want this activity to go away
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -814,9 +989,17 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         @Override
         protected String doInBackground(Void... voids) {
 
-
-            Result_Maker resultMaker = new Result_Maker(getApplicationContext(), name_of_exercise, num_of_exercise, totalRound, list_of_exer_name,round_list);
+            for(int i:round_list.get(0))
+            {
+                Log.d("nodata",String.valueOf(i));
+            }
+            for(int i:second_round_list.get(0))
+            {
+                Log.d("secondnodata",String.valueOf(i));
+            }
+            Result_Maker resultMaker = new Result_Maker(getApplicationContext(), name_of_exercise, num_of_exercise, totalRound, list_of_exer_name,round_list,second_round_list);
             //temp gen
+
             Log.d("round:lis ",String.valueOf(round_list.size()));
             resultMaker.makeJSON();
             String id;
@@ -889,22 +1072,26 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         Log.d("createGraph0",String.valueOf(graphNumber));
 
         series0 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 0),
+                new DataPoint(0, graph_pt),
         });
-        series1 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 30),
-        });
-        addRandomDataPoint();
-        //addRandomDataPoint1();
-        series1.setColor(Color.RED);
 
-        graph.addSeries(series0);
-        graph.addSeries(series1);
+        series1 = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(0, second_graph_pt),
+        });
+        //addRandomDataPoint();
+        //addRandomDataPoint1();
+        series1.setColor(Color.GREEN);
+
+
+        //graph.addSeries(series1);
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
         graph.getViewport().setMaxY(90);
         graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(20);
+        graph.addSeries(series0);
+        graph.addSeries(series1);
 //graph end
     }
 

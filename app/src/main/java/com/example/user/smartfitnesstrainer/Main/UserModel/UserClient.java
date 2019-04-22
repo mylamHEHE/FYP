@@ -2,6 +2,7 @@ package com.example.user.smartfitnesstrainer.Main.UserModel;
 
 import com.example.user.smartfitnesstrainer.Main.Profile.Detail_Player_History;
 import com.example.user.smartfitnesstrainer.Main.Profile.UserProfile;
+import com.example.user.smartfitnesstrainer.Main.Splash.Refresh;
 import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.Playlist;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public interface UserClient {
     Call<ResponseBody> postRecord(@Header("Content-Type") String content_type, @Header("Authorization") String authToken, @Body RequestBody body);
     @GET("getrecord/{id}")
     Call<Detail_Player_History> getRecord(@Header("Content-Type") String content_type, @Header("Authorization") String authToken, @Path("id") int id);
+    @POST("token/refresh")
+    Call<Refresh> getAccess_token(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
 }

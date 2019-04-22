@@ -21,6 +21,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.BluetoothDifferenter;
 import com.example.user.smartfitnesstrainer.R;
 import com.vise.xsnow.cache.SpCache;
 import com.vise.xsnow.event.BusManager;
@@ -122,6 +123,7 @@ public class SecondDeviceControl extends Activity {
 
             DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
             Log.d("bletest", deviceMirror.getBluetoothLeDevice().getAddress());
+            BluetoothDifferenter.SECOND_BLUETOOTH_DEV = deviceMirror.getBluetoothLeDevice();
             for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
                 Log.d("bletest", String.valueOf(bgs.getUuid()));
                 if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
@@ -320,7 +322,7 @@ public class SecondDeviceControl extends Activity {
         double z = Math.atan2(2 * q0 * q3 + 2 * q1 * q2,-2 * q2 * q2 - 2 * q3* q3 + 1)* 57.3; // yaw; // yaw
         double y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
         double x = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
-
+        Log.d("xmen",z+""+y+""+x);
         //double r0 = 0, r1 = 1, r2 = 0, r3 = 0;0100
         double[] first_result = multiplyQuaternion(0,0,0,1,q0,-q1,-q2,-q3);
         double[] last_result = multiplyQuaternion(q0, q1, q2, q3, first_result[0],first_result[1],first_result[2],first_result[3]);
@@ -336,10 +338,7 @@ public class SecondDeviceControl extends Activity {
         double result=(elevation_acc+elevationGyro)/2;
 
         //timer get buffer average in one sec
-        // Intent it = new Intent("tw.android.MY_BROADCAST1");
-        //it.putExtra("sender_name",result);
 
-        //sendBroadcast(it);
         return result;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
@@ -401,6 +400,10 @@ public class SecondDeviceControl extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble11", String.valueOf(quad_res));
+                Intent it = new Intent("tw.android.MY_BROADCAST2");
+                it.putExtra("second_dev",quad_res);
+
+                sendBroadcast(it);
             } catch (Exception e) {
 
             }
@@ -437,6 +440,10 @@ public class SecondDeviceControl extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble22", String.valueOf(quad_res));
+                Intent it = new Intent("tw.android.MY_BROADCAST2");
+                it.putExtra("second_dev",quad_res);
+
+                sendBroadcast(it);
             } catch (Exception e) {
 
             }

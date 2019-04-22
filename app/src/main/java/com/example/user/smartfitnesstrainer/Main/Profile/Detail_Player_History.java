@@ -15,7 +15,8 @@ public class Detail_Player_History {
     private String name;
     private String list_name;
     private boolean succuessful;
-    private String round_data;
+    private String first_round_data;
+    private String second_round_data;
     private int total_exercise;
     private String date;
 
@@ -43,12 +44,20 @@ public class Detail_Player_History {
         this.succuessful = succuessful;
     }
 
-    public String getRound_data() {
-        return round_data;
+    public String getFirst_round_data() {
+        return first_round_data;
     }
 
-    public void setRound_data(String round_data) {
-        this.round_data = round_data;
+    public void setFirst_round_data(String round_data) {
+        this.first_round_data = round_data;
+    }
+
+    public String getSecond_round_data() {
+        return second_round_data;
+    }
+
+    public void setSecond_round_data(String second_round_data) {
+        this.second_round_data = second_round_data;
     }
     public String getList_name()
     {

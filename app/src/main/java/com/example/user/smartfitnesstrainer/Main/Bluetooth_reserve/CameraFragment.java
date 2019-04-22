@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -244,20 +245,26 @@ public class CameraFragment extends android.support.v4.app.Fragment {
                         Log.d("bleadr", x.getAddress());
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
+                    secondBLE = new SecondBLE(bleAdress, getContext(), getActivity());
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            secondBLE.init();
+                        }
+                    });
 
                 }
-                bluetooth = new MyBluetoothService(bleAdress, getContext(), getActivity());
-
-                        bluetooth.init();
-
             }
             else if (ViseBle.getInstance().getDeviceMirrorPool().getDeviceList().size()==1)
             {
                 secondBLE = new SecondBLE(bleAdress, getContext(), getActivity());
-
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
                         secondBLE.init();
+                    }
+                });
 
             }
 

@@ -78,8 +78,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
         myFab = (FloatingActionButton) view.findViewById(R.id.fab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(),ResentEmailActivity.class);
-                startActivity(intent);
+               getProfile();
             }
         });
 
@@ -129,6 +128,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
                 }
                 else
                 {
+
                       //  Toast.makeText(getActivity(),response.code(),Toast.LENGTH_SHORT).show();
 
                 }
