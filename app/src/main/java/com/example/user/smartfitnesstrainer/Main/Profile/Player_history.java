@@ -1,48 +1,45 @@
 package com.example.user.smartfitnesstrainer.Main.Profile;
 
 public class Player_history {
+    private String[] roll_comment;
 
-    /**
-     * name : Cardio Exercise
-     * succuessful : true
-     * date : 2011-11-3
-     */
+    private String[] pitch_comment;
 
-    private String name;
-    private boolean succuessful;
-    private String date;
-    private String historyID;
+    private Detail_Player_History explist;
 
-    public String getHistoryID()
+    public String[] getRoll_comment ()
     {
-        return historyID;
+        return roll_comment;
     }
 
-    public void setHistoryID(String historyID) {
-        this.historyID = historyID;
+    public void setRoll_comment (String[] roll_comment)
+    {
+        this.roll_comment = roll_comment;
     }
 
-    public String getName() {
-        return name;
+    public String[] getPitch_comment ()
+    {
+        return pitch_comment;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPitch_comment (String[] pitch_comment)
+    {
+        this.pitch_comment = pitch_comment;
     }
 
-    public boolean isSuccuessful() {
-        return succuessful;
+    public Detail_Player_History getExplist ()
+    {
+        return explist;
     }
 
-    public void setSuccuessful(boolean succuessful) {
-        this.succuessful = succuessful;
+    public void setExplist (Detail_Player_History explist)
+    {
+        this.explist = explist;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    @Override
+    public String toString()
+    {
+        return "ClassPojo [roll_comment = "+roll_comment+", pitch_comment = "+pitch_comment+", explist = "+explist+"]";
     }
 }

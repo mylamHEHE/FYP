@@ -48,7 +48,13 @@ import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 public class GraphActivity extends AppCompatActivity {
     private TextView name_text;
     private TextView date_text;
-    private String[][] name_of_sensor_work = new String[][];
+    private ArrayList<String[]> name_of_sensor_work = new ArrayList<String[]>() {
+        {
+            add(new String[]{"Left Leg Elevation",""});
+            add(new String[]{"Geeks"});
+            add(new String[]{"Geeks"});
+        }
+    };
     public Retrofit.Builder builder = new Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
@@ -85,11 +91,11 @@ public class GraphActivity extends AppCompatActivity {
 
                         JSONArray round = new JSONArray(response.body().getFirst_round_data());
                         JSONArray second_round = new JSONArray(response.body().getSecond_round_data());
+                        String[] pitch_comm =  response.body().getPitch_comment();
+                        String[] roll_comm = response.body().getRoll_comment();
                         String name=response.body().getName();
                         String date=response.body().getDate();
-
-                          first_round(second_round,round,response);
-
+                          first_round(pitch_comm,roll_comm,second_round,round,response);
                         name_text.setText(name);
                         date_text.setText(date);
                         //tomilia: get Profile stats
@@ -108,16 +114,18 @@ public class GraphActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Detail_Player_History> call, Throwable t) {
-               Log.d("psdv","fai;");
+               t.printStackTrace();
             }
         });
     }
-    private void first_round(JSONArray second_round,JSONArray round,Response<Detail_Player_History> response) throws JSONException {
+    private void first_round(String[] pitch_com,String[] roll_com,JSONArray second_round,JSONArray round,Response<Detail_Player_History> response) throws JSONException {
         for(int rot=0;rot<round.length();rot++)
         {
+
         JSONArray each = new JSONArray(round.get(rot).toString());
         JSONArray second_each = new JSONArray(second_round.get(rot).toString());
         JSONArray name_list = new JSONArray(response.body().getList_name());
+
         //first device pitch
         ArrayList<Integer> graphplot = new ArrayList<>();
         //second device pitch
@@ -126,6 +134,8 @@ public class GraphActivity extends AppCompatActivity {
         ArrayList<Integer> second_graphplot = new ArrayList<>();
         //second device roll
             ArrayList<Integer> second_graphplot_pitch2 = new ArrayList<>();
+            ArrayList<String> pitch=new ArrayList<>();
+            ArrayList<String> roll=new ArrayList<>();
         ArrayList<String> list_name = new ArrayList<>();
         for(int a=0;a<name_list.length();a++)
         {
@@ -138,6 +148,22 @@ public class GraphActivity extends AppCompatActivity {
                 graphplot.add(pitch_point.getInt(0));
                 graphplot_pitch2.add(pitch_point.getInt(1));
         }
+/*
+
+            for (int point=0;point<pitch_com.length();point++)
+            {
+
+                Log.d("currentrcom",pitch_com.getJSONObject(point).toString());
+
+            }
+
+            for (int point=0;point<roll_com.length();point++)
+            {
+                roll.add(roll_com.getString(point));
+
+
+            }
+            */
             for (int point=0;point<second_each.length();point++)
             {
                 JSONArray pitch_point= second_each.getJSONArray(point);
@@ -146,12 +172,12 @@ public class GraphActivity extends AppCompatActivity {
             }
         //tomilia: add to name_list
 
-        createGraph(graphplot_pitch2,graphplot,list_name);
-        createRollGraph(second_graphplot_pitch2,second_graphplot);
+        createGraph(pitch_com,graphplot_pitch2,graphplot,list_name);
+        createRollGraph(roll_com,second_graphplot_pitch2,second_graphplot);
         }
 
     }
-    private void createGraph(ArrayList<Integer> graph2,ArrayList<Integer> graph,ArrayList<String> list_name)
+    private void createGraph(String[] pitch_com,ArrayList<Integer> graph2,ArrayList<Integer> graph,ArrayList<String> list_name)
     {
         int[] ret = new int[graph.size()];
         int[] ret2 = new int[graph2.size()];
@@ -168,10 +194,10 @@ public class GraphActivity extends AppCompatActivity {
         {
             name[i]=list_name.get(i);
         }
-        onGraphCreate(ret2,ret,name);
+        onGraphCreate(pitch_com,ret2,ret,name);
 
     }
-    private void createRollGraph(ArrayList<Integer> graph2,ArrayList<Integer> graph)
+    private void createRollGraph(String[] roll_com,ArrayList<Integer> graph2,ArrayList<Integer> graph)
     {
         int[] ret = new int[graph.size()];
         int[] ret2 = new int[graph2.size()];
@@ -184,7 +210,7 @@ public class GraphActivity extends AppCompatActivity {
             ret2[i] = graph2.get(i).intValue();
         }
 
-        onRollGraphCreate(ret2,ret);
+        onRollGraphCreate(roll_com,ret2,ret);
 
     }
     @Override
@@ -276,7 +302,7 @@ public class GraphActivity extends AppCompatActivity {
         */
     }
 
-    private void onGraphCreate(int [] graph2,int[] graph,String[] name){
+    private void onGraphCreate(String[] pitch_com,int [] graph2,int[] graph,String[] name){
 
 
         double x1 = 0, y1 = 0;
@@ -355,12 +381,22 @@ public class GraphActivity extends AppCompatActivity {
         graph1.invalidate();
 
         graph1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
-
+        TextView tv4=new TextView(getApplicationContext());
+        tv4.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.arrow_up_float, 0, 0, 0);
+        tv4.setCompoundDrawablePadding(5);
+        tv4.setText(pitch_com[name_counter]);
+        tv4.setTextColor(Color.rgb(0,128,128));
+        TextView tv=new TextView(getApplicationContext());
+        tv.setText("Comment on elevation:");
+        tv.setTextSize(13f);
+        tv.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+
         layout.addView(tv3);
         layout.addView(graph1);
+        layout.addView(tv);
+        layout.addView(tv4);
 
-        name_counter++;
         /*
         int numDataPoints2 = 90;
         for(int i = 0; i < numDataPoints2; i++){
@@ -388,7 +424,7 @@ public class GraphActivity extends AppCompatActivity {
         */
     }
 
-    private void onRollGraphCreate(int [] graph2,int[] graph){
+    private void onRollGraphCreate(String[] roll_com,int [] graph2,int[] graph){
 
 
         double x1 = 0, y1 = 0;
@@ -445,9 +481,9 @@ public class GraphActivity extends AppCompatActivity {
         graphroll.getViewport().setMaxX(graph.length);
         graphroll.getViewport().setScrollable(true);
         series3x.setColor(Color.RED);
-        series3y.setColor(Color.GREEN);
+        series3y.setColor(Color.rgb(63, 235, 255));
         series4x.setColor(Color.RED);
-        series4y.setColor(Color.YELLOW);
+        series4y.setColor(Color.rgb(255, 63, 248));
         graphroll.addSeries(series3x);
         graphroll.addSeries(series3y);
         graphroll.addSeries(dot3x);
@@ -466,6 +502,20 @@ public class GraphActivity extends AppCompatActivity {
 
         //layout.addView(tv3);
         layout.addView(graphroll);
+        TextView tv=new TextView(getApplicationContext());
+        tv.setText("Comment on rotation:");
+        tv.setTextSize(13f);
+        tv.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
+
+        TextView tv4=new TextView(getApplicationContext());
+        tv4.setText(roll_com[name_counter]);
+        tv4.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_rotate, 0, 0, 0);
+        tv4.setTextColor(Color.rgb(0,128,128));
+        tv4.setCompoundDrawablePadding(5);
+        layout.addView(tv);
+        layout.addView(tv4);
+
+        name_counter++;
         /*
         int numDataPoints2 = 90;
         for(int i = 0; i < numDataPoints2; i++){

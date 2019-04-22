@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,9 +45,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.user.smartfitnesstrainer.Main.HomeActivity.URL_Base;
 
 
+
 public class Video_innerActivity extends AppCompatActivity {
     private static final String TAG = "Video_innerActivity";
 ImageView image;
+
 RecyclerView rv,videorv;
 Video_inner_desp_adapter vida;
 Video_inner_playlist_adapter vida2;
@@ -114,7 +117,7 @@ Button start;
             vida2 = new Video_inner_playlist_adapter(getApplicationContext(),exercise_playlist, 1,preview);
             vida2.notifyDataSetChanged();
 
-           // videorv.setAdapter(vida2);
+            videorv.setAdapter(vida2);
 
         videorv.setLayoutManager(llmm);
         VideoView videoView = findViewById(R.id.video);
@@ -139,7 +142,9 @@ Button start;
 
 
         //initImageBitmaps();
+    private void getMatchHistory(){
 
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initStartButton(){
@@ -165,8 +170,8 @@ Button start;
                         }
                         else
                         {
-                            Toast toast=Toast.makeText(Video_innerActivity.this,"You need to connect both devices to start the exercise!",Toast.LENGTH_LONG);
-                            toast.show();
+                            Snackbar.make(view, "You need to connect both devices to start the exercise!", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
                         }
                         break;
                     }
@@ -258,7 +263,6 @@ Button start;
                         age.setText(item_id.getString("agegroup"));
                         mduration.add(item_id.getString("description"));
                         MapPlaylist(obj.getJSONArray("exp_list"));
-                        Toast.makeText(getApplicationContext(),response.body().string(),Toast.LENGTH_SHORT).show();
                         vida.notifyDataSetChanged();
 
                         //

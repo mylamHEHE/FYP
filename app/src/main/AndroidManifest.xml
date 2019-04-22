@@ -81,6 +81,10 @@
         <activity
             android:name=".Main.Profile.Main2Activity"
             android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Main.Video_inner.Video_Inner_Activity"
+            android:label="@string/title_activity_video__inner_"
             android:theme="@style/AppTheme"></activity>
     </application>
 
