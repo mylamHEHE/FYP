@@ -336,8 +336,14 @@ public class SecondDeviceControl extends Activity {
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
 
         double result=(elevation_acc+elevationGyro)/2;
-
+        Log.d("original", String.format("pitch: %f, pitch: %f //roll: %f, roll: %f ", correct(x), x, correct(y), y));
         //timer get buffer average in one sec
+
+        Intent it = new Intent("tw.android.MY_BROADCAST2");
+        it.putExtra("second_dev_pitch",x);
+        it.putExtra("second_dev_roll",y);
+
+        sendBroadcast(it);
 
         return result;
     }
@@ -348,6 +354,11 @@ public class SecondDeviceControl extends Activity {
         result[2] = (a*g-b*h+c*e+d*f);
         result[3] = (a*h+b*g-c*f+d*e);
         return result;
+    }
+    private double correct(double input){
+        if (input>90)
+            return 180-input;
+        return input;
     }
     @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceNotifyData(final SecondNotify event) {
@@ -400,10 +411,7 @@ public class SecondDeviceControl extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble11", String.valueOf(quad_res));
-                Intent it = new Intent("tw.android.MY_BROADCAST2");
-                it.putExtra("second_dev",quad_res);
 
-                sendBroadcast(it);
             } catch (Exception e) {
 
             }
@@ -440,10 +448,6 @@ public class SecondDeviceControl extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble22", String.valueOf(quad_res));
-                Intent it = new Intent("tw.android.MY_BROADCAST2");
-                it.putExtra("second_dev",quad_res);
-
-                sendBroadcast(it);
             } catch (Exception e) {
 
             }

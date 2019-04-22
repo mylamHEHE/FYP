@@ -333,13 +333,19 @@ public class DeviceControlActivity extends Activity {
         double elevationGyro = Math.asin(sqrt(xss*xss+yss*yss)/sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2))) * 180 /PI;
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
         double rollgyr = Math.atan(sqrt(xss*xss+yss*yss)/(sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2)))) * 180 /PI;
-        double rollgyr2 = Math.atan2(2 * yss * zss + 2 * last_result[0] * xss,-2 * xss * q1 - 2 * yss* yss + 1)* 180 /PI;
+        double rollgyr2 = Math.atan2(2 * yss * zss + 2 * last_result[0] * xss,-2 * xss * xss - 2 * yss* yss + 1)* 180 /PI;
 
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
-        Log.d("roll", String.format("pitch: %f, roll: %f rolltest: %f", (elevation_acc+elevationGyro)/2, rollgyr2, rollgyr));
+        Log.d("rolllllllllllll", String.format("pitch: %f, roll: %f rolltest: %f", (elevation_acc+elevationGyro)/2, rollgyr2/1.98, rollgyr2/1.79));
+        Log.d("original", String.format("pitch: %f, pitch: %f //roll: %f, roll: %f ", correct(x), x, correct(y), y));
         double result=(elevation_acc+elevationGyro)/2;
 
+        Intent it = new Intent("tw.android.MY_BROADCAST1");
+        it.putExtra("first_dev_pitch",x);
+        it.putExtra("first_dev_roll",y);
+
+        sendBroadcast(it);
         //timer get buffer average in one sec
 
         return result;
@@ -353,10 +359,8 @@ public class DeviceControlActivity extends Activity {
         return result;
     }
     private double correct(double input){
-        if (input<0)
-            input=input*(-1);
         if (input>90)
-            input=input-90;
+            return 180-input;
         return input;
     }
     @Subscribe(threadMode = ThreadMode.SINGLE)
@@ -410,10 +414,7 @@ public class DeviceControlActivity extends Activity {
                 //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
                 double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
                 Log.d("delble1", String.valueOf(quad_res));
-                Intent it = new Intent("tw.android.MY_BROADCAST1");
-                it.putExtra("first_dev",quad_res);
 
-                sendBroadcast(it);
             } catch (Exception e) {
 
             }

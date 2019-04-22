@@ -131,11 +131,14 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     private Handler mHandler = new Handler();
     private int lastXPoint = 2, lastXPoint1 = 2, lastXPoint2 = 2;
     private LineGraphSeries<DataPoint> series0, series1, series2, series3, series4, series5;
-    private double graph_pt;
-    private double second_graph_pt;
+    private double graph_pt_pitch;
+    private double graph_pt_roll;
+    private double second_graph_pt_pitch;
+    private double second_graph_pt_roll;
     private GraphView graph;
     private int graphNumber = 0;
     private ArrayList<Double> buffer_Data=new ArrayList<>();
+    private ArrayList<Double> roll_buffer_Data=new ArrayList<>();
     private ArrayList<Double> second_buffer_Data = new ArrayList<>();
     private ArrayList<Integer> getRound_Data = new ArrayList<>();
     private ArrayList<Integer> second_getRound_Data = new ArrayList<>();
@@ -144,20 +147,24 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
 
         public void addToBuffer(double result)
         {
-
             buffer_Data.add(result);
-
-
         }
-
+        public void addToRollBuffer(double result)
+        {
+            roll_buffer_Data.add(result);
+        }
         @Override
         public void onReceive(Context context, Intent intent) {
 
             // TODO Auto-generated method stub
-            graph_pt = intent.getDoubleExtra("first_dev", 0);
-            Log.d("grappg",graph_pt+"");
-            if(graph_pt!=0)
-            addToBuffer(graph_pt);
+            graph_pt_pitch = intent.getDoubleExtra("first_dev_pitch", 0);
+            graph_pt_roll = intent.getDoubleExtra("first_dev_roll",0);
+            Log.d("grappg",graph_pt_pitch+" "+graph_pt_roll);
+            if(graph_pt_pitch!=0)
+                addToBuffer(graph_pt_pitch);
+            if(graph_pt_roll!=0)
+                addToRollBuffer(graph_pt_roll);
+
             //tommy change 78
             //if(sender==78)sender=0;\
 
@@ -220,9 +227,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         public void onReceive(Context context, Intent intent) {
 
             // TODO Auto-generated method stub
-            second_graph_pt = intent.getDoubleExtra("second_dev",0);
-            if(second_graph_pt!=0);
-            addToSecondBuffer(second_graph_pt);
+            second_graph_pt_pitch = intent.getDoubleExtra("second_dev_pitch",0);
+            second_graph_pt_roll = intent.getDoubleExtra("second_dev_roll",0);
+            Log.d("second_graph",second_graph_pt_pitch+" "+second_graph_pt_roll);
+            if(second_graph_pt_pitch!=0);
+                addToSecondBuffer(second_graph_pt_pitch);
             //tommy change 78
             //if(sender==78)sender=0;
 
@@ -434,8 +443,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             unregisterReceiver(m_MyReceiver1);
             unregisterReceiver(m_MyReceiver2);
             mHandler.removeCallbacks(runGraph);
-            series0.resetData(new DataPoint[]{new DataPoint(0,graph_pt)});
-            series1.resetData(new DataPoint[]{new DataPoint(0,second_graph_pt)});
+            series0.resetData(new DataPoint[]{new DataPoint(0,graph_pt_pitch)});
+            series1.resetData(new DataPoint[]{new DataPoint(0,second_graph_pt_pitch)});
             mGraphTimer.interrupt();
 
 
@@ -1025,10 +1034,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void run() {
                 lastXPoint++;
-                series0.appendData(new DataPoint(lastXPoint,graph_pt),true,100);
+                series0.appendData(new DataPoint(lastXPoint,graph_pt_pitch),true,100);
                 series1.appendData(new DataPoint(lastXPoint,30),true,100);
                 saveCurrentExercisePoint();
-                //series.appendData(new DataPoint(lastXPoint, graph_pt), false, 100);
+                //series.appendData(new DataPoint(lastXPoint, graph_pt_pitch), false, 100);
                 addRandomDataPoint();
                 Log.d("create000",String.valueOf(graphNumber));
                 Log.d("createA0A",String.valueOf(lastXPoint));
@@ -1040,10 +1049,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void run() {
                 lastXPoint1++;
-                series2.appendData(new DataPoint(lastXPoint1,graph_pt),true,100);
+                series2.appendData(new DataPoint(lastXPoint1,graph_pt_pitch),true,100);
                 series3.appendData(new DataPoint(lastXPoint1,40),true,100);
                 saveCurrentExercisePoint();
-                //series.appendData(new DataPoint(lastXPoint1, graph_pt), false, 100);
+                //series.appendData(new DataPoint(lastXPoint1, graph_pt_pitch), false, 100);
                 addRandomDataPoint1();
                 Log.d("create111",String.valueOf(graphNumber));
                 Log.d("createA1A",String.valueOf(lastXPoint1));
@@ -1056,10 +1065,10 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             @Override
             public void run() {
                 lastXPoint2++;
-                series4.appendData(new DataPoint(lastXPoint2,graph_pt),true,100);
+                series4.appendData(new DataPoint(lastXPoint2,graph_pt_pitch),true,100);
                 series5.appendData(new DataPoint(lastXPoint2,45),true,100);
                 saveCurrentExercisePoint();
-                //series.appendData(new DataPoint(lastXPoint2, graph_pt), false, 100);
+                //series.appendData(new DataPoint(lastXPoint2, graph_pt_pitch), false, 100);
                 addRandomDataPoint2();
                 Log.d("create222",String.valueOf(graphNumber));
                 Log.d("createA2A",String.valueOf(lastXPoint2));
@@ -1072,11 +1081,11 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         Log.d("createGraph0",String.valueOf(graphNumber));
 
         series0 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, graph_pt),
+                new DataPoint(0, graph_pt_pitch),
         });
 
         series1 = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, second_graph_pt),
+                new DataPoint(0, second_graph_pt_pitch),
         });
         //addRandomDataPoint();
         //addRandomDataPoint1();
