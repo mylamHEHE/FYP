@@ -322,7 +322,7 @@ public class SecondDeviceControl extends Activity {
         double z = Math.atan2(2 * q0 * q3 + 2 * q1 * q2,-2 * q2 * q2 - 2 * q3* q3 + 1)* 57.3; // yaw; // yaw
         double y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
         double x = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
-
+        Log.d("xmen",z+""+y+""+x);
         //double r0 = 0, r1 = 1, r2 = 0, r3 = 0;0100
         double[] first_result = multiplyQuaternion(0,0,0,1,q0,-q1,-q2,-q3);
         double[] last_result = multiplyQuaternion(q0, q1, q2, q3, first_result[0],first_result[1],first_result[2],first_result[3]);

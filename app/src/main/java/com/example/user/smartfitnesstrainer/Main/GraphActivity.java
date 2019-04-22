@@ -9,16 +9,20 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.smartfitnesstrainer.Main.BLE.RegistrationActivity;
 import com.example.user.smartfitnesstrainer.Main.Profile.Detail_Player_History;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -47,7 +51,6 @@ public class GraphActivity extends AppCompatActivity {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(URL_Base);
     Retrofit retrofit = builder.build();
-
     UserClient userClient = retrofit.create(UserClient.class);
     PrefKey prefKey;
     int name_counter=0;
@@ -173,7 +176,13 @@ public class GraphActivity extends AppCompatActivity {
         } else {
             finish();
         }
-
+        Button button = (Button) findViewById(R.id.Return);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+               finish();
+            }
+        });
         //receive broadcast
         /*
         m_MyReceiver1 = new MyBroadcaseReceiver1();
@@ -248,7 +257,7 @@ public class GraphActivity extends AppCompatActivity {
         TextView tv3=new TextView(getApplicationContext());
         tv3.setText(name[name_counter]);
         tv3.setTextSize(20f);
-
+        tv3.setTextColor(Color.LTGRAY);
         tv3.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         for(int y:graph)
         {
@@ -306,9 +315,14 @@ public class GraphActivity extends AppCompatActivity {
         graph1.addSeries(series2x);
         graph1.addSeries(series2y);
         graph1.addSeries(dot2x);
+        graph1.getGridLabelRenderer().setGridColor(Color.WHITE);
+        graph1.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
+        graph1.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
+
         graph1.invalidate();
 
         graph1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
+
         LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
         layout.addView(tv3);
         layout.addView(graph1);

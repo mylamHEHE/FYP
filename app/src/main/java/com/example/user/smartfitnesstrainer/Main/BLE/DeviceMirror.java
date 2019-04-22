@@ -748,7 +748,9 @@ public class DeviceMirror {
         }
         connectState = ConnectState.CONNECT_PROCESS;
         if (bluetoothLeDevice != null && bluetoothLeDevice.getDevice() != null) {
-            bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), true, coreGattCallback);
+
+            BluetoothGatt blg=bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), true, coreGattCallback);
+            refreshDeviceCache();
         }
     }
 

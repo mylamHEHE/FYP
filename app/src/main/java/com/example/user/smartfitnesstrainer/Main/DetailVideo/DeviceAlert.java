@@ -49,8 +49,8 @@ public class DeviceAlert extends DialogFragment
 
         super.onStart();
         Dialog dialog = getDialog();
-        Log.d("bldlist",BluetoothDifferenter.FIRST_BLUETOOTH_DEV.getAddress());
-        Log.d("bldlist",BluetoothDifferenter.SECOND_BLUETOOTH_DEV.getAddress());
+//        Log.d("bldlist",BluetoothDifferenter.FIRST_BLUETOOTH_DEV.getAddress());
+  //      Log.d("bldlist",BluetoothDifferenter.SECOND_BLUETOOTH_DEV.getAddress());
 
         ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.rgb(49,120,115));
         if (dialog != null)
@@ -99,10 +99,12 @@ public class DeviceAlert extends DialogFragment
         VideoView video=(VideoView)view.findViewById(R.id.tutorial_vid);
         TextView left_hand = (TextView)view.findViewById(R.id.left_hand);
         TextView right_hand = (TextView)view.findViewById(R.id.right_hand);
+        /*
         String first_ble = BluetoothDifferenter.FIRST_BLUETOOTH_DEV.getName();
         String second_ble = BluetoothDifferenter.SECOND_BLUETOOTH_DEV.getName();
         left_hand.setText("Please put device "+first_ble.substring(first_ble.length()-4)+"on the left part of body as video shown below.");
         right_hand.setText("Please put device "+second_ble.substring(second_ble.length()-4)+"on the right part of body as video shown below.");
+        */
         Log.d("vieod",video.toString());
         String path =  tutVideo;
 
