@@ -29,6 +29,7 @@ public class BluetoothLeDeviceStore {
         } else {
             mDeviceMap.put(device.getAddress(), device);
         }
+
     }
 
     public void removeDevice(BluetoothLeDevice device) {

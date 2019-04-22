@@ -1,55 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
+    android:background="@color/colorPrimaryDark"
     android:paddingRight="16dp"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:label="Graph">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
-            <TextView
-                android:id="@+id/Game1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Game1"
-                android:textSize="30sp"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:textColor="#000"/>
-            <com.jjoe64.graphview.GraphView
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:id="@+id/graph1"
-            />
-            <TextView
-                android:id="@+id/Game2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Game2"
-                android:textSize="30sp"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:textColor="#000"/>
-            <com.jjoe64.graphview.GraphView
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:id="@+id/graph2"
-                />
-            <TextView
-                android:id="@+id/Game3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Game3"
-                android:textSize="30sp"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:textColor="#000"/>
-            <com.jjoe64.graphview.GraphView
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:id="@+id/graph3"
-                />
+            android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            android:id="@+id/name_text"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#eeeeee"
+                    android:drawableLeft="@android:drawable/stat_sys_upload_done"
+                    android:drawablePadding="5dp"
+                    android:textSize="20sp"
+                    android:id="@+id/date_text"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    >
+                        <View
+                            android:layout_width="30dp"
+                            android:layout_height="15dp"
+                            android:background="@drawable/green_rect">
 
+                        </View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#eee"
+                            android:textSize="13sp"
+                            android:text=" = Left side of body"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp">
+                        <View
+                            android:layout_width="30dp"
+                            android:layout_height="15dp"
+                            android:background="@drawable/yellow_rect">
+
+                        </View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#eee"
+                            android:textSize="13sp"
+                            android:text=" = Right side of body"/>
+                </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+                <Button
+                    android:id="@+id/Return"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:textSize="30sp"
+                    android:text="BACK"
+                    android:textStyle="bold"
+                    android:textColor="#FFF"/>
+        </LinearLayout>
+</ScrollView>

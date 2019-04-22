@@ -94,12 +94,15 @@ public class DeviceMirror {
          */
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
-            ViseLog.i("onConnectionStateChange  status: " + status + " ,newState: " + newState +
+            Log.d("conn","onConnectionStateChange  status: " + status + " ,newState: " + newState +
                     "  ,thread: " + Thread.currentThread());
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 gatt.discoverServices();
             } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                 Log.d("adpre","sta");
+                gatt.discoverServices();
+                //deviceMirror.removeAllCallback();
+                /*
                 close();
                 if (connectCallback != null) {
                     if (handler != null) {
@@ -114,6 +117,7 @@ public class DeviceMirror {
                        //mylam  connectCallback.onConnectFailure(new ConnectException(gatt, status));
                     }
                 }
+                */
             } else if (newState == BluetoothGatt.STATE_CONNECTING) {
                 connectState = ConnectState.CONNECT_PROCESS;
             }
@@ -744,7 +748,9 @@ public class DeviceMirror {
         }
         connectState = ConnectState.CONNECT_PROCESS;
         if (bluetoothLeDevice != null && bluetoothLeDevice.getDevice() != null) {
-            bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), true, coreGattCallback);
+
+            BluetoothGatt blg=bluetoothLeDevice.getDevice().connectGatt(ViseBle.getInstance().getContext(), true, coreGattCallback);
+            refreshDeviceCache();
         }
     }
 

@@ -17,6 +17,7 @@ public class PrefKey {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("access_token", access_token);
+        editor.putString("refresh_token", renew_token);
         //tomilia: renewal
         editor.apply();
 
@@ -26,5 +27,17 @@ public class PrefKey {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPref.getString("access_token","");
     }
-
+    public String getRefresh_token()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPref.getString("refresh_token","");
+    }
+    public void removeAccessToken(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPref.edit().remove("access_token").apply();
+    }
+    public void removeRefreshToken(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPref.edit().remove("refresh_token").apply();
+    }
 }

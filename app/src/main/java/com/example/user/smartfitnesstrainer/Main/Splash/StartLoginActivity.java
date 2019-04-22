@@ -1,5 +1,6 @@
 package com.example.user.smartfitnesstrainer.Main.Splash;
 
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -365,6 +366,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
                         {
                             if(response.body().getAccess_token()!=null) {
                                 access_token = response.body().getAccess_token();
+                                renew_token = response.body().getRefresh_token();
                                 Toast.makeText(StartLoginActivity.this, response.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
                             }
@@ -410,7 +412,7 @@ public class StartLoginActivity extends AppCompatActivity implements LoaderCallb
 
 
             if (success) {
-                prefKey.saveToken(access_token,"");
+                prefKey.saveToken(access_token,renew_token);
                 //tomilia: temp use intent for login;
                 Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

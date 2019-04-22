@@ -1,10 +1,13 @@
 package com.example.user.smartfitnesstrainer.Main.UserModel;
 
+import com.example.user.smartfitnesstrainer.Main.Profile.Detail_Player_History;
 import com.example.user.smartfitnesstrainer.Main.Profile.UserProfile;
+import com.example.user.smartfitnesstrainer.Main.Splash.Refresh;
 import com.example.user.smartfitnesstrainer.Main.exercise_selection_page.Playlist;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -22,4 +25,15 @@ public interface UserClient {
     Call<List<Playlist>> getPlaylist(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
     @GET("playlist/{id}")
     Call<ResponseBody> getPlaylistWithid(@Header("Content-Type") String content_type, @Header("Authorization") String authToken,@Path("id") int id);
+    @POST("postrecord")
+    Call<ResponseBody> postRecord(@Header("Content-Type") String content_type, @Header("Authorization") String authToken, @Body RequestBody body);
+    @GET("getrecord/{id}")
+    Call<Detail_Player_History> getRecord(@Header("Content-Type") String content_type, @Header("Authorization") String authToken, @Path("id") int id);
+    @POST("token/refresh")
+    Call<Refresh> getAccess_token(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+    @POST("logout/access")
+    Call<ResponseBody> logOutAccess(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+    @POST("logout/refresh")
+    Call<ResponseBody> logOutRefresh(@Header("Content-Type") String content_type, @Header("Authorization") String authToken);
+
 }

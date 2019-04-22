@@ -21,6 +21,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 //import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.BluetoothDifferenter;
 import com.example.user.smartfitnesstrainer.Main.DetailVideo.ExerciseActivity;
 import com.example.user.smartfitnesstrainer.Main.Splash.PrefKey;
 import com.example.user.smartfitnesstrainer.Main.UserModel.UserClient;
@@ -157,10 +158,16 @@ Button start;
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
-                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                        startActivity(homeIntent);
-                        Log.d("catgirl","cat");
+                        if(BluetoothDifferenter.FIRST_BLUETOOTH_DEV!=null&&BluetoothDifferenter.SECOND_BLUETOOTH_DEV!=null) {
+                            Intent homeIntent = new Intent(getApplicationContext(), ExerciseActivity.class);
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                            startActivity(homeIntent);
+                        }
+                        else
+                        {
+                            Toast toast=Toast.makeText(Video_innerActivity.this,"You need to connect both devices to start the exercise!",Toast.LENGTH_LONG);
+                            toast.show();
+                        }
                         break;
                     }
                 }

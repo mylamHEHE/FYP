@@ -139,20 +139,42 @@
     </RelativeLayout>
 </LinearLayout>
         <LinearLayout
+            android:id="@+id/ly_bar_top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="28dp"
+                android:src="@android:drawable/ic_delete"
+                app:borderWidth="0dp"
+                app:elevation="6dp"
+                app:pressedTranslationZ="12dp"
+                app:rippleColor="@null"
+                app:backgroundTint="@null"
+                app:fabSize="mini"/>
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/ly_bar_bottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="right"
+            android:layout_alignParentTop="true"
+            android:gravity="left"
             android:orientation="horizontal">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
+                android:layout_gravity="bottom|start"
                 android:layout_margin="28dp"
-                android:src="@drawable/setting_grn"
+                android:src="@android:drawable/ic_menu_rotate"
                 app:borderWidth="0dp"
                 app:elevation="6dp"
                 app:pressedTranslationZ="12dp"

@@ -21,10 +21,12 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 
+import com.example.user.smartfitnesstrainer.Main.DetailVideo.BluetoothDifferenter;
 import com.example.user.smartfitnesstrainer.R;
 import com.vise.xsnow.cache.SpCache;
 import com.vise.xsnow.event.BusManager;
 import com.vise.xsnow.event.Subscribe;
+import com.vise.xsnow.event.inner.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +60,7 @@ public class DeviceControlActivity extends Activity {
     private EditText mInput;
     private EditText mOutput;
     //Data buffer import
-    private ArrayList buffer_Data = new ArrayList();
+    private ArrayList<Double> buffer_Data = new ArrayList();
     //buffer timer for preventing package loss
     Timer buf_timer= new Timer();
     private SpCache mSpCache;
@@ -90,7 +92,6 @@ public class DeviceControlActivity extends Activity {
 
 
         Log.d("bluettohd",String.valueOf(BluetoothDeviceManager.getInstance().isConnected(mDevice)));
-        timerTaskforBuffer();
 
         //       showDefaultInfo();
 
@@ -122,6 +123,7 @@ public class DeviceControlActivity extends Activity {
 
             DeviceMirror deviceMirror = ViseBle.getInstance().getDeviceMirror(mDevice);
             Log.d("bletest", deviceMirror.getBluetoothLeDevice().getAddress());
+            BluetoothDifferenter.FIRST_BLUETOOTH_DEV = deviceMirror.getBluetoothLeDevice();
             for (BluetoothGattService bgs : deviceMirror.getBluetoothGatt().getServices()) {
                 Log.d("bletest", String.valueOf(bgs.getUuid()));
                 if (bgs.getUuid().toString().equals("0783b03e-8535-b5a0-7140-a304d2495cb0")) {
@@ -139,7 +141,7 @@ public class DeviceControlActivity extends Activity {
         }
 
     }
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showConnectedDevice(ConnectEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
@@ -165,7 +167,7 @@ public class DeviceControlActivity extends Activity {
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceCallbackData(CallbackDataEvent event) {
         if (event != null) {
             if (event.isSuccess()) {
@@ -264,8 +266,6 @@ public class DeviceControlActivity extends Activity {
 
         norm = sqrt(pow(ax,2)+pow(ay,2)+pow(az,2));
         double elevation_acc = Math.asin(sqrt(ax*ax+ay*ay)/norm) * 180 /PI;
-        Log.d("gyro", String.valueOf(gx) + " " + String.valueOf(gy) + " " + String.valueOf(gz));
-        Log.d("accelo", String.valueOf(ax) + " " + String.valueOf(ay) + " " + String.valueOf(az));
         // 先把这些用得到的值算好
         double q0q0 = q0 * q0;
         double q0q1 = q0 * q1;
@@ -319,29 +319,35 @@ public class DeviceControlActivity extends Activity {
 
         //四元数到欧拉角的转换，公式推导见博文一
         //其中YAW航向角由于加速度计对其没有修正作用，因此此处直接用陀螺仪积分代替
-        Log.d("momo","AngleY: "+String.valueOf(Math.asin(-2 * q1 * q3 + 2 * q0* q2)*100)+" AngleX: "+
-                String.valueOf((Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1))*100));
         double z = Math.atan2(2 * q0 * q3 + 2 * q1 * q2,-2 * q2 * q2 - 2 * q3* q3 + 1)* 57.3; // yaw; // yaw
         double y = Math.asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch
         double x = Math.atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll
-
+        Log.d("xmen",Math.abs(z)+" "+Math.abs(y)+" "+Math.abs(x));
         //double r0 = 0, r1 = 1, r2 = 0, r3 = 0;0100
         double[] first_result = multiplyQuaternion(0,0,0,1,q0,-q1,-q2,-q3);
         double[] last_result = multiplyQuaternion(q0, q1, q2, q3, first_result[0],first_result[1],first_result[2],first_result[3]);
-        double xss = last_result[1];
-        double yss = last_result[2];
-        double zss = last_result[3];
+        double xss = last_result[1];//Q1
+        double yss = last_result[2];//Q2
+        double zss = last_result[3];//Q3
 ////cos
         double elevationGyro = Math.asin(sqrt(xss*xss+yss*yss)/sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2))) * 180 /PI;
-        Log.d("assd",String.valueOf(x)+" "+String.valueOf(y)+" "+String.valueOf(z));
-        Log.d("q123",String.valueOf(q0)+" "+String.valueOf(q1)+" "+String.valueOf(q2)+" "+String.valueOf(q3));
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
+        double rollgyr = Math.atan(sqrt(xss*xss+yss*yss)/(sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2)))) * 180 /PI;
+        double rollgyr2 = Math.atan2(2 * yss * zss + 2 * last_result[0] * xss,-2 * xss * xss - 2 * yss* yss + 1)* 180 /PI;
+
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
+        Log.d("rolllllllllllll", String.format("pitch: %f, roll: %f rolltest: %f", (elevation_acc+elevationGyro)/2, rollgyr2/1.98, rollgyr2/1.79));
+        Log.d("original", String.format("pitch: %f, pitch: %f //roll: %f, roll: %f ", correct(x), x, correct(y), y));
         double result=(elevation_acc+elevationGyro)/2;
+
         Intent it = new Intent("tw.android.MY_BROADCAST1");
-        it.putExtra("sender_name",result);
+        it.putExtra("first_dev_pitch",x);
+        it.putExtra("first_dev_roll",y);
+
         sendBroadcast(it);
+        //timer get buffer average in one sec
+
         return result;
     }
     private double[] multiplyQuaternion(double a, double b, double c, double d, double e, double f, double g, double h){
@@ -352,68 +358,112 @@ public class DeviceControlActivity extends Activity {
         result[3] = (a*h+b*g-c*f+d*e);
         return result;
     }
-    @Subscribe
+    private double correct(double input){
+        if (input>90)
+            return 180-input;
+        return input;
+    }
+    @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceNotifyData(final NotifyDataEvent event) {
 
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-
-
-                if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
-                        && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
-                    String result = HexUtil.encodeHexStr(event.getData());
-
-                    int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
-                    String tmp = "";
-                    int id = 0;
-
-                    while(id<result.length())
-                    {
-
-                        tmp+=Integer.toBinaryString(Integer.parseInt(result.substring(id,Math.min(id+2, result.length())),16)& 0xffff);
-                        tmp+="-";
-                        id+=2;
+                Log.d("heart", String.valueOf(event.getBluetoothLeDevice().getAddress()));
+                try {
+                    if(!event.getBluetoothLeDevice().getAddress().equals("45:53:3C:3D:14:D8")) {
+                        d9Device(event);
                     }
-
-                    Pattern pattern;
-                    pattern=Pattern.compile(Pattern.quote("-"));
-                    String[] data =pattern.split(tmp);
-                    byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
-                    //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
-                    //              float f = int16;
-                    //            Log.d("datax",String.valueOf(f));
-                    try {
-                        buffer_Data.add(data[1]);
-
-
-                        //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
-                        IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
-
-                    }
-                    catch(Exception e)
+                    else
                     {
-
+                        d8Device(event);
                     }
                 }
-                return null;
-            }
+                catch(Exception e)
+                {
 
-        }.execute();
+                }
+                return;
+
     }
-    private void timerTaskforBuffer(){
-        if(buffer_Data.isEmpty())
-            return;
-        TimerTask showtime= new TimerTask(){//也可以用匿名類別的方式，
+    private void d8Device(NotifyDataEvent event){
 
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Log.d("timer",String.valueOf(buffer_Data.get(0)));
-                buffer_Data.remove(0);
+
+        if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
+                && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
+            String result = HexUtil.encodeHexStr(event.getData());
+
+            int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
+            String tmp = "";
+            int id = 0;
+
+            while (id < result.length()) {
+
+                tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+                tmp += "-";
+                id += 2;
             }
-        };
-        buf_timer.schedule(showtime,  100);
+
+            Pattern pattern;
+            pattern = Pattern.compile(Pattern.quote("-"));
+            String[] data = pattern.split(tmp);
+            byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+            //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+            //              float f = int16;
+            //            Log.d("datax",String.valueOf(f));
+            try {
+                //buffer_Data.add(data[1]);
+
+                //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                Log.d("delble1", String.valueOf(quad_res));
+
+            } catch (Exception e) {
+
+            }
+        }
+    }
+    private void d9Device(NotifyDataEvent event){
+
+
+        if (event != null && event.getData() != null && event.getBluetoothLeDevice() != null
+                && event.getBluetoothLeDevice().getAddress().equals(mDevice.getAddress())) {
+            String result = HexUtil.encodeHexStr(event.getData());
+
+            int i = (event.getData()[1] & 0xff) << 7 | (short) (event.getData()[2] << 8);
+            String tmp = "";
+            int id = 0;
+
+            while (id < result.length()) {
+
+                tmp += Integer.toBinaryString(Integer.parseInt(result.substring(id, Math.min(id + 2, result.length())), 16) & 0xffff);
+                tmp += "-";
+                id += 2;
+            }
+
+            Pattern pattern;
+            pattern = Pattern.compile(Pattern.quote("-"));
+            String[] data = pattern.split(tmp);
+            byte[] bytes = {0, -128}; // bytes[0] = 0000 0000, bytes[1] = 1000 0000
+            //                short int16 = (short)(((Integer.parseInt(data[5],2) & 0xFF) << 8) | (Integer.parseInt(data[6],2) & 0xFF));
+            //              float f = int16;
+            //            Log.d("datax",String.valueOf(f));
+            try {
+                //buffer_Data.add(data[1]);
+
+                //shiftHighByte(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
+                double quad_res=IMUupdate(data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12]);
+                Log.d("delble2", String.valueOf(quad_res));
+                Intent it = new Intent("tw.android.MY_BROADCAST1");
+                it.putExtra("first_dev",quad_res);
+
+                sendBroadcast(it);
+            } catch (Exception e) {
+
+            }
+        }
+    }
+    private void timerTaskforBuffer(double result){
+        Log.d("timer","hei");
+
+
     }
     @Override
     protected void onDestroy() {
