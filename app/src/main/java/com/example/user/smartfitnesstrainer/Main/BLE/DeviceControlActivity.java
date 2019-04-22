@@ -324,15 +324,18 @@ public class DeviceControlActivity extends Activity {
         //double r0 = 0, r1 = 1, r2 = 0, r3 = 0;0100
         double[] first_result = multiplyQuaternion(0,0,0,1,q0,-q1,-q2,-q3);
         double[] last_result = multiplyQuaternion(q0, q1, q2, q3, first_result[0],first_result[1],first_result[2],first_result[3]);
-        double xss = last_result[1];
-        double yss = last_result[2];
-        double zss = last_result[3];
+        double xss = last_result[1];//Q1
+        double yss = last_result[2];//Q2
+        double zss = last_result[3];//Q3
 ////cos
         double elevationGyro = Math.asin(sqrt(xss*xss+yss*yss)/sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2))) * 180 /PI;
 //        double elevationGyro = Math.asin(sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2))/ (sqrt(pow(Math.sin(x),2) + pow(Math.sin(y), 2)) + pow(Math.sin(y), 2)));
+        double rollgyr = Math.atan(sqrt(xss*xss+yss*yss)/(sqrt(pow(xss,2)+pow(yss,2)+pow(zss,2)))) * 180 /PI;
+        double rollgyr2 = Math.atan2(2 * yss * zss + 2 * last_result[0] * xss,-2 * xss * q1 - 2 * yss* yss + 1)* 180 /PI;
+
 
         Log.d("elevation", String.format("accelerometer: %f, gyroscope: %f, average: %f", elevation_acc, elevationGyro, (elevation_acc+elevationGyro)/2));
-
+        Log.d("roll", String.format("pitch: %f, roll: %f rolltest: %f", (elevation_acc+elevationGyro)/2, rollgyr2, rollgyr));
         double result=(elevation_acc+elevationGyro)/2;
 
         //timer get buffer average in one sec
@@ -349,6 +352,13 @@ public class DeviceControlActivity extends Activity {
         result[2] = (a*g-b*h+c*e+d*f);
         result[3] = (a*h+b*g-c*f+d*e);
         return result;
+    }
+    private double correct(double input){
+        if (input<0)
+            input=input*(-1);
+        if (input>90)
+            input=input-90;
+        return input;
     }
     @Subscribe(threadMode = ThreadMode.SINGLE)
     public void showDeviceNotifyData(final NotifyDataEvent event) {

@@ -874,7 +874,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
             public void run() {
                 lastXPoint2++;
                 series4.appendData(new DataPoint(lastXPoint2,graph_pt),true,100);
-                series5.appendData(new DataPoint(lastXPoint2,450),true,100);
+                series5.appendData(new DataPoint(lastXPoint2,45),true,100);
                 saveCurrentExercisePoint();
                 //series.appendData(new DataPoint(lastXPoint2, graph_pt), false, 100);
                 addRandomDataPoint2();
@@ -957,5 +957,4 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         graph.getViewport().setMaxX(20);
 //graph end
     }
-
-    }
+}
