@@ -1000,6 +1000,7 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
     }
 
     public void onFinish() {
+        player.release();
         unregDevice();
         mTimer2.cancel();
         mTimer.cancel();
@@ -1126,8 +1127,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         });
         //addRandomDataPoint();
         //addRandomDataPoint1();
-        series0.setColor(Color.YELLOW);
-        series1.setColor(Color.GREEN);
+        series0.setColor(Color.GREEN);
+        series1.setColor(Color.YELLOW);
 
 
         //graph.addSeries(series1);
@@ -1159,8 +1160,8 @@ public class ExerciseActivity extends AppCompatActivity implements DialogInterfa
         });
         //addRandomDataPoint();
         //addRandomDataPoint1();
-        series2.setColor(Color.YELLOW);
-        series3.setColor(Color.GREEN);
+        series2.setColor(Color.rgb(63, 235, 255));
+        series3.setColor(Color.rgb(255, 63, 248));
 
 
         //graph.addSeries(series1);

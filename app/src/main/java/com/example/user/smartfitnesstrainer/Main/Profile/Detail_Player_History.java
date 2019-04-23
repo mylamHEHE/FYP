@@ -1,5 +1,7 @@
 package com.example.user.smartfitnesstrainer.Main.Profile;
 
+import android.util.Log;
+
 public class Detail_Player_History {
 
     /**
@@ -19,6 +21,13 @@ public class Detail_Player_History {
     private String second_round_data;
     private int total_exercise;
     private String date;
+    /**
+     * pitch_comment : ['Maybe you need to keep ur legs in position and keep two legs balance!', 'Keep working! Although the balancing of back and legs also consistency is not so satisfied.', 'Keep working! Although the elevation of legs and left hand has to be straight to the ground;Consistency is not so satisfied.', 'Keep working! Although the balancing and consistency is not so satisfied.', 'Keep working! Although the balancing of back and legs also consistency is not so satisfied.', 'Keep working! Although the elevation of legs and left hand has to be straight to the ground;Consistency is not so satisfied.']
+     * roll_comment : ['Very good! The rotation of the body is balanced despite consistency needs improve!', 'Excellent! The rotation of the body is very balanced!', 'Maybe you hold your hand towards the eyesight and keep two legs balance and tight!', 'Very good! The rotation of the body is balanced despite consistency needs improve!', 'Excellent! The rotation of the body is very balanced!', 'Maybe you hold your hand towards the eyesight and keep two legs balance and tight!']
+     */
+
+    private String[] pitch_comment;
+    private String[] roll_comment;
 
     public int getRef_id() {
         return ref_id;
@@ -81,5 +90,22 @@ public class Detail_Player_History {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String[] getPitch_comment() {
+
+        return pitch_comment;
+    }
+
+    public void setPitch_comment(String[] pitch_comment) {
+        this.pitch_comment = pitch_comment;
+    }
+
+    public String[] getRoll_comment() {
+        return roll_comment;
+    }
+
+    public void setRoll_comment(String[] roll_comment) {
+        this.roll_comment = roll_comment;
     }
 }

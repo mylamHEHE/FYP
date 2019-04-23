@@ -25,6 +25,7 @@ public class SecondBLE {
     private String address ;
     private Activity activity;
     private boolean gotDevice=false;
+
     Context context;
     public SecondBLE(String address,Context context,Activity activity) {
         this.address = address;
@@ -48,6 +49,7 @@ public class SecondBLE {
     private ScanCallback sc = new ScanCallback(new IScanCallback() {
         @Override
         public void onDeviceFound(final BluetoothLeDevice bluetoothLeDevice) {
+
             new AsyncTask<Void,Void,Boolean>(){
 
                 @Override
